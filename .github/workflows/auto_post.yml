@@ -1,0 +1,50 @@
+name: 🚀 Blogger Gemini AI Auto-Poster Cloud
+
+on:
+  schedule:
+    # Tự động chạy lúc 01:00 UTC (Tương đương 08:00 sáng giờ Việt Nam mỗi ngày)
+    - cron: '0 1 * * *'
+
+  # Cho phép bấm nút "Run workflow" để chạy thử bất cứ lúc nào
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  auto_post:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Tải mã nguồn từ Repository
+        uses: actions/checkout@v4
+
+      - name: 🐍 Cài đặt môi trường Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: 📦 Cài đặt thư viện phụ thuộc
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: 🚀 Chạy kịch bản Viết bài & Đăng lên Blogger
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          BLOGGER_BLOG_ID: ${{ secrets.BLOGGER_BLOG_ID }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+          POST_MODE: ${{ vars.POST_MODE || 'schedule' }}
+          SCHEDULE_HOURS_AHEAD: ${{ vars.SCHEDULE_HOURS_AHEAD || '24' }}
+        run: |
+          python main.py
+
+      - name: 💾 Tự động lưu lịch sử bài đã đăng (Git Commit & Push)
+        run: |
+          git config --global user.name "Blogger Bot (GitHub Actions)"
+          git config --global user.email "bot@blogger-gemini.local"
+          git add posted_history.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Tự động cập nhật lịch sử bài đăng [skip ci]" && git push)
