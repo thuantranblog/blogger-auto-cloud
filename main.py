@@ -29,14 +29,24 @@ except ImportError:
 # ==============================================================================
 # CẤU HÌNH HỆ THỐNG
 # ==============================================================================
-GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
-BLOGGER_BLOG_ID = os.environ.get('BLOGGER_BLOG_ID')
-GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID')
-GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
-GOOGLE_REFRESH_TOKEN = os.environ.get('GOOGLE_REFRESH_TOKEN')
+def clean_credential(val):
+    if not val:
+        return ''
+    v = str(val).strip().strip('"').strip("'")
+    if '=' in v and not v.startswith('1//'):
+        v = v.split('=', 1)[1].strip().strip('"').strip("'")
+    # Loại bỏ hoàn toàn ký tự xuống dòng và khoảng trắng do copy-paste từ PowerShell
+    v = v.replace('\n', '').replace('\r', '').replace(' ', '')
+    return v
+
+GEMINI_API_KEY = clean_credential(os.environ.get('GEMINI_API_KEY'))
+BLOGGER_BLOG_ID = clean_credential(os.environ.get('BLOGGER_BLOG_ID'))
+GOOGLE_CLIENT_ID = clean_credential(os.environ.get('GOOGLE_CLIENT_ID'))
+GOOGLE_CLIENT_SECRET = clean_credential(os.environ.get('GOOGLE_CLIENT_SECRET'))
+GOOGLE_REFRESH_TOKEN = clean_credential(os.environ.get('GOOGLE_REFRESH_TOKEN'))
 
 # Chế độ phát hành: 'schedule' (Lên lịch tương lai), 'publish' (Đăng ngay), 'draft' (Lưu nháp)
-POST_MODE = os.environ.get('POST_MODE', 'schedule').lower()
+POST_MODE = os.environ.get('POST_MODE', 'schedule').lower().strip()
 SCHEDULE_HOURS_AHEAD = int(os.environ.get('SCHEDULE_HOURS_AHEAD', '24'))
 
 # Thông tin thương hiệu LuViet
@@ -86,7 +96,7 @@ Hãy trả về DUY NHẤT một chuỗi JSON hợp lệ (không kèm theo bất
 }}
 """
 
-    models = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.5-flash']
+    models = ['gemini-2.5-flash', 'gemini-2.5-pro']
     last_err = None
 
     for model in models:
@@ -133,6 +143,11 @@ Hãy trả về DUY NHẤT một chuỗi JSON hợp lệ (không kèm theo bất
 def get_blogger_service():
     if not (GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET and GOOGLE_REFRESH_TOKEN):
         raise Exception("Thiếu thông tin Google OAuth (GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REFRESH_TOKEN)!")
+
+    print(f"🔍 Kiểm tra định dạng Google OAuth:")
+    print(f"   - Client ID: {GOOGLE_CLIENT_ID[:12]}...{GOOGLE_CLIENT_ID[-15:]} (Độ dài: {len(GOOGLE_CLIENT_ID)})")
+    print(f"   - Client Secret: {GOOGLE_CLIENT_SECRET[:6]}... (Độ dài: {len(GOOGLE_CLIENT_SECRET)})")
+    print(f"   - Refresh Token: {GOOGLE_REFRESH_TOKEN[:8]}... (Độ dài: {len(GOOGLE_REFRESH_TOKEN)})")
 
     creds = Credentials(
         token=None,
