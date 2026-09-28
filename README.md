@@ -46,15 +46,25 @@ blogger-auto-cloud/
 
 ---
 
-### Bước 2: Chuẩn bị 5 thông số kết nối (Secrets)
+### Bước 2: Chuẩn bị các thông số kết nối (Secrets & Variables)
 
-| Tên Secret | Ý nghĩa | Cách lấy |
-| :--- | :--- | :--- |
-| `GEMINI_API_KEY` | Khóa Google Gemini AI | Lấy miễn phí tại: [aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey) |
-| `BLOGGER_BLOG_ID` | ID blog trên Blogger | Vào `blogger.com` ➔ Dãy số trên URL: `blogger.com/blog/posts/`**`123456789...`** |
-| `GOOGLE_CLIENT_ID` | Mã Client ID OAuth2 | Tạo tại [Google Cloud Console](https://console.cloud.google.com/apis/credentials) |
-| `GOOGLE_CLIENT_SECRET` | Mã Bí mật OAuth2 | Tạo cùng lúc với Client ID ở trên |
-| `GOOGLE_REFRESH_TOKEN` | Token đăng bài vĩnh viễn | Chạy file `get_refresh_token.py` (hoặc qua OAuth Playground) |
+| Tên Secret | Ý nghĩa | Bắt buộc / Tùy chọn | Cách lấy |
+| :--- | :--- | :--- | :--- |
+| `GEMINI_API_KEY` | Khóa Google Gemini AI | Bắt buộc | Lấy miễn phí tại: [aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey) |
+| `BLOGGER_BLOG_ID` | ID blog trên Blogger | Bắt buộc | Vào `blogger.com` ➔ Dãy số trên URL: `blogger.com/blog/posts/`**`123456789...`** |
+| `GOOGLE_CLIENT_ID` | Mã Client ID OAuth2 | Bắt buộc | Tạo tại [Google Cloud Console](https://console.cloud.google.com/apis/credentials) |
+| `GOOGLE_CLIENT_SECRET` | Mã Bí mật OAuth2 | Bắt buộc | Tạo cùng lúc với Client ID ở trên |
+| `GOOGLE_REFRESH_TOKEN` | Token đăng bài vĩnh viễn | Bắt buộc | Chạy file `get_refresh_token.py` (hoặc qua OAuth Playground) |
+| `GOOGLE_SHEET_URL` | **Link Google Sheets chứa đề tài** | **Ưu tiên số 1** | Link Google Sheet đã bật: *"Bất kỳ ai có liên kết đều có thể xem"* |
+| `GOOGLE_SHEET_WEBHOOK_URL` | Webhook Apps Script đồng bộ trạng thái | Tùy chọn | URL Webhook sau khi Deploy Apps Script (`google_sheets_webhook.js`) |
+
+> 📌 **LƯU Ý QUAN TRỌNG VỀ ĐỒNG BỘ GOOGLE SHEETS**:
+> 1. Để hệ thống **ưu tiên lấy bài từ Google Sheets**, bạn bắt buộc phải thêm Secret hoặc Variable mang tên `GOOGLE_SHEET_URL`. Nếu không có biến này, hệ thống sẽ tự động dùng file dự phòng `topics.txt`.
+> 2. Bảng tính Google Sheets **bắt buộc phải bật quyền chia sẻ**: Bấm nút **Chia sẻ (Share)** ➔ Chuyển quyền chung sang: **"Bất kỳ ai có đường liên kết đều có thể xem" (Anyone with the link can view)**.
+> 3. Kiểm tra kết nối trước bằng lệnh:
+>    ```bash
+>    python test_google_sheets.py "<LINK_GOOGLE_SHEET_CUA_BAN>"
+>    ```
 
 #### 🔑 Cách lấy `GOOGLE_REFRESH_TOKEN` cực nhanh (Chỉ 30 giây):
 1. Chạy script có sẵn trên máy tính của bạn:
@@ -69,12 +79,14 @@ blogger-auto-cloud/
 
 ### Bước 3: Cài đặt Secrets vào GitHub Repository
 1. Trên trang Repository GitHub của bạn, vào mục: **Settings** ➔ Cột bên trái chọn **Secrets and variables** ➔ Bấm **Actions**.
-2. Bấm nút **New repository secret** màu xanh và lần lượt thêm 5 mục:
+2. Bấm nút **New repository secret** màu xanh và lần lượt thêm:
    - `GEMINI_API_KEY`: *(Dán mã AIzaSy...)*
    - `BLOGGER_BLOG_ID`: *(Dán số ID blog của bạn)*
    - `GOOGLE_CLIENT_ID`: *(Dán Client ID)*
    - `GOOGLE_CLIENT_SECRET`: *(Dán Client Secret)*
    - `GOOGLE_REFRESH_TOKEN`: *(Dán Refresh Token)*
+   - `GOOGLE_SHEET_URL`: *(Dán link Google Sheets bảng kế hoạch của bạn)*
+   - `GOOGLE_SHEET_WEBHOOK_URL`: *(Dán Webhook Apps Script nếu có)*
 
 ---
 

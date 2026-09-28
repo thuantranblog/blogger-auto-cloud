@@ -218,7 +218,13 @@ Hãy trả về DUY NHẤT một chuỗi JSON hợp lệ (không kèm theo bất
 }}
 """
 
-    models = ['gemini-flash-latest', 'gemini-flash-lite-latest', 'gemini-2.5-flash', 'gemini-3.1-pro-preview']
+    models = [
+        'gemini-2.5-flash',
+        'gemini-2.0-flash',
+        'gemini-1.5-flash',
+        'gemini-2.5-flash-lite',
+        'gemini-flash-latest'
+    ]
     last_err = None
 
     # VÒNG LẶP DỰ PHÒNG QUA TỪNG API KEY (KEY POOL ROTATION)
@@ -228,45 +234,75 @@ Hãy trả về DUY NHẤT một chuỗi JSON hợp lệ (không kèm theo bất
 
         key_overloaded = False
         for model in models:
-            try:
-                print(f"👉 Thử tạo bài với Model: {model}...")
-                url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={current_key}"
-                body = {
-                    "contents": [{"parts": [{"text": prompt}]}],
-                    "generationConfig": {
-                        "responseMimeType": "application/json",
-                        "thinkingConfig": {"thinkingBudget": 0}
+            retry_delays = [3, 7, 15]
+            max_attempts = len(retry_delays) + 1
+
+            for attempt in range(1, max_attempts + 1):
+                try:
+                    if attempt == 1:
+                        print(f"👉 Thử tạo bài với Model: {model}...")
+                    else:
+                        print(f"🔄 Thử lại lần {attempt}/{max_attempts} với Model: {model}...")
+
+                    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={current_key}"
+                    
+                    gen_config = {
+                        "responseMimeType": "application/json"
                     }
-                }
+                    if '2.5' in model:
+                        gen_config["thinkingConfig"] = {"thinkingBudget": 0}
 
-                resp = requests.post(url, json=body, timeout=90)
+                    body = {
+                        "contents": [{"parts": [{"text": prompt}]}],
+                        "generationConfig": gen_config
+                    }
 
-                # Kiểm tra quá tải hoặc hết quota để đổi key dự phòng ngay
-                if resp.status_code == 429 or "RESOURCE_EXHAUSTED" in resp.text:
-                    print(f"⚠️ API Key #{key_idx} gặp sự cố quá tải / hết lượt gọi (HTTP 429 / Quota Exceeded).")
-                    key_overloaded = True
-                    break  # Thoát loop model để nhảy sang key dự phòng tiếp theo ngay lập tức
+                    resp = requests.post(url, json=body, timeout=120)
 
-                if resp.status_code != 200:
-                    raise Exception(f"HTTP {resp.status_code}: {resp.text}")
+                    # 1. Xử lý lỗi tạm thời HTTP 503 (Spike in demand / UNAVAILABLE)
+                    if resp.status_code == 503 or "UNAVAILABLE" in resp.text:
+                        if attempt < max_attempts:
+                            wait_sec = retry_delays[attempt - 1]
+                            print(f"⏳ Máy chủ Google đang quá tải tạm thời (HTTP 503 High Demand). Đang chờ {wait_sec} giây trước khi thử lại...")
+                            time.sleep(wait_sec)
+                            continue
+                        else:
+                            print(f"⚠️ Model {model} vẫn bị quá tải sau {max_attempts} lần thử. Đang chuyển sang model tiếp theo...")
+                            last_err = Exception(f"HTTP 503: {resp.text}")
+                            break
 
-                res_json = resp.json()
-                raw_text = res_json['candidates'][0]['content']['parts'][0]['text']
+                    # 2. Xử lý lỗi HTTP 429 (Hết hạn mức / RESOURCE_EXHAUSTED)
+                    if resp.status_code == 429 or "RESOURCE_EXHAUSTED" in resp.text:
+                        print(f"⚠️ API Key #{key_idx} gặp sự cố quá tải / hết lượt gọi (HTTP 429 / Quota Exceeded).")
+                        key_overloaded = True
+                        last_err = Exception(f"HTTP 429: {resp.text}")
+                        break
 
-                # Clean json
-                cleaned = raw_text.strip()
-                if cleaned.startswith("```json"):
-                    cleaned = cleaned[7:]
-                if cleaned.endswith("```"):
-                    cleaned = cleaned[:-3]
-                cleaned = cleaned.strip()
+                    if resp.status_code != 200:
+                        raise Exception(f"HTTP {resp.status_code}: {resp.text}")
 
-                data = json.loads(cleaned)
-                print(f"✅ Gemini AI đã tạo xong bài viết: '{data.get('title')}' thành công với Key #{key_idx} ({model})!")
-                return data
-            except Exception as e:
-                last_err = e
-                print(f"⚠️ Model {model} gặp sự cố: {e}. Đang thử model kế tiếp...")
+                    res_json = resp.json()
+                    raw_text = res_json['candidates'][0]['content']['parts'][0]['text']
+
+                    # Clean json
+                    cleaned = raw_text.strip()
+                    if cleaned.startswith("```json"):
+                        cleaned = cleaned[7:]
+                    if cleaned.endswith("```"):
+                        cleaned = cleaned[:-3]
+                    cleaned = cleaned.strip()
+
+                    data = json.loads(cleaned)
+                    print(f"✅ Gemini AI đã tạo xong bài viết: '{data.get('title')}' thành công với Key #{key_idx} ({model})!")
+                    return data
+                except Exception as e:
+                    last_err = e
+                    if "503" not in str(e) and "429" not in str(e):
+                        print(f"⚠️ Model {model} gặp sự cố: {e}. Đang thử model kế tiếp...")
+                    break
+
+            if key_overloaded:
+                break
 
         if key_overloaded and key_idx < len(api_keys):
             print(f"🔄 Tự động chuyển sang API Key dự phòng #{key_idx + 1}...")
@@ -402,7 +438,7 @@ def fetch_topics_from_google_sheet(sheet_url):
     gid = gid_match.group(1) if gid_match else '0'
 
     csv_url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&gid={gid}"
-    print(f"📊 Đang đồng bộ đề tài từ Google Sheets (Sheet ID: {sheet_id[:10]}..., GID: {gid})...")
+    print(f"📊 Đang kết nối Google Sheets (Sheet ID: {sheet_id[:10]}..., GID: {gid})...")
 
     headers_req = {"User-Agent": "Mozilla/5.0"}
     resp = requests.get(csv_url, headers=headers_req, timeout=30)
@@ -410,12 +446,19 @@ def fetch_topics_from_google_sheet(sheet_url):
         raise Exception(f"HTTP {resp.status_code}: Không thể tải Google Sheet. Vui lòng kiểm tra quyền chia sẻ 'Bất kỳ ai có liên kết đều có thể xem'!")
 
     content = resp.content.decode('utf-8-sig', errors='replace')
+    
+    # Kiểm tra xem Google có chuyển hướng sang trang đăng nhập HTML không (khi chưa Share Public)
+    if '<html' in content.lower() or 'accounts.google.com' in content or 'serviceLogin' in content:
+        raise Exception("Google Sheets trả về trang đăng nhập HTML thay vì dữ liệu CSV. Nguyên nhân: Bảng tính chưa được BẬT quyền chia sẻ 'Bất kỳ ai có liên kết đều có thể xem' (Anyone with the link can view)!")
+
     reader = csv.reader(io.StringIO(content))
     rows = list(reader)
     if not rows:
+        print("⚠️ Bảng tính Google Sheets hoàn toàn trống (không có dòng dữ liệu nào).")
         return []
 
-    headers = [h.strip().lower() for h in rows[0]]
+    # Quét qua 5 dòng đầu tiên để tự động tìm dòng Header thực sự
+    header_row_idx = 0
     col_title = -1
     col_keyword = -1
     col_label = -1
@@ -424,6 +467,19 @@ def fetch_topics_from_google_sheet(sheet_url):
     col_status = -1
     col_id = -1
 
+    for r_idx in range(min(5, len(rows))):
+        h_row = [str(c).strip().lower() for c in rows[r_idx]]
+        c_title = -1
+        for i, h in enumerate(h_row):
+            if any(k in h for k in ['tiêu đề', 'tieu de', 'title', 'chủ đề', 'chu de', 'topic']):
+                c_title = i
+                break
+        if c_title != -1:
+            header_row_idx = r_idx
+            col_title = c_title
+            break
+
+    headers = [str(c).strip().lower() for c in rows[header_row_idx]]
     for i, h in enumerate(headers):
         if any(k in h for k in ['tiêu đề', 'tieu de', 'title', 'chủ đề', 'chu de', 'topic']):
             col_title = i
@@ -444,7 +500,8 @@ def fetch_topics_from_google_sheet(sheet_url):
         col_title = 1 if len(headers) > 1 else 0
 
     topics = []
-    for row_idx, r in enumerate(rows[1:], 2):  # 1-based index (tiêu đề ở dòng 1)
+    skipped_status_count = 0
+    for row_idx, r in enumerate(rows[header_row_idx + 1:], header_row_idx + 2):  # 1-based index (tiêu đề ở dòng header)
         if not r or len(r) <= col_title:
             continue
         title = r[col_title].strip()
@@ -452,7 +509,8 @@ def fetch_topics_from_google_sheet(sheet_url):
             continue
 
         status = r[col_status].strip().lower() if col_status != -1 and len(r) > col_status else ''
-        if any(s in status for s in ['đã đăng', 'da dang', 'posted', 'done']):
+        if any(s in status for s in ['đã đăng', 'da dang', 'posted', 'done', 'đã lên lịch', 'da len lich', 'scheduled', 'hoàn thành', 'hoan thanh']):
+            skipped_status_count += 1
             continue
 
         keyword = r[col_keyword].strip() if col_keyword != -1 and len(r) > col_keyword else ''
@@ -478,7 +536,7 @@ def fetch_topics_from_google_sheet(sheet_url):
             "source": "google_sheets"
         })
 
-    print(f"✅ Đã tải thành công {len(topics)} đề tài chưa đăng từ Google Sheets!")
+    print(f"✅ Đã tải thành công {len(topics)} đề tài chưa đăng từ Google Sheets! (Đã bỏ qua {skipped_status_count} bài đã đăng/lên lịch)")
     return topics
 
 def notify_google_sheet(item, result, scheduled_slot=None):
@@ -519,11 +577,20 @@ def get_next_topics(count=1):
 
     # 1. Ưu tiên đọc từ Google Sheets nếu có cấu hình GOOGLE_SHEET_URL
     if GOOGLE_SHEET_URL:
+        print(f"🔗 Phát hiện cấu hình GOOGLE_SHEET_URL: {GOOGLE_SHEET_URL[:45]}...")
         try:
-            all_candidates = fetch_topics_from_google_sheet(GOOGLE_SHEET_URL)
+            candidates_from_sheet = fetch_topics_from_google_sheet(GOOGLE_SHEET_URL)
+            if candidates_from_sheet:
+                all_candidates = candidates_from_sheet
+            else:
+                print("⚠️ Bảng tính Google Sheets không có đề tài nào hợp lệ hoặc tất cả đã được đánh dấu 'Đã đăng'.")
+                print("🔄 Tự động chuyển sang file dự phòng topics.txt...")
         except Exception as e:
-            print(f"⚠️ Không thể tải từ Google Sheets: {e}")
+            print(f"⚠️ LỖI ĐỒNG BỘ GOOGLE SHEETS: {e}")
             print("🔄 Tự động chuyển sang file dự phòng topics.txt...")
+    else:
+        print("💡 Chưa cấu hình biến môi trường GOOGLE_SHEET_URL (trên GitHub Secrets hoặc file .env).")
+        print("📂 Mặc định chuyển sang nguồn đề tài từ file cục bộ: topics.txt")
 
     # 2. Nếu không có Google Sheet hoặc danh sách rỗng, đọc từ topics.txt
     if not all_candidates:
@@ -564,7 +631,7 @@ def get_next_topics(count=1):
                 "source": "topics.txt"
             })
 
-    # Lọc các đề tài chưa đăng
+    # Lọc các đề tài chưa đăng trong lịch sử posted_history.json
     selected = []
     for item in all_candidates:
         top_name = item['topic'].lower().strip()
@@ -598,8 +665,9 @@ def main():
     # 1. Tìm các đề tài tiếp theo chưa đăng
     selected_topics, history = get_next_topics(count=POSTS_COUNT)
     if not selected_topics:
-        print("ℹ️ Tất cả đề tài trong topics.txt đều đã được đăng bài!")
-        print("💡 Hãy thêm các đề tài mới vào file topics.txt để hệ thống tiếp tục chạy.")
+        source_name = "Google Sheets" if GOOGLE_SHEET_URL else "topics.txt"
+        print(f"ℹ️ Tất cả đề tài từ {source_name} đều đã được đăng bài hoặc không còn bài mới trong danh sách!")
+        print(f"💡 Hãy thêm các đề tài mới vào {source_name} để hệ thống tiếp tục chạy.")
         return
 
     # 2. Tính toán trước khung giờ vàng hẹn giờ (nếu ở chế độ schedule)
