@@ -373,6 +373,16 @@ def post_to_blogger(service, article, original_labels, scheduled_slot=None):
         'labels': post_labels
     }
 
+    # Đính kèm ảnh đại diện cho bài viết (Blogger Post images metadata)
+    thumb_to_attach = article.get('thumbnail_url')
+    if not thumb_to_attach:
+        import re
+        m_img = re.search(r'<img[^>]+src=["\']([^"\']+)["\']', article.get('content', ''))
+        if m_img:
+            thumb_to_attach = m_img.group(1)
+    if thumb_to_attach:
+        post_body['images'] = [{'url': thumb_to_attach}]
+
     # Tự động điền Mô tả tìm kiếm (Search Description chuẩn SEO)
     if article.get('metaDescription'):
         post_body['customMetaData'] = article['metaDescription']
@@ -736,6 +746,7 @@ def main():
                             f'</a></div>\n'
                         )
                         article['content'] = banner_html + article.get('content', '')
+                        article['thumbnail_url'] = thumb_url
                         print(f"🖼️ Đã gắn ảnh Thumbnail Doanh Nhân vào đầu bài viết Blogger thành công!")
                 except Exception as img_err:
                     print(f"⚠️ Quá trình tạo Thumbnail tự động gặp sự cố nhẹ: {img_err}")
