@@ -16,8 +16,8 @@ try:
     from google.oauth2.credentials import Credentials
     from googleapiclient.discovery import build
 except ImportError:
-    print("❌ Vui lòng cài đặt google-api-python-client và google-auth!")
-    sys.exit(1)
+    Credentials = None
+    build = None
 
 # Load local .env if available
 try:
@@ -59,9 +59,34 @@ GOOGLE_CLIENT_ID = clean_credential(os.environ.get('GOOGLE_CLIENT_ID'))
 GOOGLE_CLIENT_SECRET = clean_credential(os.environ.get('GOOGLE_CLIENT_SECRET'))
 GOOGLE_REFRESH_TOKEN = clean_credential(os.environ.get('GOOGLE_REFRESH_TOKEN'))
 
+# Cấu hình Google Sheets đồng bộ đề tài & Webhook cập nhật trạng thái
+GOOGLE_SHEET_URL = os.environ.get('GOOGLE_SHEET_URL', '').strip()
+GOOGLE_SHEET_WEBHOOK_URL = os.environ.get('GOOGLE_SHEET_WEBHOOK_URL', '').strip()
+
 # Chế độ phát hành: 'schedule' (Lên lịch theo giờ vàng), 'publish' (Đăng ngay), 'draft' (Lưu nháp)
 POST_MODE = os.environ.get('POST_MODE', 'schedule').lower().strip()
 SCHEDULE_HOURS_AHEAD = int(os.environ.get('SCHEDULE_HOURS_AHEAD', '24'))
+
+def determine_label(title, summary='', raw_tags=''):
+    """
+    Phân loại nhãn chuẩn theo quy ước hiển thị của LuViet:
+    - dich-vu: Bài về dịch vụ thiết kế web, landing page doanh nghiệp, báo giá, Đồng Nai/Biên Hòa
+    - tin-tuc: Tin tức thị trường, chiến lược bán hàng, thương mại điện tử
+    - kien-thuc: Hướng dẫn kỹ thuật, tool AI, thủ thuật
+    """
+    combined = (str(title) + ' ' + str(summary) + ' ' + str(raw_tags)).lower()
+    service_keywords = [
+        'dịch vụ', 'dich vu', 'thiết kế web', 'thiet ke web', 'báo giá', 'bảng giá',
+        'thuê đơn vị làm website', 'thiết kế landing page', 'đồng nai', 'biên hòa'
+    ]
+    if any(k in combined for k in service_keywords):
+        return 'dich-vu'
+    knowledge_keywords = [
+        'hướng dẫn', 'huong dan', 'cách làm', 'thủ thuật', 'ai chatbot', 'chatgpt', 'gemini'
+    ]
+    if any(k in combined for k in knowledge_keywords):
+        return 'tin-tuc, kien-thuc'
+    return 'tin-tuc'
 
 # Cấu hình viết hàng loạt & thời gian giãn cách
 POSTS_COUNT = int(os.environ.get('POSTS_COUNT', os.environ.get('POST_COUNT', '3')))
@@ -252,6 +277,9 @@ Hãy trả về DUY NHẤT một chuỗi JSON hợp lệ (không kèm theo bất
 # HÀM XÁC THỰC VÀ ĐĂNG BÀI QUA BLOGGER API V3
 # ==============================================================================
 def get_blogger_service():
+    if build is None or Credentials is None:
+        raise Exception("Vui lòng cài đặt google-api-python-client và google-auth!")
+
     if not (GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET and GOOGLE_REFRESH_TOKEN):
         raise Exception("Thiếu thông tin Google OAuth (GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REFRESH_TOKEN)!")
 
@@ -274,10 +302,27 @@ def get_blogger_service():
 def post_to_blogger(service, article, original_labels, scheduled_slot=None):
     print(f"\n🚀 Đang gửi bài viết lên Blogger Blog ID: {BLOGGER_BLOG_ID}...")
 
-    # Labels
-    post_labels = article.get('labels') or original_labels
-    if isinstance(post_labels, str):
-        post_labels = [l.strip() for l in post_labels.split(',') if l.strip()]
+    # Labels: Ưu tiên tuyệt đối nhãn do người dùng cấu hình (tin-tuc, dich-vu, v.v.)
+    post_labels = []
+    if original_labels:
+        if isinstance(original_labels, str):
+            post_labels = [l.strip() for l in original_labels.split(',') if l.strip()]
+        elif isinstance(original_labels, list):
+            post_labels = [str(l).strip() for l in original_labels if str(l).strip()]
+
+    # Nếu chưa có nhãn, lấy từ AI sinh ra
+    if not post_labels:
+        art_labels = article.get('labels', [])
+        if isinstance(art_labels, str):
+            post_labels = [l.strip() for l in art_labels.split(',') if l.strip()]
+        elif isinstance(art_labels, list):
+            post_labels = [str(l).strip() for l in art_labels if str(l).strip()]
+
+    # Mặc định tối thiểu luôn phải có nhãn hợp lệ để hiển thị trên website
+    if not post_labels:
+        post_labels = ['tin-tuc']
+
+    print(f"🏷️ Danh sách nhãn (Labels) gắn cho bài viết Blogger: {post_labels}")
 
     post_body = {
         'kind': 'blogger#post',
@@ -318,11 +363,12 @@ def post_to_blogger(service, article, original_labels, scheduled_slot=None):
     post_url = result.get('url') or f"https://www.blogger.com/blog/post/edit/{BLOGGER_BLOG_ID}/{result.get('id')}"
     print(f"🎉 ĐĂNG/LÊN LỊCH THÀNH CÔNG LÊN BLOGGER!")
     print(f"📌 Tiêu đề: {result.get('title')}")
+    print(f"🏷️ Nhãn đã đăng: {result.get('labels', post_labels)}")
     print(f"🔗 Link bài: {post_url}")
     return result
 
 # ==============================================================================
-# HÀM QUẢN LÝ DANH SÁCH BÀI & LỊCH SỬ
+# HÀM QUẢN LÝ DANH SÁCH BÀI & LỊCH SỬ & GOOGLE SHEETS
 # ==============================================================================
 def load_history():
     if os.path.exists(HISTORY_FILE):
@@ -337,47 +383,193 @@ def save_history(history):
     with open(HISTORY_FILE, 'w', encoding='utf-8') as f:
         json.dump(history, f, ensure_ascii=False, indent=2)
 
+def fetch_topics_from_google_sheet(sheet_url):
+    """
+    Tải danh sách đề tài trực tiếp từ Google Sheets qua URL chia sẻ hoặc xuất bản CSV.
+    Hỗ trợ URL dạng:
+    - https://docs.google.com/spreadsheets/d/{SHEET_ID}/edit#gid={GID}
+    - https://docs.google.com/spreadsheets/d/{SHEET_ID}/gviz/tq?tqx=out:csv
+    - Hoặc ID Google Sheet đơn thuần
+    """
+    import re
+    import csv
+    import io
+
+    sheet_id_match = re.search(r'/spreadsheets/d/([a-zA-Z0-9-_]+)', sheet_url)
+    sheet_id = sheet_id_match.group(1) if sheet_id_match else sheet_url.strip()
+
+    gid_match = re.search(r'[#&?]gid=([0-9]+)', sheet_url)
+    gid = gid_match.group(1) if gid_match else '0'
+
+    csv_url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&gid={gid}"
+    print(f"📊 Đang đồng bộ đề tài từ Google Sheets (Sheet ID: {sheet_id[:10]}..., GID: {gid})...")
+
+    headers_req = {"User-Agent": "Mozilla/5.0"}
+    resp = requests.get(csv_url, headers=headers_req, timeout=30)
+    if resp.status_code != 200:
+        raise Exception(f"HTTP {resp.status_code}: Không thể tải Google Sheet. Vui lòng kiểm tra quyền chia sẻ 'Bất kỳ ai có liên kết đều có thể xem'!")
+
+    content = resp.content.decode('utf-8-sig', errors='replace')
+    reader = csv.reader(io.StringIO(content))
+    rows = list(reader)
+    if not rows:
+        return []
+
+    headers = [h.strip().lower() for h in rows[0]]
+    col_title = -1
+    col_keyword = -1
+    col_label = -1
+    col_summary = -1
+    col_cta = -1
+    col_status = -1
+    col_id = -1
+
+    for i, h in enumerate(headers):
+        if any(k in h for k in ['tiêu đề', 'tieu de', 'title', 'chủ đề', 'chu de', 'topic']):
+            col_title = i
+        elif any(k in h for k in ['từ khóa', 'tu khoa', 'keyword']):
+            col_keyword = i
+        elif any(k in h for k in ['nhãn', 'nhan', 'label', 'chuyên mục', 'chuyen muc', 'category']):
+            col_label = i
+        elif any(k in h for k in ['gợi ý', 'goi y', 'tóm tắt', 'tom tat', 'nội dung', 'summary', 'note']):
+            col_summary = i
+        elif any(k in h for k in ['cta', 'link đích', 'link dich']):
+            col_cta = i
+        elif any(k in h for k in ['trạng thái', 'trang thai', 'status']):
+            col_status = i
+        elif any(k in h for k in ['stt', 'id']):
+            col_id = i
+
+    if col_title == -1:
+        col_title = 1 if len(headers) > 1 else 0
+
+    topics = []
+    for row_idx, r in enumerate(rows[1:], 2):  # 1-based index (tiêu đề ở dòng 1)
+        if not r or len(r) <= col_title:
+            continue
+        title = r[col_title].strip()
+        if not title or title.startswith('#'):
+            continue
+
+        status = r[col_status].strip().lower() if col_status != -1 and len(r) > col_status else ''
+        if any(s in status for s in ['đã đăng', 'da dang', 'posted', 'done']):
+            continue
+
+        keyword = r[col_keyword].strip() if col_keyword != -1 and len(r) > col_keyword else ''
+        raw_label = r[col_label].strip() if col_label != -1 and len(r) > col_label else ''
+        summary = r[col_summary].strip() if col_summary != -1 and len(r) > col_summary else ''
+        cta = r[col_cta].strip() if col_cta != -1 and len(r) > col_cta and r[col_cta].startswith('http') else REGISTER_URL
+
+        if raw_label:
+            labels = [l.strip() for l in raw_label.replace(';', ',').split(',') if l.strip()]
+        else:
+            labels = [determine_label(title, summary, '')]
+
+        row_id_val = r[col_id].strip() if col_id != -1 and len(r) > col_id else str(row_idx)
+
+        topics.append({
+            "topic": title,
+            "keyword": keyword,
+            "labels": labels,
+            "summary": summary,
+            "cta_url": cta,
+            "sheet_row": row_idx,
+            "row_id": row_id_val,
+            "source": "google_sheets"
+        })
+
+    print(f"✅ Đã tải thành công {len(topics)} đề tài chưa đăng từ Google Sheets!")
+    return topics
+
+def notify_google_sheet(item, result, scheduled_slot=None):
+    """
+    Gửi thông báo cập nhật kết quả lên Google Sheet qua Webhook Google Apps Script
+    """
+    if not GOOGLE_SHEET_WEBHOOK_URL:
+        return
+    try:
+        pub_time = result.get('published')
+        if scheduled_slot:
+            pub_time = scheduled_slot.strftime('%d/%m/%Y %H:%M') + " (Giờ VN)"
+
+        post_url = result.get('url') or f"https://www.blogger.com/blog/post/edit/{BLOGGER_BLOG_ID}/{result.get('id')}"
+        status_text = "Đã lên lịch" if POST_MODE == 'schedule' else "Đã đăng"
+
+        payload = {
+            "row_index": item.get('sheet_row'),
+            "row_id": item.get('row_id'),
+            "topic": item.get('topic'),
+            "status": status_text,
+            "post_url": post_url,
+            "post_id": result.get('id'),
+            "published": pub_time,
+            "labels": result.get('labels', item.get('labels', []))
+        }
+        resp = requests.post(GOOGLE_SHEET_WEBHOOK_URL, json=payload, timeout=15)
+        if resp.status_code == 200:
+            print("📊 Đã cập nhật trạng thái bài viết lên Google Sheet qua Webhook thành công!")
+    except Exception as e:
+        print(f"⚠️ Gửi cập nhật Webhook Google Sheet thất bại: {e}")
+
 def get_next_topics(count=1):
-    if not os.path.exists(TOPICS_FILE):
-        raise Exception(f"Không tìm thấy file danh sách đề tài: {TOPICS_FILE}")
-
-    with open(TOPICS_FILE, 'r', encoding='utf-8') as f:
-        lines = [line.strip() for line in f if line.strip() and not line.strip().startswith('#')]
-
     history = load_history()
-    posted_topics = set(item['topic'].lower() for item in history.get('history', []))
+    posted_topics = set(item['topic'].lower().strip() for item in history.get('history', []))
 
-    selected = []
-    for line in lines:
-        parts = [p.strip() for p in line.split('|')]
-        raw_topic = parts[0]
-        summary = ''
-        labels = ['AILADI Platform', 'Kinh Doanh Online']
-        cta_url = REGISTER_URL
+    all_candidates = []
 
-        if len(parts) == 2:
-            # Format: Tiêu đề | Nhãn 1, Nhãn 2
-            labels = [l.strip() for l in parts[1].split(',') if l.strip()]
-        elif len(parts) >= 3:
-            # Format: Tiêu đề | Tóm tắt gợi ý | Link CTA (hoặc Nhãn)
-            summary = parts[1]
-            if parts[2].startswith('http'):
-                cta_url = parts[2]
-            else:
-                labels = [l.strip() for l in parts[2].split(',') if l.strip()]
+    # 1. Ưu tiên đọc từ Google Sheets nếu có cấu hình GOOGLE_SHEET_URL
+    if GOOGLE_SHEET_URL:
+        try:
+            all_candidates = fetch_topics_from_google_sheet(GOOGLE_SHEET_URL)
+        except Exception as e:
+            print(f"⚠️ Không thể tải từ Google Sheets: {e}")
+            print("🔄 Tự động chuyển sang file dự phòng topics.txt...")
+
+    # 2. Nếu không có Google Sheet hoặc danh sách rỗng, đọc từ topics.txt
+    if not all_candidates:
+        if not os.path.exists(TOPICS_FILE):
+            raise Exception(f"Không tìm thấy file danh sách đề tài: {TOPICS_FILE}")
+
+        with open(TOPICS_FILE, 'r', encoding='utf-8') as f:
+            lines = [line.strip() for line in f if line.strip() and not line.strip().startswith('#')]
+
+        for line in lines:
+            parts = [p.strip() for p in line.split('|')]
+            raw_topic = parts[0]
+            summary = parts[1] if len(parts) >= 2 else ''
+            cta_url = REGISTER_URL
+            raw_tags = ''
+
+            if len(parts) >= 3:
+                if parts[2].startswith('http'):
+                    cta_url = parts[2]
+                else:
+                    raw_tags = parts[2]
             if len(parts) >= 4:
                 if parts[3].startswith('http'):
                     cta_url = parts[3]
-                elif parts[3]:
-                    labels = [l.strip() for l in parts[3].split(',') if l.strip()]
+                else:
+                    raw_tags = parts[3]
 
-        if raw_topic.lower() not in posted_topics:
-            selected.append({
+            if raw_tags:
+                labels = [l.strip() for l in raw_tags.split(',') if l.strip()]
+            else:
+                labels = [determine_label(raw_topic, summary, '')]
+
+            all_candidates.append({
                 "topic": raw_topic,
                 "labels": labels,
                 "summary": summary,
-                "cta_url": cta_url
+                "cta_url": cta_url,
+                "source": "topics.txt"
             })
+
+    # Lọc các đề tài chưa đăng
+    selected = []
+    for item in all_candidates:
+        top_name = item['topic'].lower().strip()
+        if top_name not in posted_topics:
+            selected.append(item)
             if len(selected) == count:
                 break
 
@@ -464,6 +656,9 @@ def main():
             save_history(history)
             success_count += 1
             print(f"\n💾 Đã lưu lịch sử bài #{idx}. Tổng cộng đã đăng: {history['total_posted']} bài.")
+
+            # 4.4. Thông báo cập nhật Google Sheets (nếu có cấu hình Webhook)
+            notify_google_sheet(item, result, scheduled_slot=scheduled_slot)
 
         except Exception as e:
             print(f"❌ Xảy ra lỗi khi xử lý bài '{topic}': {e}")
