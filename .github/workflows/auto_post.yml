@@ -75,5 +75,5 @@ jobs:
         run: |
           git config --global user.name "Blogger Bot (GitHub Actions)"
           git config --global user.email "bot@blogger-gemini.local"
-          git add posted_history.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Tự động cập nhật lịch sử bài đăng [skip ci]" && git push)
+          git add posted_history.json thumbnails/
+          git diff --quiet && git diff --staged --quiet || (git commit -m "🤖 Tự động cập nhật lịch sử bài đăng & thumbnail [skip ci]" && git push)

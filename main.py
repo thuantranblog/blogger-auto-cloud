@@ -26,6 +26,12 @@ try:
 except ImportError:
     pass
 
+# Import bộ máy tạo ảnh Thumbnail Doanh Nhân
+try:
+    from generate_executive_thumbnail import create_post_thumbnail
+except ImportError:
+    create_post_thumbnail = None
+
 # ==============================================================================
 # CẤU HÌNH HỆ THỐNG
 # ==============================================================================
@@ -495,6 +501,8 @@ def fetch_topics_from_google_sheet(sheet_url):
             col_status = i
         elif any(k in h for k in ['stt', 'id']):
             col_id = i
+        elif any(k in h for k in ['ảnh', 'anh', 'image', 'thumbnail', 'banner', 'hình ảnh']):
+            col_image = i
 
     if col_title == -1:
         col_title = 1 if len(headers) > 1 else 0
@@ -517,6 +525,7 @@ def fetch_topics_from_google_sheet(sheet_url):
         raw_label = r[col_label].strip() if col_label != -1 and len(r) > col_label else ''
         summary = r[col_summary].strip() if col_summary != -1 and len(r) > col_summary else ''
         cta = r[col_cta].strip() if col_cta != -1 and len(r) > col_cta and r[col_cta].startswith('http') else REGISTER_URL
+        image_val = r[col_image].strip() if col_image != -1 and len(r) > col_image else ''
 
         if raw_label:
             labels = [l.strip() for l in raw_label.replace(';', ',').split(',') if l.strip()]
@@ -531,6 +540,7 @@ def fetch_topics_from_google_sheet(sheet_url):
             "labels": labels,
             "summary": summary,
             "cta_url": cta,
+            "image_url": image_val,
             "sheet_row": row_idx,
             "row_id": row_id_val,
             "source": "google_sheets"
@@ -705,7 +715,33 @@ def main():
             # 4.1. Gọi Gemini AI sinh bài
             article = generate_seo_article(topic, labels, summary=summary, cta_url=cta_url)
 
-            # 4.2. Đăng / Lên lịch lên Blogger
+            # 4.2. Tự động sinh ảnh Thumbnail Doanh Nhân và gắn vào đầu bài viết Blogger
+            thumb_url = None
+            if create_post_thumbnail:
+                try:
+                    primary_key = api_keys[0] if api_keys else ""
+                    custom_img = item.get('image_url', '')
+                    art_title = article.get('title') or topic
+                    thumb_url = create_post_thumbnail(
+                        title=art_title,
+                        keyword=item.get('keyword', ''),
+                        custom_image_url=custom_img,
+                        api_key=primary_key
+                    )
+                    if thumb_url:
+                        clean_title_esc = art_title.replace('"', '&quot;')
+                        banner_html = (
+                            f'<div class="separator" style="clear: both; text-align: center; margin: 0 0 30px 0;">'
+                            f'<a href="{thumb_url}" style="margin-left: 1em; margin-right: 1em;">'
+                            f'<img src="{thumb_url}" alt="{clean_title_esc}" title="{clean_title_esc}" border="0" style="max-width: 100%; height: auto; border-radius: 12px; box-shadow: 0 6px 25px rgba(0,0,0,0.18);" />'
+                            f'</a></div>\n'
+                        )
+                        article['content'] = banner_html + article.get('content', '')
+                        print(f"🖼️ Đã gắn ảnh Thumbnail Doanh Nhân vào đầu bài viết Blogger thành công!")
+                except Exception as img_err:
+                    print(f"⚠️ Quá trình tạo Thumbnail tự động gặp sự cố nhẹ: {img_err}")
+
+            # 4.3. Đăng / Lên lịch lên Blogger
             result = post_to_blogger(service, article, labels, scheduled_slot=scheduled_slot)
 
             # 4.3. Ghi nhận lịch sử ngay lập tức
