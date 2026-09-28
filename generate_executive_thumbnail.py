@@ -18,10 +18,13 @@ if sys.platform.startswith('win'):
 
 def get_best_font(size, bold=True):
     """Tìm font tiếng Việt Unicode chuẩn đẹp nhất trên hệ thống"""
+    bundled_font = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Roboto-Bold.ttf")
     font_candidates = [
+        bundled_font,
         r"C:\Windows\Fonts\arialbd.ttf" if bold else r"C:\Windows\Fonts\arial.ttf",
         r"C:\Windows\Fonts\segoeuib.ttf" if bold else r"C:\Windows\Fonts\segoeui.ttf",
-        os.path.join(os.path.dirname(__file__), "..", "Roboto-Bold.ttf"),
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
         r"C:\Windows\Fonts\tahomabd.ttf",
     ]
     for p in font_candidates:
