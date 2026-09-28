@@ -2,11 +2,37 @@ name: 🚀 Blogger Gemini AI Auto-Poster Cloud
 
 on:
   schedule:
-    # Tự động chạy lúc 01:00 UTC (Tương đương 08:00 sáng giờ Việt Nam mỗi ngày)
-    - cron: '0 1 * * *'
+    # Tự động chạy mỗi ngày lúc 22:00 UTC (Tương đương 05:00 sáng giờ Việt Nam)
+    # Tự động viết ngay và lên lịch sẵn cho 3 bài của cả ngày (06:30, 11:30, 14:30)
+    - cron: '0 22 * * *'
 
-  # Cho phép bấm nút "Run workflow" để chạy thử bất cứ lúc nào
+  # Cho phép bấm nút "Run workflow" để chạy thủ công bất kỳ lúc nào trên web GitHub
   workflow_dispatch:
+    inputs:
+      posts_count:
+        description: 'Số lượng bài viết muốn tạo & lên lịch'
+        required: true
+        default: '3'
+        type: choice
+        options:
+          - '1'
+          - '2'
+          - '3'
+          - '6'
+          - '9'
+      post_mode:
+        description: 'Chế độ phát hành'
+        required: true
+        default: 'schedule'
+        type: choice
+        options:
+          - 'schedule'
+          - 'publish'
+          - 'draft'
+      delay_seconds:
+        description: 'Thời gian nghỉ giữa các bài (giây)'
+        required: false
+        default: '15'
 
 permissions:
   contents: write
@@ -37,8 +63,9 @@ jobs:
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
-          POST_MODE: ${{ vars.POST_MODE || 'schedule' }}
-          SCHEDULE_HOURS_AHEAD: ${{ vars.SCHEDULE_HOURS_AHEAD || '24' }}
+          POST_MODE: ${{ github.event.inputs.post_mode || vars.POST_MODE || 'schedule' }}
+          POSTS_COUNT: ${{ github.event.inputs.posts_count || vars.POSTS_COUNT || '3' }}
+          DELAY_SECONDS: ${{ github.event.inputs.delay_seconds || vars.DELAY_SECONDS || '15' }}
         run: |
           python main.py
 
