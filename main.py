@@ -59,9 +59,57 @@ GOOGLE_CLIENT_ID = clean_credential(os.environ.get('GOOGLE_CLIENT_ID'))
 GOOGLE_CLIENT_SECRET = clean_credential(os.environ.get('GOOGLE_CLIENT_SECRET'))
 GOOGLE_REFRESH_TOKEN = clean_credential(os.environ.get('GOOGLE_REFRESH_TOKEN'))
 
-# Chế độ phát hành: 'schedule' (Lên lịch tương lai), 'publish' (Đăng ngay), 'draft' (Lưu nháp)
+# Chế độ phát hành: 'schedule' (Lên lịch theo giờ vàng), 'publish' (Đăng ngay), 'draft' (Lưu nháp)
 POST_MODE = os.environ.get('POST_MODE', 'schedule').lower().strip()
 SCHEDULE_HOURS_AHEAD = int(os.environ.get('SCHEDULE_HOURS_AHEAD', '24'))
+
+# Cấu hình viết hàng loạt & thời gian giãn cách
+POSTS_COUNT = int(os.environ.get('POSTS_COUNT', os.environ.get('POST_COUNT', '3')))
+DELAY_SECONDS = int(os.environ.get('DELAY_SECONDS', '15'))
+
+# Khung giờ vàng phát bài mỗi ngày (Giờ Việt Nam UTC+7: 06:30, 11:30, 14:30)
+GOLDEN_SLOTS = [(6, 30), (11, 30), (14, 30)]
+
+def get_next_schedule_slots(count=1, existing_history=None):
+    """
+    Tính toán danh sách các khung giờ vàng 06:30, 11:30, 14:30 giờ Việt Nam (UTC+7).
+    Tự động nối tiếp các bài đã lên lịch trước đó để không bị trùng slot.
+    """
+    vn_tz = timezone(timedelta(hours=7))
+    now_vn = datetime.now(vn_tz)
+    min_time = now_vn + timedelta(minutes=5)
+
+    occupied_slots = []
+    if existing_history and 'history' in existing_history:
+        for item in existing_history['history']:
+            pub_str = item.get('published')
+            if pub_str:
+                try:
+                    dt = datetime.fromisoformat(pub_str.replace('Z', '+00:00')).astimezone(vn_tz)
+                    occupied_slots.append(dt)
+                except Exception:
+                    pass
+
+    slots = []
+    check_day = min_time.date()
+
+    while len(slots) < count:
+        for h, m in GOLDEN_SLOTS:
+            slot_candidate = datetime(check_day.year, check_day.month, check_day.day, h, m, 0, tzinfo=vn_tz)
+            if slot_candidate <= min_time:
+                continue
+
+            # Kiểm tra xem slot này đã có bài lên lịch chưa (+/- 30 phút)
+            is_occupied = any(abs((slot_candidate - occ).total_seconds()) < 1800 for occ in occupied_slots)
+            is_already_selected = any(abs((slot_candidate - s).total_seconds()) < 1800 for s in slots)
+
+            if not is_occupied and not is_already_selected:
+                slots.append(slot_candidate)
+                if len(slots) == count:
+                    break
+        check_day += timedelta(days=1)
+
+    return slots
 
 # Thông tin thương hiệu LuViet & Nền tảng AILADI
 REGISTER_URL = os.environ.get('REGISTER_URL', 'https://my.luviet.com/register')
@@ -107,12 +155,12 @@ CHIẾN LƯỢC NỘI DUNG & ĐIỀU HƯỚNG CHUYỂN ĐỔI (QUAN TRỌNG NH�
    - Trợ lý AI Gemini 24/7 tự động tư vấn, chốt đơn ca đêm và viết bài SEO.
    - Cơ sở dữ liệu riêng biệt (Database Per-Tenant) an toàn tuyệt đối 100% doanh thu và dữ liệu khách hàng.
 
-3. ĐIỀU HƯỚNG LIÊN KẾT (INTERNAL LINKING - BẮT BUỘC):
-   - Trong thân bài: BẮT BUỘC chèn tự nhiên từ 2 đến 3 liên kết ngữ cảnh (contextual anchor text) dẫn người đọc bấm vào link: "{cta_url}".
-   - Ví dụ các dạng anchor text chuyển đổi cao:
-     + <a href="{cta_url}" target="_blank" rel="noopener">đăng ký tạo website bán hàng miễn phí trên AILADI</a>
-     + <a href="{cta_url}" target="_blank" rel="noopener">trải nghiệm nền tảng AILADI</a>
-     + <a href="{cta_url}" target="_blank" rel="noopener">tạo tài khoản AILADI chỉ trong 30 giây</a>
+3. ĐIỀU HƯỚNG LIÊN KẾT NỘI BỘ (INTERNAL LINKING - BẮT BUỘC):
+   - Trong thân bài: BẮT BUỘC chèn tự nhiên từ 2 đến 3 liên kết ngữ cảnh (contextual anchor text) dẫn người đọc bấm vào link đích: "{cta_url}".
+   - BẮT BUỘC chèn thêm 1 - 2 liên kết nội bộ tự nhiên đến các trang dịch vụ cột trụ của LuViet khi xuất hiện ngữ cảnh tương ứng:
+     + Khi đề cập đến dịch vụ thiết kế web chuyên nghiệp: <a href="https://www.luviet.com/p/thiet-ke-website-tron-goi.html" target="_blank">dịch vụ thiết kế website trọn gói</a>
+     + Khi đề cập đến chi phí/báo giá làm web: <a href="https://www.luviet.com/p/bang-gia-thiet-ke-website-tron-goi-tai.html" target="_blank">bảng giá thiết kế website LuViet</a>
+     + Khi đề cập đến khách hàng/doanh nghiệp khu vực Đồng Nai, Biên Hòa: <a href="https://www.luviet.com/p/dich-vu-thiet-ke-website-dong-nai.html" target="_blank">thiết kế website tại Đồng Nai</a>
 
 4. KHỐI CALL TO ACTION (CTA) ĐẲNG CẤP Ở CUỐI BÀI:
    - BẮT BUỘC chèn khối CTA nổi bật dạng hộp viền nổi, màu sắc bắt mắt, tối ưu tỷ lệ nhấp chuột (CRO):
@@ -127,7 +175,7 @@ CHIẾN LƯỢC NỘI DUNG & ĐIỀU HƯỚNG CHUYỂN ĐỔI (QUAN TRỌNG NH�
      </div>
 
 5. CẤU TRÚC BÀI VIẾT (BẮT BUỘC):
-   - TIÊU ĐỀ (Title): Giật tít hấp dẫn, chứa từ khóa chính ở đầu, dưới 65 ký tự, kích thích lượt click (CTR).
+   - TIÊU ĐỀ (Title): BẮT BUỘC đặt TỪ KHÓA CHÍNH NGAY Ở ĐẦU TIÊU ĐỀ (dưới 60 ký tự) để Blogger tự động sinh URL slug chuẩn SEO mà không bị cắt cụt. Kích thích lượt click (CTR) cao.
    - SAPO: Mở bài cuốn hút 2-3 đoạn ngắn theo công thức PAS (Problem - Agitate - Solution).
    - THÂN BÀI: Sử dụng thẻ <h2> và <h3> rõ ràng, logic. Luôn dùng danh sách (<ul>, <li>) để thoáng mắt.
    - BẢNG BIỂU: BẮT BUỘC có 1 Bảng so sánh (HTML <table>) trực quan, viền mỏng chuyên nghiệp (border: 1px solid #cbd5e1).
@@ -145,7 +193,7 @@ Hãy trả về DUY NHẤT một chuỗi JSON hợp lệ (không kèm theo bất
 }}
 """
 
-    models = ['gemini-2.5-flash', 'gemini-2.5-pro']
+    models = ['gemini-flash-latest', 'gemini-flash-lite-latest', 'gemini-2.5-flash', 'gemini-3.1-pro-preview']
     last_err = None
 
     # VÒNG LẶP DỰ PHÒNG QUA TỪNG API KEY (KEY POOL ROTATION)
@@ -161,11 +209,10 @@ Hãy trả về DUY NHẤT một chuỗi JSON hợp lệ (không kèm theo bất
                 body = {
                     "contents": [{"parts": [{"text": prompt}]}],
                     "generationConfig": {
-                        "responseMimeType": "application/json"
+                        "responseMimeType": "application/json",
+                        "thinkingConfig": {"thinkingBudget": 0}
                     }
                 }
-                if '2.5' in model:
-                    body["generationConfig"]["thinkingConfig"] = {"thinkingBudget": 0}
 
                 resp = requests.post(url, json=body, timeout=90)
 
@@ -224,7 +271,7 @@ def get_blogger_service():
     service = build('blogger', 'v3', credentials=creds, cache_discovery=False)
     return service
 
-def post_to_blogger(service, article, original_labels):
+def post_to_blogger(service, article, original_labels, scheduled_slot=None):
     print(f"\n🚀 Đang gửi bài viết lên Blogger Blog ID: {BLOGGER_BLOG_ID}...")
 
     # Labels
@@ -239,13 +286,28 @@ def post_to_blogger(service, article, original_labels):
         'labels': post_labels
     }
 
+    # Tự động điền Mô tả tìm kiếm (Search Description chuẩn SEO)
+    if article.get('metaDescription'):
+        post_body['customMetaData'] = article['metaDescription']
+
+    # Tự động gắn Geotag vị trí Local SEO (Đồng Nai, Việt Nam)
+    post_body['location'] = {
+        'name': 'Đồng Nai, Việt Nam',
+        'lat': 10.9574,
+        'lng': 106.8427
+    }
+
     # Handling schedule
     is_draft = (POST_MODE == 'draft')
     if POST_MODE == 'schedule':
-        # Calculate future published datetime in ISO format (UTC)
-        scheduled_dt = datetime.now(timezone.utc) + timedelta(hours=SCHEDULE_HOURS_AHEAD)
-        post_body['published'] = scheduled_dt.strftime('%Y-%m-%dT%H:%M:%S.000Z')
-        print(f"⏰ Chế độ hẹn giờ: Bài viết sẽ tự động xuất bản vào lúc: {scheduled_dt.strftime('%d/%m/%Y %H:%M UTC')}")
+        if scheduled_slot:
+            post_body['published'] = scheduled_slot.astimezone(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S.000Z')
+            vn_time_str = scheduled_slot.strftime('%d/%m/%Y %H:%M')
+            print(f"⏰ Hẹn giờ phát hành: {vn_time_str} (Giờ Việt Nam - Khung Giờ Vàng)")
+        else:
+            scheduled_dt = datetime.now(timezone.utc) + timedelta(hours=SCHEDULE_HOURS_AHEAD)
+            post_body['published'] = scheduled_dt.strftime('%Y-%m-%dT%H:%M:%S.000Z')
+            print(f"⏰ Hẹn giờ phát hành: {scheduled_dt.strftime('%d/%m/%Y %H:%M UTC')}")
 
     request = service.posts().insert(
         blogId=BLOGGER_BLOG_ID,
@@ -254,7 +316,7 @@ def post_to_blogger(service, article, original_labels):
     )
     result = request.execute()
     post_url = result.get('url') or f"https://www.blogger.com/blog/post/edit/{BLOGGER_BLOG_ID}/{result.get('id')}"
-    print(f"🎉 ĐĂNG BÀI THÀNH CÔNG LÊN BLOGGER!")
+    print(f"🎉 ĐĂNG/LÊN LỊCH THÀNH CÔNG LÊN BLOGGER!")
     print(f"📌 Tiêu đề: {result.get('title')}")
     print(f"🔗 Link bài: {post_url}")
     return result
@@ -275,7 +337,7 @@ def save_history(history):
     with open(HISTORY_FILE, 'w', encoding='utf-8') as f:
         json.dump(history, f, ensure_ascii=False, indent=2)
 
-def get_next_topic():
+def get_next_topics(count=1):
     if not os.path.exists(TOPICS_FILE):
         raise Exception(f"Không tìm thấy file danh sách đề tài: {TOPICS_FILE}")
 
@@ -285,6 +347,7 @@ def get_next_topic():
     history = load_history()
     posted_topics = set(item['topic'].lower() for item in history.get('history', []))
 
+    selected = []
     for line in lines:
         parts = [p.strip() for p in line.split('|')]
         raw_topic = parts[0]
@@ -309,17 +372,26 @@ def get_next_topic():
                     labels = [l.strip() for l in parts[3].split(',') if l.strip()]
 
         if raw_topic.lower() not in posted_topics:
-            return raw_topic, labels, summary, cta_url, history
+            selected.append({
+                "topic": raw_topic,
+                "labels": labels,
+                "summary": summary,
+                "cta_url": cta_url
+            })
+            if len(selected) == count:
+                break
 
-    return None, None, '', REGISTER_URL, history
+    return selected, history
 
 # ==============================================================================
 # MAIN ENTRY POINT
 # ==============================================================================
 def main():
     print("=" * 65)
-    print("🤖 BLOGGER GEMINI AI CLOUD AUTO-POSTER (GITHUB ACTIONS)")
-    print(f"⏰ Thời gian chạy: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}")
+    print("🤖 BLOGGER GEMINI AI CLOUD AUTO-POSTER (SMART SCHEDULE ENGINE)")
+    print(f"⏰ Thời gian khởi chạy: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}")
+    print(f"⚙️ Chế độ phát hành: {POST_MODE.upper()}")
+    print(f"📚 Số lượng bài cần xử lý đợt này: {POSTS_COUNT} bài")
     print("=" * 65)
 
     api_keys = get_api_key_pool()
@@ -331,44 +403,80 @@ def main():
         print("❌ Lỗi: Thiếu biến môi trường BLOGGER_BLOG_ID!")
         sys.exit(1)
 
-    # 1. Tìm đề tài chưa đăng
-    topic, labels, summary, cta_url, history = get_next_topic()
-    if not topic:
+    # 1. Tìm các đề tài tiếp theo chưa đăng
+    selected_topics, history = get_next_topics(count=POSTS_COUNT)
+    if not selected_topics:
         print("ℹ️ Tất cả đề tài trong topics.txt đều đã được đăng bài!")
         print("💡 Hãy thêm các đề tài mới vào file topics.txt để hệ thống tiếp tục chạy.")
         return
 
-    print(f"\n📝 Đề tài tiếp theo trong hàng đợi: '{topic}'")
-    print(f"🏷️ Nhãn chuyên mục: {', '.join(labels)}")
-    if summary:
-        print(f"💡 Góc nhìn gợi ý: {summary}")
-    print(f"🎯 Link đích chuyển đổi: {cta_url}")
+    # 2. Tính toán trước khung giờ vàng hẹn giờ (nếu ở chế độ schedule)
+    slots = []
+    if POST_MODE == 'schedule':
+        slots = get_next_schedule_slots(count=len(selected_topics), existing_history=history)
 
-    # 2. Sinh bài viết chuẩn SEO bằng Gemini AI
-    article = generate_seo_article(topic, labels, summary=summary, cta_url=cta_url)
+    print(f"\n📋 KẾ HOẠCH XỬ LÝ {len(selected_topics)} BÀI VIẾT:")
+    for idx, item in enumerate(selected_topics, 1):
+        if POST_MODE == 'schedule' and idx <= len(slots):
+            slot_vn = slots[idx - 1].strftime('%d/%m/%Y %H:%M')
+            print(f"  [{idx}/{len(selected_topics)}] '{item['topic']}' ➔ Lên lịch xuất bản: {slot_vn} (Giờ VN)")
+        else:
+            print(f"  [{idx}/{len(selected_topics)}] '{item['topic']}' ➔ Xuất bản trực tiếp ngay bây giờ")
 
-    # 3. Kết nối Blogger API và đăng/lên lịch bài viết
+    # 3. Khởi tạo dịch vụ Blogger API
     service = get_blogger_service()
-    result = post_to_blogger(service, article, labels)
 
-    # 4. Ghi nhận lịch sử
-    history_entry = {
-        "topic": topic,
-        "title": result.get('title'),
-        "post_id": result.get('id'),
-        "url": result.get('url'),
-        "published": result.get('published'),
-        "posted_at": datetime.now(timezone.utc).isoformat(),
-        "mode": POST_MODE
-    }
-    history['history'].append(history_entry)
-    history['total_posted'] = len(history['history'])
-    history['last_updated'] = datetime.now(timezone.utc).isoformat()
-    save_history(history)
+    # 4. Viết và đăng từng bài theo kế hoạch
+    success_count = 0
+    for idx, item in enumerate(selected_topics, 1):
+        topic = item['topic']
+        labels = item['labels']
+        summary = item['summary']
+        cta_url = item['cta_url']
+        scheduled_slot = slots[idx - 1] if POST_MODE == 'schedule' and idx <= len(slots) else None
 
-    print(f"\n💾 Đã lưu lịch sử đăng bài vào posted_history.json. Tổng cộng đã đăng: {history['total_posted']} bài.")
-    print("=" * 65)
-    print("🎉 HOÀN THÀNH TIẾN TRÌNH TỰ ĐỘNG HÓA THÀNH CÔNG!")
+        print("\n" + "=" * 65)
+        print(f"📝 BẮT ĐẦU XỬ LÝ BÀI [{idx}/{len(selected_topics)}]: '{topic}'")
+        if scheduled_slot:
+            print(f"⏰ Hẹn giờ phát hành: {scheduled_slot.strftime('%d/%m/%Y %H:%M')} (Giờ VN)")
+        print("=" * 65)
+
+        try:
+            # 4.1. Gọi Gemini AI sinh bài
+            article = generate_seo_article(topic, labels, summary=summary, cta_url=cta_url)
+
+            # 4.2. Đăng / Lên lịch lên Blogger
+            result = post_to_blogger(service, article, labels, scheduled_slot=scheduled_slot)
+
+            # 4.3. Ghi nhận lịch sử ngay lập tức
+            history_entry = {
+                "topic": topic,
+                "title": result.get('title'),
+                "post_id": result.get('id'),
+                "url": result.get('url'),
+                "published": result.get('published'),
+                "posted_at": datetime.now(timezone.utc).isoformat(),
+                "mode": POST_MODE
+            }
+            history['history'].append(history_entry)
+            history['total_posted'] = len(history['history'])
+            history['last_updated'] = datetime.now(timezone.utc).isoformat()
+            save_history(history)
+            success_count += 1
+            print(f"\n💾 Đã lưu lịch sử bài #{idx}. Tổng cộng đã đăng: {history['total_posted']} bài.")
+
+        except Exception as e:
+            print(f"❌ Xảy ra lỗi khi xử lý bài '{topic}': {e}")
+            import traceback
+            traceback.print_exc()
+
+        # Nghỉ giữa các bài nếu còn bài kế tiếp
+        if idx < len(selected_topics):
+            print(f"\n⏳ Nghỉ {DELAY_SECONDS} giây trước khi viết bài tiếp theo để bảo vệ hạn ngạch API...")
+            time.sleep(DELAY_SECONDS)
+
+    print("\n" + "=" * 65)
+    print(f"🎉 HOÀN THÀNH TIẾN TRÌNH: Đã tạo và lên lịch thành công {success_count}/{len(selected_topics)} bài!")
     print("=" * 65)
 
 if __name__ == '__main__':
