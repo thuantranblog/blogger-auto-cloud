@@ -719,14 +719,13 @@ def main():
             thumb_url = None
             if create_post_thumbnail:
                 try:
-                    primary_key = api_keys[0] if api_keys else ""
                     custom_img = item.get('image_url', '')
                     art_title = article.get('title') or topic
                     thumb_url = create_post_thumbnail(
                         title=art_title,
                         keyword=item.get('keyword', ''),
                         custom_image_url=custom_img,
-                        api_key=primary_key
+                        api_key=api_keys
                     )
                     if thumb_url:
                         clean_title_esc = art_title.replace('"', '&quot;')

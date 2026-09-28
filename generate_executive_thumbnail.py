@@ -272,42 +272,53 @@ def extract_thumbnail_headlines(title, keyword=''):
     bot_w = " ".join(words[min(5, len(words)):min(10, len(words))]) or "ĐỘT PHÁ DOANH SỐ"
     return top_w, main_w, bot_w
 
-def call_imagen_api(prompt, api_key, output_bg_path):
+def call_imagen_api(prompt, api_keys, output_bg_path):
     """
     Gọi Google Imagen 3 API sinh ảnh nền doanh nhân chất lượng cao
+    Hỗ trợ danh sách nhiều API key (tự động thử key tiếp theo nếu bị lỗi)
     """
     import requests
     import base64
 
-    if not api_key:
+    if isinstance(api_keys, str):
+        keys = [api_keys] if api_keys else []
+    else:
+        keys = list(api_keys) if api_keys else []
+
+    if not keys:
         return False
 
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key={api_key}"
-    payload = {
-        "instances": [{"prompt": prompt}],
-        "parameters": {
-            "sampleCount": 1,
-            "aspectRatio": "16:9",
-            "outputOptions": {"mimeType": "image/jpeg"}
+    for idx, k in enumerate(keys, 1):
+        if not k:
+            continue
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key={k}"
+        payload = {
+            "instances": [{"prompt": prompt}],
+            "parameters": {
+                "sampleCount": 1,
+                "aspectRatio": "16:9",
+                "outputOptions": {"mimeType": "image/jpeg"}
+            }
         }
-    }
 
-    try:
-        print(f"🎨 Đang gọi Google Imagen 3 API sinh ảnh nền độc quyền...")
-        resp = requests.post(url, json=payload, timeout=60)
-        if resp.status_code == 200:
-            res_json = resp.json()
-            predictions = res_json.get('predictions', [])
-            if predictions and 'bytesBase64Encoded' in predictions[0]:
-                img_data = base64.b64decode(predictions[0]['bytesBase64Encoded'])
-                with open(output_bg_path, 'wb') as f:
-                    f.write(img_data)
-                print(f"✅ Google Imagen 3 đã sinh ảnh nền thành công!")
-                return True
-        else:
-            print(f"ℹ️ Imagen 3 phản hồi HTTP {resp.status_code}. Tự động dùng ảnh nền doanh nhân chuẩn.")
-    except Exception as e:
-        print(f"ℹ️ Kết nối Imagen 3: {e}. Tự động dùng ảnh nền doanh nhân chuẩn.")
+        try:
+            print(f"🎨 Đang gọi Google Imagen 3 API sinh ảnh nền (Key #{idx}/{len(keys)})...")
+            resp = requests.post(url, json=payload, timeout=60)
+            if resp.status_code == 200:
+                res_json = resp.json()
+                predictions = res_json.get('predictions', [])
+                if predictions and 'bytesBase64Encoded' in predictions[0]:
+                    img_data = base64.b64decode(predictions[0]['bytesBase64Encoded'])
+                    with open(output_bg_path, 'wb') as f:
+                        f.write(img_data)
+                    print(f"✅ Google Imagen 3 đã sinh ảnh nền thành công!")
+                    return True
+            else:
+                print(f"ℹ️ Imagen 3 với Key #{idx} phản hồi HTTP {resp.status_code}. Thử tiếp...")
+        except Exception as e:
+            print(f"ℹ️ Kết nối Imagen 3 với Key #{idx}: {e}")
+
+    print("ℹ️ Tự động dùng ảnh nền doanh nhân chuẩn tích hợp sẵn.")
     return False
 
 def create_post_thumbnail(title, keyword="", custom_image_url="", api_key="", repo_full_name="thuantranblog/blogger-auto-cloud"):
