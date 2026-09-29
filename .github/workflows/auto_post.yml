@@ -66,6 +66,8 @@ jobs:
           GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
           GOOGLE_SHEET_URL: ${{ secrets.GOOGLE_SHEET_URL || vars.GOOGLE_SHEET_URL || '' }}
           GOOGLE_SHEET_WEBHOOK_URL: ${{ secrets.GOOGLE_SHEET_WEBHOOK_URL || vars.GOOGLE_SHEET_WEBHOOK_URL || '' }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN || '8480459173:AAHhSTEGSCG5zwq1jp6Dtycw97NQ2dqA8QM' }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID || '-5074952407' }}
           POST_MODE: ${{ github.event.inputs.post_mode || vars.POST_MODE || 'schedule' }}
           POSTS_COUNT: ${{ github.event.inputs.posts_count || vars.POSTS_COUNT || '3' }}
           DELAY_SECONDS: ${{ github.event.inputs.delay_seconds || vars.DELAY_SECONDS || '15' }}
