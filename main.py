@@ -69,6 +69,10 @@ GOOGLE_REFRESH_TOKEN = clean_credential(os.environ.get('GOOGLE_REFRESH_TOKEN'))
 GOOGLE_SHEET_URL = os.environ.get('GOOGLE_SHEET_URL', '').strip()
 GOOGLE_SHEET_WEBHOOK_URL = os.environ.get('GOOGLE_SHEET_WEBHOOK_URL', '').strip()
 
+# Cấu hình thông báo Telegram báo cáo trực tiếp
+TELEGRAM_BOT_TOKEN = clean_credential(os.environ.get('TELEGRAM_BOT_TOKEN', '8480459173:AAHhSTEGSCG5zwq1jp6Dtycw97NQ2dqA8QM'))
+TELEGRAM_CHAT_ID = clean_credential(os.environ.get('TELEGRAM_CHAT_ID', '-5074952407'))
+
 # Chế độ phát hành: 'schedule' (Lên lịch theo giờ vàng), 'publish' (Đăng ngay), 'draft' (Lưu nháp)
 POST_MODE = os.environ.get('POST_MODE', 'schedule').lower().strip()
 SCHEDULE_HOURS_AHEAD = int(os.environ.get('SCHEDULE_HOURS_AHEAD', '24'))
@@ -559,6 +563,41 @@ def fetch_topics_from_google_sheet(sheet_url):
     print(f"✅ Đã tải thành công {len(topics)} đề tài chưa đăng từ Google Sheets! (Đã bỏ qua {skipped_status_count} bài đã đăng/lên lịch)")
     return topics
 
+def send_telegram_notification(topic, status_text, post_url, published_time, labels, row_index=None):
+    """
+    Gửi thông báo báo cáo trực tiếp tới nhóm Telegram ngay khi đăng/lên lịch thành công
+    """
+    if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
+        return
+    try:
+        url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+        labels_str = ", ".join(labels) if isinstance(labels, list) else str(labels)
+        text = (
+            f"🚀 <b>[BLOGGER AUTO-POSTER] ĐĂNG BÀI THÀNH CÔNG</b>\n\n"
+            f"📌 <b>Tiêu đề:</b> {topic}\n"
+            f"🏷️ <b>Nhãn:</b> <code>{labels_str}</code>\n"
+            f"⏰ <b>Thời gian:</b> {published_time}\n"
+        )
+        if row_index and row_index > 0:
+            text += f"📊 <b>Google Sheet:</b> Đã cập nhật dòng #{row_index} (<b>{status_text}</b>)\n"
+        if post_url:
+            text += f"🔗 <b>Link bài viết:</b> <a href=\"{post_url}\">Bấm xem bài viết ngay</a>\n"
+        text += "\n💡 <i>Hệ thống AI Blogger Cloud LuViet đã xuất bản hoàn tất!</i>"
+
+        payload = {
+            "chat_id": TELEGRAM_CHAT_ID,
+            "text": text,
+            "parse_mode": "HTML",
+            "disable_web_page_preview": False
+        }
+        resp = requests.post(url, json=payload, timeout=12)
+        if resp.status_code == 200:
+            print(f"📱 Đã gửi thông báo báo cáo tới Telegram ({TELEGRAM_CHAT_ID}) thành công!")
+        else:
+            print(f"⚠️ Gửi thông báo Telegram thất bại (HTTP {resp.status_code}): {resp.text}")
+    except Exception as e:
+        print(f"⚠️ Lỗi khi gửi thông báo Telegram: {e}")
+
 def notify_google_sheet(item, result, scheduled_slot=None):
     """
     Gửi thông báo cập nhật kết quả lên Google Sheet qua Webhook Google Apps Script
@@ -583,7 +622,7 @@ def notify_google_sheet(item, result, scheduled_slot=None):
             "published": pub_time,
             "labels": result.get('labels', item.get('labels', []))
         }
-        resp = requests.post(GOOGLE_SHEET_WEBHOOK_URL, json=payload, timeout=15)
+        resp = requests.post(GOOGLE_SHEET_WEBHOOK_URL, json=payload, timeout=30)
         if resp.status_code == 200:
             print("📊 Đã cập nhật trạng thái bài viết lên Google Sheet qua Webhook thành công!")
     except Exception as e:
@@ -771,7 +810,21 @@ def main():
             success_count += 1
             print(f"\n💾 Đã lưu lịch sử bài #{idx}. Tổng cộng đã đăng: {history['total_posted']} bài.")
 
-            # 4.4. Thông báo cập nhật Google Sheets (nếu có cấu hình Webhook)
+            status_text = "Đã lên lịch" if POST_MODE == 'schedule' else "Đã đăng"
+            pub_time_display = scheduled_slot.strftime('%d/%m/%Y %H:%M') + " (Giờ VN - Khung Giờ Vàng)" if scheduled_slot else result.get('published', '')
+            post_url = result.get('url') or f"https://www.blogger.com/blog/post/edit/{BLOGGER_BLOG_ID}/{result.get('id')}"
+
+            # 4.4. Gửi thông báo trực tiếp tới Telegram
+            send_telegram_notification(
+                topic=item.get('topic'),
+                status_text=status_text,
+                post_url=post_url,
+                published_time=pub_time_display,
+                labels=result.get('labels', item.get('labels', [])),
+                row_index=item.get('sheet_row')
+            )
+
+            # 4.5. Thông báo cập nhật Google Sheets (nếu có cấu hình Webhook)
             notify_google_sheet(item, result, scheduled_slot=scheduled_slot)
 
         except Exception as e:
