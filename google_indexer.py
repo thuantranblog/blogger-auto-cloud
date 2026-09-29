@@ -6,7 +6,7 @@
 import os
 import json
 import logging
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import requests
 
 try:
@@ -185,16 +185,17 @@ def process_auto_indexing(history_data, notify_telegram_func=None):
 
             # Báo cáo Telegram nếu có hàm callback
             if notify_telegram_func:
-                title = item.get("title", "Bài viết mới")
-                vn_time_str = pub_dt.astimezone(timezone(datetime.now().astimezone().tzinfo or timezone.utc)).strftime("%d/%m/%Y %H:%M")
-                msg = (
-                    f"🚀 <b>GOOGLE INDEXING: BẮN LẬP CHỈ MỤC THÀNH CÔNG!</b>\n\n"
-                    f"📌 <b>Tiêu đề:</b> {title}\n"
-                    f"🔗 <b>URL:</b> {url}\n"
-                    f"⏰ <b>Thời điểm xuất bản:</b> {vn_time_str}\n"
-                    f"⚡ <b>Trạng thái:</b> Google Bot đã nhận lệnh lập chỉ mục (URL_UPDATED)!"
-                )
                 try:
+                    title = item.get("title", "Bài viết mới")
+                    vn_tz = timezone(timedelta(hours=7))
+                    vn_time_str = pub_dt.astimezone(vn_tz).strftime("%d/%m/%Y %H:%M")
+                    msg = (
+                        f"🚀 <b>GOOGLE INDEXING: BẮN LẬP CHỈ MỤC THÀNH CÔNG!</b>\n\n"
+                        f"📌 <b>Tiêu đề:</b> {title}\n"
+                        f"🔗 <b>URL:</b> {url}\n"
+                        f"⏰ <b>Thời điểm xuất bản:</b> {vn_time_str} (Giờ VN)\n"
+                        f"⚡ <b>Trạng thái:</b> Google Bot đã nhận lệnh lập chỉ mục (URL_UPDATED)!"
+                    )
                     notify_telegram_func(msg)
                 except Exception as tele_err:
                     print(f"   ⚠️ Lỗi gửi thông báo Telegram Indexing: {tele_err}")
