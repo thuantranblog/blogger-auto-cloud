@@ -71,6 +71,7 @@ jobs:
           POST_MODE: ${{ github.event.inputs.post_mode || vars.POST_MODE || 'schedule' }}
           POSTS_COUNT: ${{ github.event.inputs.posts_count || vars.POSTS_COUNT || '1' }}
           DELAY_SECONDS: ${{ github.event.inputs.delay_seconds || vars.DELAY_SECONDS || '15' }}
+          INDEXING_SERVICE_ACCOUNT_JSON: ${{ secrets.INDEXING_SERVICE_ACCOUNT_JSON || '' }}
         run: |
           python main.py
 
