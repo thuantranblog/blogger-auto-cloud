@@ -91,16 +91,19 @@
    - **Hệ thống tính điểm & Audit Realtime:**
      * Vòng tròn SVG Radial Gauge tính điểm On-Page tức thì theo thời gian thực (0 - 100đ).
      * Checklist 10 tiêu chuẩn Google khắt khe: Từ khóa trong Tiêu đề (vị trí & độ dài 40-65 ký tự), Search Description (120-155 ký tự & chứa từ khóa), Mật độ từ khóa On-Page (1.0% - 2.5%), Từ khóa trong 100 từ đầu & kết bài, Cấu trúc Heading H2/H3, Thẻ Alt hình ảnh, Độ dài nội dung (Word count >= 1200 từ), Liên kết nội bộ/ngoài, Khối Rich Content/FAQ.
-   - **Bộ công cụ AI 1-Click thông minh (Google Gemini AI):**
-     * 🪄 *AI Viết & Điền Search Description*: Gemini tạo 140 ký tự chuẩn SEO -> 1-Click tự tìm panel và điền thẳng vào sidebar Blogger!
-     * 🖼️ *AI Quét & Sửa Thẻ Alt Ảnh Toàn Bài*: Tự động phát hiện ảnh thiếu alt và cập nhật alt chứa từ khóa trực tiếp vào bài.
-     * 💡 *AI Gợi Ý 5 Tiêu Đề Giật Tít (High CTR)*: 1-Click áp dụng ngay vào ô Tiêu đề của Blogger.
-     * ❓ *AI Tạo & Chèn Khối FAQ Schema*: Tự tạo 3-4 câu hỏi thường gặp và chèn vào cuối bài.
-     * 💡 *Smart Keyword Detection*: Nút "💡 Lấy từ Tiêu đề" tự lọc stop-words và trích xuất từ khóa mục tiêu. Tự động lưu Focus Keyword theo từng bài viết vào `chrome.storage.local`.
+9. **Kích hoạt tự động viết bài từ Google Sheets 20 phút / lần (29/09/2026):**
+   - **Cấu hình Workflow GitHub Actions:**
+     * Cập nhật `.github/workflows/auto_post.yml` sang lịch cron: `*/20 * * * *` (mỗi 20 phút chạy 1 lần).
+     * Thiết lập mỗi lần chạy viết 1 bài (`POSTS_COUNT = 1`).
+     * Cơ chế tự động lấy đề tài tiếp theo chưa đăng từ Google Sheets (311 đề tài sẵn có).
+     * Thuật toán `get_next_schedule_slots()` tự động nối tiếp lấp đầy 3 khung giờ vàng (06:30, 11:30, 14:30) của các ngày tiếp theo mà không bị trùng slot.
+     * Cập nhật ngược lại Google Sheets qua Webhook (Đổi trạng thái "Đã lên lịch", điền ngày giờ hẹn, link bài viết và thumbnail).
+     * Báo cáo Telegram & Gmail tự động tức thì.
+   - **Kết quả kiểm thử thực tế:**
+     * Run ID `36572394368` hoàn thành **Success** trong 45 giây.
+     * Tự động lấy đề tài STT 10 từ Google Sheet và lên lịch hẹn chuẩn xác lúc **01/10/2026 14:30 (Giờ VN)**.
+     * Cột G Google Sheet tự động đổi sang "Đã lên lịch" và Cột H ghi nhận ngày giờ thành công 100%.
 
----
-
-## 📂 III. BẢN ĐỒ CÁC FILE QUAN TRỌNG
 
 | Thành phần | Đường dẫn tệp | Trạng thái |
 | :--- | :--- | :--- |
