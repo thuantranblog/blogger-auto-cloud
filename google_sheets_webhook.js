@@ -5,12 +5,12 @@
  * CẤU HÌNH THÔNG BÁO TELEGRAM & EMAIL
  * ==============================================================================
  */
-// Điền Token Telegram Bot (Lấy từ @BotFather) và Chat ID nhóm nhận thông báo
-var TELEGRAM_BOT_TOKEN = "YOUR_TELEGRAM_BOT_TOKEN";
-var TELEGRAM_CHAT_ID = "YOUR_TELEGRAM_CHAT_ID"; // Nhóm Content Luviet
+// Cấu hình Telegram Bot (@BotFather) & Chat ID nhóm nhận thông báo
+var TELEGRAM_BOT_TOKEN = "8480459173:AAHhSTEGSCG5zwq1jp6Dtycw97NQ2dqA8QM";
+var TELEGRAM_CHAT_ID = "-5074952407"; // Nhóm Content Luviet
 
-// Email nhận thông báo: Để trống "" sẽ tự động gửi về email của chủ tài khoản Google Sheet
-var NOTIFICATION_EMAIL = ""; 
+// Email nhận thông báo: Điền email nhận thông báo báo cáo xuất bản bài viết
+var NOTIFICATION_EMAIL = "luvietceo@gmail.com"; 
 
 /**
  * ==============================================================================
@@ -141,8 +141,16 @@ function sendTelegramMessage(topic, status, postUrl, publishedTime, labels, rowI
  * ==============================================================================
  */
 function sendEmailNotification(topic, status, postUrl, publishedTime, labels, rowIndex) {
-  var recipient = NOTIFICATION_EMAIL || Session.getEffectiveUser().getEmail();
-  if (!recipient) return;
+  var recipient = (NOTIFICATION_EMAIL || "").trim();
+  if (!recipient) {
+    try {
+      recipient = Session.getEffectiveUser().getEmail();
+    } catch (e) {}
+  }
+  if (!recipient) {
+    Logger.log("⚠️ Không tìm thấy email nhận thông báo! Vui lòng điền vào biến NOTIFICATION_EMAIL.");
+    return;
+  }
   
   var subject = "🚀 [Blogger Auto] Xuất bản thành công: " + topic;
   
@@ -175,6 +183,7 @@ function sendEmailNotification(topic, status, postUrl, publishedTime, labels, ro
     subject: subject,
     htmlBody: htmlBody
   });
+  Logger.log("✅ Đã gửi email thông báo thành công tới: " + recipient);
 }
 
 /**
