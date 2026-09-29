@@ -486,6 +486,7 @@ def fetch_topics_from_google_sheet(sheet_url):
     col_cta = -1
     col_status = -1
     col_id = -1
+    col_image = -1
 
     for r_idx in range(min(5, len(rows))):
         h_row = [str(c).strip().lower() for c in rows[r_idx]]
