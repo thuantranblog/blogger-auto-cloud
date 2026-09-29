@@ -18,6 +18,15 @@ var NOTIFICATION_EMAIL = "thuantranblog@gmail.com";
  * ==============================================================================
  */
 function doPost(e) {
+  // 1. Kiểm tra an toàn: nếu hàm bị gọi bởi trigger "On edit" hoặc không có postData
+  if (!e || !e.postData || !e.postData.contents) {
+    Logger.log("⚠️ doPost được gọi nhưng không có postData (do kích hoạt nhầm trigger On Edit trong Apps Script). Bỏ qua an toàn.");
+    return ContentService.createTextOutput(JSON.stringify({
+      status: "ignored",
+      message: "Không có dữ liệu HTTP POST. Nếu bạn đang cài Trigger 'Khi chỉnh sửa / On edit' trong mục Triggers của Apps Script, vui lòng xóa trigger đó đi (Webhook hoạt động qua bản Triển khai Web App, không cần Trigger)."
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+
   try {
     var data = JSON.parse(e.postData.contents);
     var ss = SpreadsheetApp.getActiveSpreadsheet();
