@@ -10,7 +10,7 @@ var TELEGRAM_BOT_TOKEN = "8480459173:AAHhSTEGSCG5zwq1jp6Dtycw97NQ2dqA8QM";
 var TELEGRAM_CHAT_ID = "-5074952407"; // Nhóm Content Luviet
 
 // Email nhận thông báo: Điền email nhận thông báo báo cáo xuất bản bài viết
-var NOTIFICATION_EMAIL = "thuantranblo@gmail.com";
+var NOTIFICATION_EMAIL = "thuantranblog@gmail.com";
 
 /**
  * ==============================================================================
