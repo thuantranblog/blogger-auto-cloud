@@ -772,6 +772,7 @@ def main():
                     art_title = article.get('title') or topic
                     thumb_url = create_post_thumbnail(
                         title=art_title,
+                        summary=summary,
                         keyword=item.get('keyword', ''),
                         custom_image_url=custom_img,
                         api_key=api_keys
