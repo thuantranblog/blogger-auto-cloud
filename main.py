@@ -599,6 +599,26 @@ def send_telegram_notification(topic, status_text, post_url, published_time, lab
     except Exception as e:
         print(f"⚠️ Lỗi khi gửi thông báo Telegram: {e}")
 
+def send_raw_telegram_message(text):
+    """
+    Gửi tin nhắn Telegram tùy biến (dùng cho thông báo Google Indexing, cảnh báo lỗi,...)
+    """
+    if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
+        return
+    try:
+        url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+        payload = {
+            "chat_id": TELEGRAM_CHAT_ID,
+            "text": text,
+            "parse_mode": "HTML",
+            "disable_web_page_preview": False
+        }
+        resp = requests.post(url, json=payload, timeout=12)
+        if resp.status_code == 200:
+            print(f"📱 Đã gửi thông báo Indexing tới Telegram thành công!")
+    except Exception as e:
+        print(f"⚠️ Lỗi khi gửi thông báo Telegram Indexing: {e}")
+
 def notify_google_sheet(item, result, scheduled_slot=None):
     """
     Gửi thông báo cập nhật kết quả lên Google Sheet qua Webhook Google Apps Script
@@ -842,6 +862,17 @@ def main():
     print("\n" + "=" * 65)
     print(f"🎉 HOÀN THÀNH TIẾN TRÌNH: Đã tạo và lên lịch thành công {success_count}/{len(selected_topics)} bài!")
     print("=" * 65)
+
+    # ==============================================================================
+    # 5. TỰ ĐỘNG QUÉT & GỬI GOOGLE INDEXING CHO CÁC BÀI ĐÃ XUẤT BẢN THÀNH CÔNG (LIVE)
+    # ==============================================================================
+    try:
+        from google_indexer import process_auto_indexing
+        indexed_count = process_auto_indexing(history, notify_telegram_func=send_raw_telegram_message)
+        if indexed_count > 0:
+            save_history(history)
+    except Exception as idx_err:
+        print(f"⚠️ Quá trình tự động Google Indexing gặp lỗi: {idx_err}")
 
 if __name__ == '__main__':
     main()
