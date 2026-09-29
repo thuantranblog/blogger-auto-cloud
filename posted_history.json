@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-09-29T13:04:44.934487+00:00",
-  "total_posted": 14,
+  "last_updated": "2026-09-29T15:51:20.322085+00:00",
+  "total_posted": 15,
   "history": [
     {
       "topic": "Dịch vụ thiết kế website doanh nghiệp chuẩn SEO chuyên nghiệp 2026",
@@ -9,7 +9,9 @@
       "url": "https://www.luviet.com/2026/09/dich-vu-thiet-ke-website-doanh-nghiep.html",
       "published": "2026-09-28T18:39:29+07:00",
       "posted_at": "2026-09-27T11:39:29.951072+00:00",
-      "mode": "schedule"
+      "mode": "schedule",
+      "indexed": true,
+      "indexed_at": "2026-09-29T15:51:23.740848+00:00"
     },
     {
       "topic": "Bán Hàng Trên Sàn TMĐT Năm 2026: Vì Sao Càng Ra Nhiều Đơn Lợi Nhuận Càng Teo Tóp?",
@@ -18,7 +20,9 @@
       "url": "https://www.luviet.com/2026/09/ban-hang-san-tmt-2026-cang-ra-nhieu-on.html",
       "published": "2026-09-28T11:30:00+07:00",
       "posted_at": "2026-09-28T02:43:49.498803+00:00",
-      "mode": "schedule"
+      "mode": "schedule",
+      "indexed": true,
+      "indexed_at": "2026-09-29T15:51:23.740848+00:00"
     },
     {
       "topic": "Chi Phí Sàn TMĐT Lên Đến 18-25%: Bóc Tách Các Loại Phí Ẩn Đang Bào Mòn Lợi Nhuận Của Bạn",
@@ -27,7 +31,9 @@
       "url": "https://www.luviet.com/2026/09/chi-phi-san-tmt-len-en-18-25-boc-tach.html",
       "published": "2026-09-28T14:30:00+07:00",
       "posted_at": "2026-09-28T02:49:19.979724+00:00",
-      "mode": "schedule"
+      "mode": "schedule",
+      "indexed": true,
+      "indexed_at": "2026-09-29T15:51:23.740848+00:00"
     },
     {
       "topic": "Hiểm Họa Mất Trắng Doanh Nghiệp Khi Bị Khóa Shop TMĐT & Bài Học Tự Chủ Kênh Bán Hàng",
@@ -36,7 +42,9 @@
       "url": "https://www.luviet.com/2026/09/hiem-hoa-mat-trang-doanh-nghiep-khi-bi.html",
       "published": "2026-09-28T14:22:00+07:00",
       "posted_at": "2026-09-28T07:22:00.562211+00:00",
-      "mode": "publish"
+      "mode": "publish",
+      "indexed": true,
+      "indexed_at": "2026-09-29T15:51:23.740848+00:00"
     },
     {
       "topic": "Chạy Ads Facebook Ra Hàng Trăm Tin Nhắn Nhưng Tỷ Lệ Chốt Dưới 5%: Đâu Là Nguyên Nhân Thật Sự?",
@@ -45,7 +53,9 @@
       "url": "https://www.luviet.com/2026/09/chay-ads-facebook-ra-hang-tram-tin-nhan.html",
       "published": "2026-09-29T11:30:00+07:00",
       "posted_at": "2026-09-28T10:08:05.240103+00:00",
-      "mode": "schedule"
+      "mode": "schedule",
+      "indexed": true,
+      "indexed_at": "2026-09-29T15:51:23.740848+00:00"
     },
     {
       "topic": "Chi Phí Quảng Cáo TikTok & Facebook Ngày Càng Đắt: Bí Quyết Cắt Giảm 50% Ngân Sách Nhờ Landing Page",
@@ -63,7 +73,9 @@
       "url": "https://www.luviet.com/2026/09/landing-page-bat-ong-san-chuan-seo-bi.html",
       "published": "2026-09-29T06:30:00+07:00",
       "posted_at": "2026-09-28T11:09:12.906939+00:00",
-      "mode": "schedule"
+      "mode": "schedule",
+      "indexed": true,
+      "indexed_at": "2026-09-29T15:51:23.740848+00:00"
     },
     {
       "topic": "Thiết Kế Website Xuất Hóa Đơn Điện Tử Tự Động: Tối Ưu Quản Lý Bán Lẻ 2026",
@@ -126,6 +138,15 @@
       "url": "https://www.luviet.com/2026/10/noi-am-anh-bom-hang-cod-5-cach-chu-shop.html",
       "published": "2026-10-02T06:30:00+07:00",
       "posted_at": "2026-09-29T13:04:44.934472+00:00",
+      "mode": "schedule"
+    },
+    {
+      "topic": "Thuê Đơn Vị Làm Website 10-20 Triệu: Những Bẫy Chi Phí Và Bất Cập Chủ Shop Cần Biết",
+      "title": "Thuê Đơn Vị Làm Website 10-20 Triệu: Bẫy Chi Phí & Bất Cập Chủ Shop Cần Biết",
+      "post_id": "1562333948473110317",
+      "url": "https://www.luviet.com/2026/10/thue-on-vi-lam-website-10-20-trieu-bay.html",
+      "published": "2026-10-02T11:30:00+07:00",
+      "posted_at": "2026-09-29T15:51:20.322067+00:00",
       "mode": "schedule"
     }
   ]
