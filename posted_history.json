@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-09-30T01:54:36.403407+00:00",
-  "total_posted": 19,
+  "last_updated": "2026-09-30T08:08:57.607050+00:00",
+  "total_posted": 20,
   "history": [
     {
       "topic": "Dịch vụ thiết kế website doanh nghiệp chuẩn SEO chuyên nghiệp 2026",
@@ -84,7 +84,9 @@
       "url": "https://www.luviet.com/2026/09/thiet-ke-website-xuat-hoa-on-ien-tu-tu.html",
       "published": "2026-09-30T06:30:00+07:00",
       "posted_at": "2026-09-28T11:10:42.262600+00:00",
-      "mode": "schedule"
+      "mode": "schedule",
+      "indexed": true,
+      "indexed_at": "2026-09-30T08:09:30.835700+00:00"
     },
     {
       "topic": "Hướng Dẫn Kết Nối Pancake Invoice Với Website Bán Hàng Tự Động 2026",
@@ -93,7 +95,9 @@
       "url": "https://www.luviet.com/2026/09/huong-dan-ket-noi-pancake-invoice-voi.html",
       "published": "2026-09-30T11:30:00+07:00",
       "posted_at": "2026-09-28T11:12:21.462887+00:00",
-      "mode": "schedule"
+      "mode": "schedule",
+      "indexed": true,
+      "indexed_at": "2026-09-30T08:09:30.835700+00:00"
     },
     {
       "topic": "Thiết Kế Website Đồng Nai Chuẩn SEO: Dịch Vụ Trọn Gói Chuyên Nghiệp 2026",
@@ -183,6 +187,15 @@
       "url": "https://www.luviet.com/2026/10/ban-hang-qua-inbox-ca-nhan-nhung-lo.html",
       "published": "2026-10-03T14:30:00+07:00",
       "posted_at": "2026-09-30T01:54:36.403388+00:00",
+      "mode": "schedule"
+    },
+    {
+      "topic": "Nghệ Thuật Giữ Chân Khách Cũ: Vì Sao Chi Phí Kiếm Khách Mới Đắt Gấp 7 Lần Chăm Sóc Lại?",
+      "title": "Nghệ Thuật Giữ Chân Khách Cũ: Vì Sao Chi Phí Kiếm Khách Mới Đắt Gấp 7 Lần Chăm Sóc Lại?",
+      "post_id": "5374335565103581181",
+      "url": "https://www.luviet.com/2026/10/nghe-thuat-giu-chan-khach-cu-vi-sao-chi.html",
+      "published": "2026-10-04T06:30:00+07:00",
+      "posted_at": "2026-09-30T08:08:57.606998+00:00",
       "mode": "schedule"
     }
   ]
