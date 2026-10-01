@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-10-01T02:25:06.024464+00:00",
-  "total_posted": 24,
+  "last_updated": "2026-10-01T09:25:37.423975+00:00",
+  "total_posted": 25,
   "history": [
     {
       "topic": "Dịch vụ thiết kế website doanh nghiệp chuẩn SEO chuyên nghiệp 2026",
@@ -124,7 +124,9 @@
       "url": "https://www.luviet.com/2026/10/template-ban-hang-online-chuan-cro-khoi.html",
       "published": "2026-10-01T11:30:00+07:00",
       "posted_at": "2026-09-29T01:33:07.194126+00:00",
-      "mode": "schedule"
+      "mode": "schedule",
+      "indexed": true,
+      "indexed_at": "2026-10-01T09:25:42.718539+00:00"
     },
     {
       "topic": "Tại Sao Bán Hàng Nghìn Đơn Trên Sàn Nhưng Bạn Vẫn Không Sở Hữu Được Khách Hàng?",
@@ -232,6 +234,15 @@
       "url": "https://www.luviet.com/2026/10/website-tai-cham-qua-3-giay-vi-sao.html",
       "published": "2026-10-05T11:30:00+07:00",
       "posted_at": "2026-10-01T02:25:06.024443+00:00",
+      "mode": "schedule"
+    },
+    {
+      "topic": "Bài Toán Dòng Tiền Kinh Doanh Online: Đọng Vốn Tiền COD Và Cách Thu Tiền Ngay Về Tài Khoản",
+      "title": "Bài Toán Dòng Tiền Kinh Doanh Online: Đọng Vốn Tiền COD & Giải Pháp",
+      "post_id": "4424875577113812940",
+      "url": "https://www.luviet.com/2026/10/bai-toan-dong-tien-kinh-doanh-online.html",
+      "published": "2026-10-05T14:30:00+07:00",
+      "posted_at": "2026-10-01T09:25:37.423957+00:00",
       "mode": "schedule"
     }
   ]
