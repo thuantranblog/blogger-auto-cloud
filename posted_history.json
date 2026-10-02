@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-10-02T07:06:01.226700+00:00",
-  "total_posted": 29,
+  "last_updated": "2026-10-02T13:59:03.755576+00:00",
+  "total_posted": 30,
   "history": [
     {
       "topic": "Dịch vụ thiết kế website doanh nghiệp chuẩn SEO chuyên nghiệp 2026",
@@ -146,7 +146,9 @@
       "url": "https://www.luviet.com/2026/10/noi-am-anh-bom-hang-cod-5-cach-chu-shop.html",
       "published": "2026-10-02T06:30:00+07:00",
       "posted_at": "2026-09-29T13:04:44.934472+00:00",
-      "mode": "schedule"
+      "mode": "schedule",
+      "indexed": true,
+      "indexed_at": "2026-10-02T13:59:07.350368+00:00"
     },
     {
       "topic": "Thuê Đơn Vị Làm Website 10-20 Triệu: Những Bẫy Chi Phí Và Bất Cập Chủ Shop Cần Biết",
@@ -155,7 +157,9 @@
       "url": "https://www.luviet.com/2026/10/thue-on-vi-lam-website-10-20-trieu-bay.html",
       "published": "2026-10-02T11:30:00+07:00",
       "posted_at": "2026-09-29T15:51:20.322067+00:00",
-      "mode": "schedule"
+      "mode": "schedule",
+      "indexed": true,
+      "indexed_at": "2026-10-02T13:59:07.350368+00:00"
     },
     {
       "topic": "Tại Sao 80% Website Doanh Nghiệp Vừa Làm Xong Đã Bị Bỏ Hoang Không Ra Đơn?",
@@ -164,7 +168,9 @@
       "url": "https://www.luviet.com/2026/10/tai-sao-80-website-doanh-nghiep-moi-lam.html",
       "published": "2026-10-02T14:30:00+07:00",
       "posted_at": "2026-09-29T15:56:19.167661+00:00",
-      "mode": "schedule"
+      "mode": "schedule",
+      "indexed": true,
+      "indexed_at": "2026-10-02T13:59:07.350368+00:00"
     },
     {
       "topic": "Kinh Doanh D2C (Direct-to-Consumer): Xu Hướng Bắt Buộc Nếu Muốn Tồn Tại Trong Kỷ Nguyên Mới",
@@ -281,6 +287,15 @@
       "url": "https://www.luviet.com/2026/10/form-at-hang-1-cham-mua-sam-sieu-toc.html",
       "published": "2026-10-07T06:30:00+07:00",
       "posted_at": "2026-10-02T07:06:01.226681+00:00",
+      "mode": "schedule"
+    },
+    {
+      "topic": "Công Nghệ VietQR Động: Giải Pháp Quét Mã Trả Tiền Trong 3 Giây Đột Phá Doanh Số Shop Online",
+      "title": "Công Nghệ VietQR Động: Giải Pháp Quét Mã Trả Tiền 3 Giây Đột Phá Doanh Số Shop Online",
+      "post_id": "4478929924282145511",
+      "url": "https://www.luviet.com/2026/10/cong-nghe-vietqr-ong-giai-phap-quet-ma.html",
+      "published": "2026-10-07T11:30:00+07:00",
+      "posted_at": "2026-10-02T13:59:03.755558+00:00",
       "mode": "schedule"
     }
   ]
