@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-10-03T02:05:44.256934+00:00",
-  "total_posted": 33,
+  "last_updated": "2026-10-03T08:16:56.961827+00:00",
+  "total_posted": 34,
   "history": [
     {
       "topic": "Dịch vụ thiết kế website doanh nghiệp chuẩn SEO chuyên nghiệp 2026",
@@ -179,7 +179,9 @@
       "url": "https://www.luviet.com/2026/10/kinh-doanh-d2c-xu-huong-bat-buoc-e-ton.html",
       "published": "2026-10-03T06:30:00+07:00",
       "posted_at": "2026-09-29T18:42:06.124941+00:00",
-      "mode": "schedule"
+      "mode": "schedule",
+      "indexed": true,
+      "indexed_at": "2026-10-03T08:17:00.056012+00:00"
     },
     {
       "topic": "Cuộc Chiến Phá Giá Khốc Liệt Trên Sàn: Làm Sao Để Bán Giá Cao Mà Khách Vẫn Tranh Nhau Mua?",
@@ -323,6 +325,15 @@
       "url": "https://www.luviet.com/2026/10/7-khoi-hieu-ung-tam-ly-inh-cao-giup.html",
       "published": "2026-10-08T11:30:00+07:00",
       "posted_at": "2026-10-03T02:05:44.256913+00:00",
+      "mode": "schedule"
+    },
+    {
+      "topic": "Ứng Dụng Hiệu Ứng FOMO (Sợ Bỏ Lỡ) Đúng Cách Để Kích Thích Khách Hàng Ra Quyết Định Trong 60 Giây",
+      "title": "Ứng Dụng Hiệu Ứng FOMO (Sợ Bỏ Lỡ) Đúng Cách Để Kích Thích Khách Hàng Ra Quyết Định Trong 60 Giây",
+      "post_id": "1607418674206919023",
+      "url": "https://www.luviet.com/2026/10/ung-dung-hieu-ung-fomo-so-bo-lo-ung.html",
+      "published": "2026-10-08T14:30:00+07:00",
+      "posted_at": "2026-10-03T08:16:56.961809+00:00",
       "mode": "schedule"
     }
   ]
