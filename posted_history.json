@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-10-03T08:16:56.961827+00:00",
-  "total_posted": 34,
+  "last_updated": "2026-10-03T13:31:11.967408+00:00",
+  "total_posted": 35,
   "history": [
     {
       "topic": "Dịch vụ thiết kế website doanh nghiệp chuẩn SEO chuyên nghiệp 2026",
@@ -190,7 +190,9 @@
       "url": "https://www.luviet.com/2026/10/cuoc-chien-pha-gia-khoc-liet-ban-gia.html",
       "published": "2026-10-03T11:30:00+07:00",
       "posted_at": "2026-09-29T22:52:15.939828+00:00",
-      "mode": "schedule"
+      "mode": "schedule",
+      "indexed": true,
+      "indexed_at": "2026-10-03T13:31:15.122424+00:00"
     },
     {
       "topic": "Bán Hàng Qua Inbox Cá Nhân: Những Lỗ Hổng Khiến Bạn Mất 60% Doanh Thu Tiềm Năng",
@@ -199,7 +201,9 @@
       "url": "https://www.luviet.com/2026/10/ban-hang-qua-inbox-ca-nhan-nhung-lo.html",
       "published": "2026-10-03T14:30:00+07:00",
       "posted_at": "2026-09-30T01:54:36.403388+00:00",
-      "mode": "schedule"
+      "mode": "schedule",
+      "indexed": true,
+      "indexed_at": "2026-10-03T13:31:15.122424+00:00"
     },
     {
       "topic": "Nghệ Thuật Giữ Chân Khách Cũ: Vì Sao Chi Phí Kiếm Khách Mới Đắt Gấp 7 Lần Chăm Sóc Lại?",
@@ -334,6 +338,15 @@
       "url": "https://www.luviet.com/2026/10/ung-dung-hieu-ung-fomo-so-bo-lo-ung.html",
       "published": "2026-10-08T14:30:00+07:00",
       "posted_at": "2026-10-03T08:16:56.961809+00:00",
+      "mode": "schedule"
+    },
+    {
+      "topic": "Đồng Hồ Đếm Ngược Giờ Vàng: Vũ Khí Tạo Cảm Giác Khan Hiếm Khiến Khách Mua Ngay Lập Tức",
+      "title": "Đồng Hồ Đếm Ngược Giờ Vàng: Vũ Khí Tạo Cảm Giác Khan Hiếm Khiến Khách Mua Ngay Lập Tức",
+      "post_id": "3698630508650606261",
+      "url": "https://www.luviet.com/2026/10/ong-ho-em-nguoc-gio-vang-vu-khi-tao-cam.html",
+      "published": "2026-10-09T06:30:00+07:00",
+      "posted_at": "2026-10-03T13:31:11.967389+00:00",
       "mode": "schedule"
     }
   ]
