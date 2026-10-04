@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-10-04T02:45:01.074706+00:00",
-  "total_posted": 39,
+  "last_updated": "2026-10-04T09:27:10.760129+00:00",
+  "total_posted": 40,
   "history": [
     {
       "topic": "Dịch vụ thiết kế website doanh nghiệp chuẩn SEO chuyên nghiệp 2026",
@@ -223,7 +223,9 @@
       "url": "https://www.luviet.com/2026/10/quan-ly-on-bang-so-sach-excel-rui-ro.html",
       "published": "2026-10-04T11:30:00+07:00",
       "posted_at": "2026-09-30T14:59:27.014981+00:00",
-      "mode": "schedule"
+      "mode": "schedule",
+      "indexed": true,
+      "indexed_at": "2026-10-04T09:27:13.596618+00:00"
     },
     {
       "topic": "Khách Hỏi Giá Xong Im Lặng: Cách Chấm Dứt Tình Trạng Bị Khách Bỏ Rơi Nhờ Trang Đích Tự Động",
@@ -232,7 +234,9 @@
       "url": "https://www.luviet.com/2026/10/khach-hoi-gia-xong-im-lang-cach-cham.html",
       "published": "2026-10-04T14:30:00+07:00",
       "posted_at": "2026-09-30T19:56:27.868802+00:00",
-      "mode": "schedule"
+      "mode": "schedule",
+      "indexed": true,
+      "indexed_at": "2026-10-04T09:27:13.596618+00:00"
     },
     {
       "topic": "Bán Hàng Đa Kênh (Omnichannel) Cho Người Ít Vốn: Bắt Đầu Từ Đâu Để Không Bị Ngợp?",
@@ -385,6 +389,15 @@
       "url": "https://www.luviet.com/2026/10/xay-dung-quy-trinh-remarketing-0-ong.html",
       "published": "2026-10-10T11:30:00+07:00",
       "posted_at": "2026-10-04T02:45:01.074688+00:00",
+      "mode": "schedule"
+    },
+    {
+      "topic": "Bảng So Sánh Sản Phẩm Trực Quan: Đòn Bẩy Giúp Khách Hàng Nâng Cấp Lên Gói Combo Đắt Tiền Hơn",
+      "title": "Bảng So Sánh Sản Phẩm Trực Quan: Đòn Bẩy Nâng Cấp Gói Combo Đắt Tiền Hơn",
+      "post_id": "1013849501499175923",
+      "url": "https://www.luviet.com/2026/10/bang-so-sanh-san-pham-truc-quan-on-bay.html",
+      "published": "2026-10-10T14:30:00+07:00",
+      "posted_at": "2026-10-04T09:27:10.760110+00:00",
       "mode": "schedule"
     }
   ]
