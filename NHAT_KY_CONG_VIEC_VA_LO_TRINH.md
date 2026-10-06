@@ -105,11 +105,28 @@
      * Cột G Google Sheet tự động đổi sang "Đã lên lịch" và Cột H ghi nhận ngày giờ thành công 100%.
 
 
+10. **Nâng cấp Toàn diện Blogger AI Studio Pro & Companion Extension (06/10/2026):**
+    - **Tối ưu trải nghiệm người mới (Beginner-Friendly UX):**
+      * Chuyển đổi toàn bộ thuật ngữ kỹ thuật phức tạp (CDP port 9222) thành nhãn thân thiện: "Mở Trình Duyệt Blogger", huy hiệu trạng thái tương tác trực quan.
+      * Tích hợp **Modal Hướng Dẫn 3 Bước (Onboarding Tour)** tự động bật khi truy cập lần đầu và có thể mở lại bất cứ lúc nào qua nút "Hướng Dẫn".
+      * Tích hợp **Multi-Blog Selector**: Cho phép quản lý và chuyển đổi nhanh giữa nhiều Blog ID khác nhau (lưu trữ tự động trong `localStorage`), kèm hộp thoại thêm Blog mới linh hoạt.
+    - **Kiểm Soát & Tối Ưu Link SEO Realtime (Tab 4):**
+      * Tự động phân tích toàn bộ thẻ `<a>` trong mã HTML (liên kết nội bộ vs ngoại bộ).
+      * Đánh giá điểm cấu trúc liên kết (0 - 100 điểm) và phát hiện các rủi ro SEO (thiếu `target="_blank"`, thiếu `rel="noopener noreferrer"`, thiếu liên kết nội bộ).
+      * Nút **1-Click Chuẩn Hóa Link Ngoại Bộ** tự động gán bảo mật và nofollow cho liên kết ngoài.
+      * Nút **1-Click Chèn Cụm Link Nội Bộ LuViet** tự động nhúng ma trận 12 liên kết cốt lõi chuẩn SEO.
+    - **Phát triển Tiện ích Mở rộng Blogger Studio Booster (Chrome Extension v1.0.0):**
+      * Hoạt động trực tiếp trên trình duyệt Chrome hàng ngày mà không bắt buộc cấu hình CDP port 9222.
+      * Tính năng **1-Click Điền Bản Nháp Vào Blogger**: Tự động lấy Tiêu đề, Mã HTML và Thẻ mô tả SEO từ Studio điền thẳng vào trình soạn thảo Blogger.
+      * Tính năng **Kéo Bài Viết Về Studio**: Trích xuất bài viết từ Blogger về Studio để tối ưu liên kết SEO.
+      * Tính năng **Tự động nhận diện Blog ID**: Sao chép và đồng bộ nhanh Blog ID của tab hiện tại.
+
 | Thành phần | Đường dẫn tệp | Trạng thái |
 | :--- | :--- | :--- |
+| **Blogger AI Studio Pro** | `D:\BloggerAIStudioLuvietCom` | Hoạt động tại `http://127.0.0.1:8888` |
+| **Chrome Extension Booster** | `D:\BloggerAIStudioLuvietCom\chrome_extension` | Hoàn thiện 100% (Manifest V3) |
 | **Mã nguồn Auto-Post Cloud** | `C:\Users\Admin\.gemini\antigravity-ide\scratch\blogger-auto-cloud` | Đã đồng bộ GitHub |
 | **Engine tạo Thumbnail 3D** | `.../blogger-auto-cloud/generate_executive_thumbnail.py` | Hoàn thiện 100% |
-| **File Giao diện XML đã sửa** | `D:\blogger-auto-cloud\theme-1444221897689962852 (3).xml` | Đã sửa `_getBloggerThumbnail` |
-| **File Giao diện sao lưu gốc** | `D:\blogger-auto-cloud\theme-1444221897689962852 (3)_backup_original.xml` | Đã sao lưu an toàn |
 | **Blogger SEO Doctor Pro v3.0.0** | `C:\Users\Admin\.gemini\antigravity-ide\scratch\blogger-gemini-ai` | Hoàn thành chuyển đổi 100% |
+
 

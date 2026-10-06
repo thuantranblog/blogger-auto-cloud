@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Blogger AI Studio Booster</title>
+  <style>
+    :root {
+      --bg-dark: #0f172a;
+      --bg-card: rgba(30, 41, 59, 0.7);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      width: 360px;
+      background: var(--bg-dark);
+      color: var(--text-main);
+      padding: 14px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* HEADER */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-icon {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, #6366f1, #a855f7);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 14px;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
+    }
+
+    .brand-title {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+    }
+
+    .brand-title span {
+      color: #a855f7;
+    }
+
+    .badge-ver {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 6px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      color: var(--text-muted);
+    }
+
+    /* STATUS CARDS */
+    .status-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 10px;
+      backdrop-filter: blur(8px);
+    }
+
+    .status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .status-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .status-label {
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+
+    .status-val {
+      font-size: 11.5px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .dot.green { background: var(--success); box-shadow: 0 0 6px var(--success); }
+    .dot.orange { background: var(--warning); box-shadow: 0 0 6px var(--warning); }
+    .dot.red { background: var(--danger); box-shadow: 0 0 6px var(--danger); }
+
+    /* ACTION BUTTONS */
+    .actions-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .btn {
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+      padding: 9px 12px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      color: white;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #4338ca, #6d28d9);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      color: #e2e8f0;
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #059669, #10b981);
+      color: white;
+      box-shadow: 0 3px 10px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-success:hover {
+      background: linear-gradient(135deg, #047857, #059669);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    /* FEEDBACK MSG */
+    .msg-box {
+      margin-top: 10px;
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      display: none;
+      line-height: 1.4;
+    }
+
+    .msg-box.success {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #6ee7b7;
+      display: block;
+    }
+
+    .msg-box.warning {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: #fde68a;
+      display: block;
+    }
+
+    .msg-box.error {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+      display: block;
+    }
+
+    .blog-pill {
+      font-family: monospace;
+      font-size: 11px;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <!-- HEADER -->
+  <div class="header">
+    <div class="brand">
+      <div class="brand-icon">⚡</div>
+      <div class="brand-title">Blogger Studio <span>Booster</span></div>
+    </div>
+    <span class="badge-ver">v1.0</span>
+  </div>
+
+  <!-- STUDIO SERVER STATUS -->
+  <div class="status-card">
+    <div class="status-row">
+      <span class="status-label">Blogger AI Studio:</span>
+      <span id="studioStatus" class="status-val"><span class="dot orange"></span> Đang kiểm tra...</span>
+    </div>
+    <div class="status-row">
+      <span class="status-label">Bản nháp sẵn sàng:</span>
+      <span id="draftStatus" class="status-val" style="color: var(--text-muted); font-size:11px;">Chưa có</span>
+    </div>
+  </div>
+
+  <!-- ACTIVE TAB STATUS -->
+  <div class="status-card">
+    <div class="status-row">
+      <span class="status-label">Tab hiện tại:</span>
+      <span id="tabType" class="status-val"><span class="dot orange"></span> Đang nhận diện...</span>
+    </div>
+    <div class="status-row" id="blogIdRow" style="display: none;">
+      <span class="status-label">Mã Blog ID:</span>
+      <span id="blogIdVal" class="blog-pill">--</span>
+    </div>
+  </div>
+
+  <!-- FEEDBACK MESSAGE -->
+  <div id="msgBox" class="msg-box"></div>
+
+  <!-- ACTION BUTTONS -->
+  <div class="actions-grid">
+    <!-- Action 1: 1-Click Fill Draft -->
+    <button id="btnFillDraft" class="btn btn-primary" disabled>
+      ⚡ 1-Click Điền Bản Nháp Vào Blogger
+    </button>
+
+    <!-- Action 2: Extract Post to Studio -->
+    <button id="btnExtractToStudio" class="btn btn-secondary" style="display: none;">
+      📥 Kéo Bài Từ Blogger Về Studio Để Tối Ưu
+    </button>
+
+    <!-- Action 3: Add Blog to Studio -->
+    <button id="btnAddBlogToStudio" class="btn btn-secondary" style="display: none;">
+      ➕ Lưu Blog Này Vào Studio Selector
+    </button>
+
+    <!-- Action 4: Open Studio Pro -->
+    <button id="btnOpenStudio" class="btn btn-secondary">
+      🌐 Mở Blogger AI Studio Pro (Tab Mới)
+    </button>
+
+    <!-- Action 5: Open Blogger (if not on blogger) -->
+    <button id="btnOpenBlogger" class="btn btn-secondary" style="display: none;">
+      📑 Mở Trang Quản Trị Blogger
+    </button>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

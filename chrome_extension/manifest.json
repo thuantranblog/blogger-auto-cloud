@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "Blogger AI Studio Booster",
+  "version": "1.0.0",
+  "description": "Tự động hóa kết nối tab Blogger với hệ thống Blogger AI Studio Pro (LuViet Suite)",
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Blogger AI Studio Booster",
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "*://*.blogger.com/*",
+    "http://127.0.0.1:8888/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["*://*.blogger.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

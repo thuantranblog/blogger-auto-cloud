@@ -4,6 +4,7 @@ Cung cấp API thiết kế bài viết, xem trước và đồng bộ trực ti
 """
 
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, FileResponse
 from pydantic import BaseModel
@@ -16,8 +17,26 @@ import blogger_automation
 
 app = FastAPI(title="Blogger AI Studio Pro", description="Trợ lý tự động hóa viết bài & thiết kế trang Blogger LuViet")
 
+# Enable CORS for extension and cross-origin tools
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(BASE_DIR, "static")
+
+# In-memory current working draft (synchronized with frontend and companion extension)
+current_draft = {
+    "title": "",
+    "content_html": "",
+    "search_desc": "",
+    "labels": [],
+    "target_type": "page"
+}
 
 def normalize_keywords(kw: Union[List[str], str, None]) -> List[str]:
     if not kw:
@@ -116,6 +135,26 @@ def generate_seo_desc_endpoint(req: SeoDescRequest):
     )
     return {"success": True, "description": desc, "length": len(desc)}
 
+class DraftRequest(BaseModel):
+    title: Optional[str] = ""
+    content_html: Optional[str] = ""
+    search_desc: Optional[str] = ""
+    labels: Optional[Union[List[str], str]] = []
+    target_type: Optional[str] = "page"
+
+@app.get("/api/draft")
+def get_draft_endpoint():
+    return {"success": True, "draft": current_draft}
+
+@app.post("/api/draft")
+def save_draft_endpoint(req: DraftRequest):
+    current_draft["title"] = req.title or ""
+    current_draft["content_html"] = req.content_html or ""
+    current_draft["search_desc"] = req.search_desc or ""
+    current_draft["labels"] = normalize_keywords(req.labels)
+    current_draft["target_type"] = req.target_type or "page"
+    return {"success": True, "draft": current_draft}
+
 @app.post("/api/generate")
 def generate_content(req: GenerateRequest):
     try:
@@ -131,6 +170,13 @@ def generate_content(req: GenerateRequest):
             page_type=req.page_type,
             content_html=html
         )
+        # Update current draft for companion tools and extensions
+        current_draft["title"] = req.title
+        current_draft["content_html"] = html
+        current_draft["search_desc"] = desc
+        current_draft["labels"] = kw_list
+        current_draft["target_type"] = "post" if req.page_type == "article" else "page"
+
         return {"success": True, "html": html, "search_desc": desc}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -24,18 +24,33 @@
       </div>
 
       <div class="nav-actions">
+        <!-- BLOG SELECTOR -->
+        <div class="blog-selector-wrap" title="Chọn Blog đang làm việc">
+          <i class="fa-solid fa-blog"></i>
+          <select id="blogSelector" class="blog-selector-select">
+            <option value="1444221897689962852">Lữ Việt (1444...)</option>
+          </select>
+          <button id="btnAddBlog" class="btn-icon-xs" title="Thêm Blog ID mới">
+            <i class="fa-solid fa-plus"></i>
+          </button>
+        </div>
+
         <!-- CONNECTION STATUS -->
-        <div id="connectionBadge" class="connection-badge disconnected" title="Trạng thái kết nối Chrome CDP (Cổng 9222)">
+        <div id="connectionBadge" class="connection-badge disconnected" title="Bấm để xem trạng thái kết nối trình duyệt">
           <span class="status-dot"></span>
-          <span class="status-text">Đang kiểm tra Chrome...</span>
+          <span class="status-text">Đang kiểm tra trình duyệt...</span>
         </div>
 
         <button id="btnRefreshStatus" class="btn-icon" title="Làm mới trạng thái">
           <i class="fa-solid fa-arrows-rotate"></i>
         </button>
 
-        <button id="btnLaunchChrome" class="btn-secondary" title="Tự động mở trình duyệt Chrome với cổng kết nối CDP 9222">
-          <i class="fa-brands fa-chrome"></i> Mở Chrome CDP
+        <button id="btnLaunchChrome" class="btn-secondary" title="Mở cửa sổ trình duyệt Chrome dành riêng cho Blogger">
+          <i class="fa-brands fa-chrome"></i> Mở Trình Duyệt Blogger
+        </button>
+
+        <button id="btnOpenGuide" class="btn-secondary" title="Hướng dẫn sử dụng cho người mới">
+          <i class="fa-solid fa-circle-question"></i> Hướng Dẫn
         </button>
 
         <button id="btnOpenBloggerList" class="btn-secondary">
@@ -299,6 +314,93 @@
           <button id="btnCancelModal" class="btn-secondary">Đóng</button>
           <button id="btnApplySelected" class="btn-primary" disabled>
             <i class="fa-solid fa-check"></i> Cập Nhật Trang Này
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: HƯỚNG DẪN 3 BƯỚC CHO NGƯỜI MỚI (ONBOARDING) -->
+    <div id="onboardingModal" class="modal-overlay">
+      <div class="modal-box onboarding-box">
+        <div class="modal-header">
+          <div class="onboarding-header-left">
+            <span class="onboarding-pill"><i class="fa-solid fa-graduation-cap"></i> Dành Cho Người Mới</span>
+            <h3>Hướng Dẫn Nhanh 3 Bước Sử Dụng Blogger Studio Pro</h3>
+          </div>
+          <button id="btnCloseOnboarding" class="btn-close">&times;</button>
+        </div>
+        <div class="modal-body onboarding-body">
+          <p class="onboarding-desc">
+            Blogger AI Studio Pro giúp bạn <b>tạo bài viết chuẩn SEO, thiết kế bảng giá, FAQ và đẩy thẳng vào Blogger</b> mà không lo bị lỗi định dạng hay cần cấu hình Google Cloud API phức tạp.
+          </p>
+
+          <div class="onboarding-steps-grid">
+            <!-- STEP 1 -->
+            <div class="onboarding-step-card">
+              <div class="step-badge">Bước 1</div>
+              <div class="step-icon"><i class="fa-brands fa-chrome"></i></div>
+              <h4>Mở Trình Duyệt Blogger</h4>
+              <p>Bấm nút <b>"Mở Trình Duyệt Blogger"</b> ở góc trên bên phải. Hệ thống sẽ mở một cửa sổ Chrome riêng biệt để đồng bộ an toàn, không làm đóng các tab bạn đang duyệt dở.</p>
+            </div>
+
+            <!-- STEP 2 -->
+            <div class="onboarding-step-card">
+              <div class="step-badge">Bước 2</div>
+              <div class="step-icon"><i class="fa-solid fa-user-check"></i></div>
+              <h4>Đăng Nhập 1 Lần Duy Nhất</h4>
+              <p>Trên cửa sổ Chrome vừa mở, đăng nhập tài khoản Google Blogger của bạn. Trình duyệt sẽ <b>ghi nhớ phiên đăng nhập vĩnh viễn</b>, những lần sau bạn không cần đăng nhập lại nữa.</p>
+            </div>
+
+            <!-- STEP 3 -->
+            <div class="onboarding-step-card">
+              <div class="step-badge">Bước 3</div>
+              <div class="step-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+              <h4>Viết Bài &amp; Xuất Bản</h4>
+              <p>Nhập tiêu đề, bấm <b>"Tự Động Sinh Mã"</b>. Kiểm tra link SEO, xem trước trên Desktop/Mobile rồi bấm <b>"Đẩy Lên Blogger"</b> để cập nhật hoặc xuất bản bài mới!</p>
+            </div>
+          </div>
+
+          <div class="onboarding-tips-box">
+            <i class="fa-solid fa-lightbulb"></i>
+            <div>
+              <b>Mẹo hay:</b> Bạn có thể bấm vào huy hiệu trạng thái ở góc trên để kiểm tra kết nối trình duyệt bất kỳ lúc nào, hoặc bấm nút <b>"Quản Lý Trang &amp; Bài Viết"</b> để sửa bài viết cũ.
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer onboarding-footer">
+          <label class="chk-remember-label">
+            <input type="checkbox" id="chkDoNotShowGuide">
+            <span>Không tự động hiển thị lại khi mở trang</span>
+          </label>
+          <button id="btnFinishGuide" class="btn-primary">
+            <i class="fa-solid fa-check"></i> Tôi Đã Hiểu - Bắt Đầu Ngay
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: THÊM BLOG ID MỚI -->
+    <div id="addBlogModal" class="modal-overlay">
+      <div class="modal-box modal-box-sm">
+        <div class="modal-header">
+          <h3><i class="fa-solid fa-circle-plus"></i> Thêm Blog Blogger Để Quản Lý</h3>
+          <button id="btnCloseAddBlog" class="btn-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="newBlogName">Tên gợi nhớ (Ví dụ: Lữ Việt Travel, Blog Vệ Tinh 1):</label>
+            <input type="text" id="newBlogName" class="input-text" placeholder="Nhập tên Blog...">
+          </div>
+          <div class="form-group">
+            <label for="newBlogId">Mã Blog ID (Dãy số trên URL Blogger):</label>
+            <input type="text" id="newBlogId" class="input-text" placeholder="Ví dụ: 1444221897689962852">
+            <p class="field-hint">💡 Cách lấy: Vào trang quản trị Blogger, xem trên thanh địa chỉ: <code>blogger.com/blog/pages/<b>[MÃ_SỐ_NÀY]</b></code></p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="btnCancelAddBlog" class="btn-secondary">Hủy</button>
+          <button id="btnSaveNewBlog" class="btn-primary">
+            <i class="fa-solid fa-floppy-disk"></i> Lưu Blog
           </button>
         </div>
       </div>

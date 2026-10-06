@@ -4,9 +4,11 @@
 
 document.addEventListener("DOMContentLoaded", () => {
   // Elements
+  // Elements
   const connectionBadge = document.getElementById("connectionBadge");
   const btnRefreshStatus = document.getElementById("btnRefreshStatus");
   const btnLaunchChrome = document.getElementById("btnLaunchChrome");
+  const btnOpenGuide = document.getElementById("btnOpenGuide");
   const btnGenerateAI = document.getElementById("btnGenerateAI");
   const htmlEditor = document.getElementById("htmlEditor");
   const previewFrame = document.getElementById("previewFrame");
@@ -33,8 +35,119 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnApplySelected = document.getElementById("btnApplySelected");
   const toastContainer = document.getElementById("toastContainer");
 
+  // Blog Manager & Onboarding Elements
+  const blogSelector = document.getElementById("blogSelector");
+  const btnAddBlog = document.getElementById("btnAddBlog");
+  const addBlogModal = document.getElementById("addBlogModal");
+  const btnCloseAddBlog = document.getElementById("btnCloseAddBlog");
+  const btnCancelAddBlog = document.getElementById("btnCancelAddBlog");
+  const btnSaveNewBlog = document.getElementById("btnSaveNewBlog");
+  const newBlogName = document.getElementById("newBlogName");
+  const newBlogId = document.getElementById("newBlogId");
+
+  const onboardingModal = document.getElementById("onboardingModal");
+  const btnCloseOnboarding = document.getElementById("btnCloseOnboarding");
+  const btnFinishGuide = document.getElementById("btnFinishGuide");
+  const chkDoNotShowGuide = document.getElementById("chkDoNotShowGuide");
+
   let selectedItem = null;
   let currentModalType = "pages";
+
+  // 0. Multi-Blog Manager
+  function getSavedBlogs() {
+    try {
+      const saved = localStorage.getItem("bloggerStudio_blogs");
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return [
+      { id: "1444221897689962852", name: "Lữ Việt Travel (Chính)" }
+    ];
+  }
+
+  function renderBlogSelector() {
+    if (!blogSelector) return;
+    const blogs = getSavedBlogs();
+    const currentVal = localStorage.getItem("bloggerStudio_active_blog") || blogs[0].id;
+    blogSelector.innerHTML = "";
+    blogs.forEach(b => {
+      const opt = document.createElement("option");
+      opt.value = b.id;
+      opt.textContent = `${b.name} (${b.id.slice(-4)})`;
+      if (b.id === currentVal) opt.selected = true;
+      blogSelector.appendChild(opt);
+    });
+  }
+
+  function getActiveBlogId() {
+    return blogSelector ? blogSelector.value : "1444221897689962852";
+  }
+
+  if (blogSelector) {
+    blogSelector.addEventListener("change", () => {
+      localStorage.setItem("bloggerStudio_active_blog", blogSelector.value);
+      showToast(`Đã chuyển sang quản lý Blog: ${blogSelector.options[blogSelector.selectedIndex].text}`, "info");
+      checkStatus();
+    });
+  }
+
+  if (btnAddBlog) {
+    btnAddBlog.addEventListener("click", () => {
+      if (newBlogName) newBlogName.value = "";
+      if (newBlogId) newBlogId.value = "";
+      addBlogModal.classList.add("active");
+    });
+  }
+
+  if (btnCloseAddBlog) btnCloseAddBlog.addEventListener("click", () => addBlogModal.classList.remove("active"));
+  if (btnCancelAddBlog) btnCancelAddBlog.addEventListener("click", () => addBlogModal.classList.remove("active"));
+
+  if (btnSaveNewBlog) {
+    btnSaveNewBlog.addEventListener("click", () => {
+      const name = newBlogName.value.trim();
+      const id = newBlogId.value.trim();
+      if (!name || !id) {
+        showToast("Vui lòng nhập đầy đủ tên và mã Blog ID!", "error");
+        return;
+      }
+      const blogs = getSavedBlogs();
+      blogs.push({ id, name });
+      localStorage.setItem("bloggerStudio_blogs", JSON.stringify(blogs));
+      localStorage.setItem("bloggerStudio_active_blog", id);
+      renderBlogSelector();
+      addBlogModal.classList.remove("active");
+      showToast(`Đã thêm thành công Blog [${name}]!`, "success");
+    });
+  }
+
+  renderBlogSelector();
+
+  // 0.1 Onboarding Guide Logic
+  function checkOnboarding() {
+    const hasSeen = localStorage.getItem("bloggerStudio_seen_guide");
+    if (!hasSeen && onboardingModal) {
+      setTimeout(() => {
+        onboardingModal.classList.add("active");
+      }, 700);
+    }
+  }
+
+  function closeOnboarding() {
+    if (onboardingModal) onboardingModal.classList.remove("active");
+    if (chkDoNotShowGuide && chkDoNotShowGuide.checked) {
+      localStorage.setItem("bloggerStudio_seen_guide", "true");
+    }
+  }
+
+  if (btnOpenGuide) {
+    btnOpenGuide.addEventListener("click", () => {
+      if (onboardingModal) onboardingModal.classList.add("active");
+    });
+  }
+
+  if (btnCloseOnboarding) btnCloseOnboarding.addEventListener("click", closeOnboarding);
+  if (btnFinishGuide) btnFinishGuide.addEventListener("click", closeOnboarding);
+
+  checkOnboarding();
 
   // 1. Toast Notification Helper
   function showToast(message, type = "info") {
@@ -58,31 +171,44 @@ document.addEventListener("DOMContentLoaded", () => {
       if (data.connected) {
         if (data.need_login) {
           connectionBadge.className = "connection-badge warning";
-          connectionBadge.innerHTML = `<span class="status-dot" style="background:#fbbf24;box-shadow:0 0 10px #fbbf24;"></span><span class="status-text" style="color:#fbbf24;">Chrome Chưa Đăng Nhập Blogger</span>`;
+          connectionBadge.innerHTML = `<span class="status-dot" style="background:#fbbf24;box-shadow:0 0 10px #fbbf24;"></span><span class="status-text" style="color:#fbbf24;">Chờ Đăng Nhập Blogger</span>`;
           if (btnLaunchChrome) {
             btnLaunchChrome.style.display = "inline-flex";
-            btnLaunchChrome.innerHTML = `<i class="fa-solid fa-arrows-rotate"></i> Dùng Tài Khoản Đang Có`;
-            btnLaunchChrome.onclick = () => launchChrome("restart");
+            btnLaunchChrome.innerHTML = `<i class="fa-solid fa-arrow-up-right-from-square"></i> Đăng Nhập Blogger`;
+            btnLaunchChrome.onclick = () => launchChrome("profile");
           }
         } else {
           connectionBadge.className = "connection-badge connected";
           const count = data.blogger_tabs ? data.blogger_tabs.length : 0;
-          connectionBadge.innerHTML = `<span class="status-dot"></span><span class="status-text">Chrome Đã Kết Nối (${count} tab Blogger)</span>`;
+          connectionBadge.innerHTML = `<span class="status-dot"></span><span class="status-text">Trình Duyệt Sẵn Sàng (${count} tab)</span>`;
           if (btnLaunchChrome) btnLaunchChrome.style.display = "none";
         }
       } else {
         connectionBadge.className = "connection-badge disconnected";
-        connectionBadge.innerHTML = `<span class="status-dot"></span><span class="status-text">Chrome Chưa Bật Port 9222</span>`;
+        connectionBadge.innerHTML = `<span class="status-dot"></span><span class="status-text">Trình Duyệt Chưa Mở</span>`;
         if (btnLaunchChrome) {
           btnLaunchChrome.style.display = "inline-flex";
-          btnLaunchChrome.innerHTML = `<i class="fa-brands fa-chrome"></i> Mở Chrome CDP`;
-          btnLaunchChrome.onclick = () => launchChrome("restart");
+          btnLaunchChrome.innerHTML = `<i class="fa-brands fa-chrome"></i> Mở Trình Duyệt Blogger`;
+          btnLaunchChrome.onclick = () => launchChrome("profile");
         }
       }
     } catch (e) {
       connectionBadge.className = "connection-badge disconnected";
       connectionBadge.innerHTML = `<span class="status-dot"></span><span class="status-text">Chưa Kết Nối Server</span>`;
     }
+  }
+
+  // Click on badge for friendly advice
+  if (connectionBadge) {
+    connectionBadge.addEventListener("click", () => {
+      if (connectionBadge.classList.contains("connected")) {
+        showToast("Trình duyệt Blogger đang kết nối rất tốt!", "success");
+      } else if (connectionBadge.classList.contains("warning")) {
+        showToast("Cửa sổ Chrome đang mở trang đăng nhập Google. Hãy nhập mật khẩu trên cửa sổ đó nhé!", "info");
+      } else {
+        launchChrome("profile");
+      }
+    });
   }
 
   async function launchChrome(mode = "restart") {
@@ -234,12 +360,35 @@ document.addEventListener("DOMContentLoaded", () => {
     doc.close();
   }
 
+  // Helper to sync current draft to server for companion tools/extension
+  async function syncDraftToServer() {
+    try {
+      const title = postTitle ? postTitle.value : "";
+      const html = htmlEditor ? htmlEditor.value : "";
+      const desc = postDesc ? postDesc.value : "";
+      const tType = document.querySelector('input[name="targetType"]:checked')?.value || "page";
+      const labels = postLabels ? postLabels.value : "";
+      await fetch("/api/draft", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title,
+          content_html: html,
+          search_desc: desc,
+          labels,
+          target_type: tType
+        })
+      });
+    } catch (e) {}
+  }
+
   let auditDebounce = null;
   htmlEditor.addEventListener("input", () => {
     updatePreview();
     clearTimeout(auditDebounce);
     auditDebounce = setTimeout(() => {
       auditSeoLinks(htmlEditor.value);
+      syncDraftToServer();
     }, 600);
   });
 
@@ -278,6 +427,7 @@ document.addEventListener("DOMContentLoaded", () => {
           updateDescCounter();
         }
 
+        syncDraftToServer();
         showToast("Đã sinh mã giao diện LuViet thành công!", "success");
 
         // Switch to Code Tab to view
@@ -562,7 +712,8 @@ document.addEventListener("DOMContentLoaded", () => {
     selectedItem = null;
 
     try {
-      const res = await fetch(`/api/blogger/items?type=${type}`);
+      const currentBlogId = getActiveBlogId();
+      const res = await fetch(`/api/blogger/items?type=${type}&blog_id=${currentBlogId}`);
       const data = await res.json();
       if (data.success && data.items) {
         modalItemCount.innerText = `Tìm thấy ${data.items.length} mục`;
@@ -717,7 +868,7 @@ document.addEventListener("DOMContentLoaded", () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          blog_id: "1444221897689962852",
+          blog_id: getActiveBlogId(),
           target_type: targetType,
           target_id: targetId,
           title,
