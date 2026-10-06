@@ -97,4 +97,4 @@ blogger-auto-cloud/
 ## 📞 Hỗ Trợ Kỹ Thuật
 - **Đơn vị phát triển**: LuViet Solution Suite
 - **Hotline / Zalo**: `0914.878.680`
-- **Chủ sở hữu**: Trần Minh Thuận (`thuantranblog@gmail.com`)
+- **Chủ sở hữu**: Trần Minh Thuấn (`thuantranblog@gmail.com`)

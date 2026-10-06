@@ -7,7 +7,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, FileResponse
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Union
 import os
 import uvicorn
 
@@ -19,11 +19,20 @@ app = FastAPI(title="Blogger AI Studio Pro", description="Trợ lý tự động
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(BASE_DIR, "static")
 
+def normalize_keywords(kw: Union[List[str], str, None]) -> List[str]:
+    if not kw:
+        return []
+    if isinstance(kw, list):
+        return [str(k).strip() for k in kw if str(k).strip()]
+    if isinstance(kw, str):
+        return [k.strip() for k in kw.split(",") if k.strip()]
+    return []
+
 # Models
 class GenerateRequest(BaseModel):
     page_type: str  # 'service' | 'guide' | 'sales' | 'article'
     title: str
-    keywords: Optional[List[str]] = []
+    keywords: Optional[Union[List[str], str]] = []
 
 class PublishRequest(BaseModel):
     blog_id: str = "1444221897689962852"
@@ -32,7 +41,7 @@ class PublishRequest(BaseModel):
     title: str
     content_html: str
     search_desc: Optional[str] = ""
-    labels: Optional[List[str]] = []
+    labels: Optional[Union[List[str], str]] = []
     port: int = 9222
 
 class SaveFileRequest(BaseModel):
@@ -61,20 +70,45 @@ def get_blogger_items(blog_id: str = "1444221897689962852", type: str = "pages",
     res = blogger_automation.get_items_list(blog_id=blog_id, item_type=type, port=port)
     return res
 
+class SeoDescRequest(BaseModel):
+    title: str
+    keywords: Optional[Union[List[str], str]] = []
+    page_type: Optional[str] = "service"
+    content_html: Optional[str] = ""
+
+@app.post("/api/generate-seo-desc")
+def generate_seo_desc_endpoint(req: SeoDescRequest):
+    kw_list = normalize_keywords(req.keywords)
+    desc = templates.generate_seo_description(
+        title=req.title,
+        keywords=kw_list,
+        page_type=req.page_type,
+        content_html=req.content_html
+    )
+    return {"success": True, "description": desc, "length": len(desc)}
+
 @app.post("/api/generate")
 def generate_content(req: GenerateRequest):
     try:
+        kw_list = normalize_keywords(req.keywords)
         html = templates.generate_page_or_post(
             page_type=req.page_type,
             title=req.title,
-            keywords=req.keywords
+            keywords=kw_list
         )
-        return {"success": True, "html": html}
+        desc = templates.generate_seo_description(
+            title=req.title,
+            keywords=kw_list,
+            page_type=req.page_type,
+            content_html=html
+        )
+        return {"success": True, "html": html, "search_desc": desc}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/publish")
 def publish_to_blogger(req: PublishRequest):
+    labels_list = normalize_keywords(req.labels)
     res = blogger_automation.push_to_blogger(
         blog_id=req.blog_id,
         target_type=req.target_type,
@@ -82,7 +116,7 @@ def publish_to_blogger(req: PublishRequest):
         title=req.title,
         content_html=req.content_html,
         search_desc=req.search_desc,
-        labels=req.labels,
+        labels=labels_list,
         port=req.port
     )
     return res

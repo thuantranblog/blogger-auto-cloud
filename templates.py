@@ -683,6 +683,51 @@ def generate_faq_component(faqs):
   </div>
 """
 
+def generate_seo_description(title, keywords=None, page_type="service", content_html=""):
+    """
+    Tự động sinh mô tả tìm kiếm (Search Description) chuẩn SEO Google & Blogger (130 - 148 ký tự).
+    Chứa từ khóa chính, lợi ích cốt lõi và lời kêu gọi hành động (CTA) kích thích CTR.
+    Không bị ngắt cụt chữ giữa chừng, đảm bảo câu văn hoàn chỉnh và tự nhiên.
+    """
+    clean_title = title.strip().replace('"', '').replace("'", "")
+    
+    if page_type == "sales":
+        benefit = "giao diện bán hàng chuẩn CRO, tích hợp VietQR và chuẩn SEO Top Google."
+        cta = "Xem ngay ưu đãi LuViet!"
+    elif page_type == "guide":
+        benefit = "hướng dẫn từng bước từ A-Z, thao tác chuẩn kỹ thuật và dễ hiểu."
+        cta = "Khám phá cẩm nang ngay!"
+    elif page_type == "article":
+        benefit = "phân tích chuyên sâu, bí quyết thực chiến và giải pháp chuẩn SEO."
+        cta = "Xem bài viết chi tiết!"
+    else:  # service
+        benefit = "chuẩn SEO Top Google, tốc độ cao, tương thích di động hoàn hảo."
+        cta = "Hotline/Zalo 0914878680 tư vấn ngay!"
+
+    # Thử ráp câu đầy đủ
+    desc = f"{clean_title}: {benefit.capitalize()} {cta}"
+    
+    # Nếu vượt quá 148 ký tự, rút ngắn tiêu đề theo ranh giới từ nguyên vẹn
+    if len(desc) > 148:
+        max_title_len = 148 - len(f": {benefit.capitalize()} {cta}")
+        if max_title_len >= 20:
+            words = clean_title.split()
+            trunc_title = ""
+            for w in words:
+                if len(trunc_title + " " + w) <= max_title_len - 3:
+                    trunc_title = (trunc_title + " " + w).strip()
+                else:
+                    break
+            desc = f"{trunc_title}...: {benefit.capitalize()} {cta}"
+        else:
+            # Rút gọn câu ngắn
+            desc = f"{clean_title[:50].rsplit(' ', 1)[0]}...: Chuẩn SEO Top Google, giao diện di động mượt mà. Hotline/Zalo 0914878680!"
+
+    if len(desc) > 150:
+        desc = desc[:147].rsplit(" ", 1)[0] + "..."
+        
+    return desc
+
 def generate_page_or_post(page_type, title, keywords=None, outline_items=None):
     """
     Tạo nội dung HTML trọn gói chuẩn Blogger theo từng loại hình trang/bài viết.

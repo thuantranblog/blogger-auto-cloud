@@ -57,20 +57,22 @@ def launch_chrome_cdp(mode="profile", port=9222, target_url="https://www.blogger
     if not chrome_path:
         return {"success": False, "error": "Không tìm thấy file chrome.exe trên hệ thống. Vui lòng cài đặt Google Chrome."}
 
-    # Nếu port đã mở sẵn
-    ok, _ = is_cdp_available(port)
-    if ok:
-        return {"success": True, "message": f"Chrome CDP đã sẵn sàng trên cổng {port}."}
-
     try:
         if mode == "restart":
-            # Đóng tất cả process chrome đang chạy để mở lại với port 9222
+            # Đóng tất cả process chrome đang chạy để mở lại với port 9222 bằng default profile
             subprocess.run(["taskkill", "/F", "/IM", "chrome.exe"], capture_output=True)
-            time.sleep(1)
-            cmd = [chrome_path, f"--remote-debugging-port={port}", target_url]
+            time.sleep(1.5)
+            cmd = [
+                chrome_path,
+                f"--remote-debugging-port={port}",
+                target_url
+            ]
             subprocess.Popen(cmd)
         else:
-            # Dùng profile riêng biệt
+            # Nếu port đã mở sẵn ở profile riêng
+            if is_port_open("127.0.0.1", port):
+                return {"success": True, "message": f"Chrome CDP đã sẵn sàng trên cổng {port}."}
+
             profile_dir = os.path.expandvars(r"%LOCALAPPDATA%\Google\Chrome\BloggerStudioProfile")
             os.makedirs(profile_dir, exist_ok=True)
             cmd = [
@@ -83,8 +85,8 @@ def launch_chrome_cdp(mode="profile", port=9222, target_url="https://www.blogger
             ]
             subprocess.Popen(cmd)
 
-        # Chờ tối đa 4 giây để port sẵn sàng
-        for _ in range(8):
+        # Chờ tối đa 5 giây để port sẵn sàng
+        for _ in range(10):
             time.sleep(0.5)
             if is_port_open("127.0.0.1", port):
                 return {
@@ -95,7 +97,7 @@ def launch_chrome_cdp(mode="profile", port=9222, target_url="https://www.blogger
 
         return {
             "success": True,
-            "message": f"Đã gửi lệnh khởi động Chrome trên cổng {port}. Vui lòng chờ vài giây để cửa sổ mở hoàn tất.",
+            "message": f"Đã gửi lệnh khởi động Chrome trên cổng {port}. Vui lòng kiểm tra cửa sổ trình duyệt.",
             "mode": mode
         }
     except Exception as e:
@@ -107,15 +109,19 @@ def get_active_browser_info(port=9222):
         return {"connected": False, "error": data}
     
     blogger_tabs = []
+    need_login = False
     if isinstance(data, list):
         for item in data:
             url = item.get("url", "")
             title = item.get("title", "")
-            if "blogger.com" in url or "luviet.com" in url:
+            if "accounts.google.com" in url or "ServiceLogin" in url:
+                need_login = True
+            if "blogger.com" in url or "luviet.com" in url or "accounts.google.com" in url:
                 blogger_tabs.append({"id": item.get("id"), "title": title, "url": url})
             
     return {
         "connected": True,
+        "need_login": need_login,
         "total_tabs": len(data) if isinstance(data, list) else 0,
         "blogger_tabs": blogger_tabs
     }
@@ -140,42 +146,73 @@ def get_items_list(blog_id="1444221897689962852", item_type="pages", port=9222):
             browser = p.chromium.connect_over_cdp(f"http://127.0.0.1:{port}")
             context = browser.contexts[0]
             
-            # Ưu tiên tái sử dụng tab Blogger đang mở
+            # Ưu tiên tái sử dụng tab Blogger hoặc tab đăng nhập đang mở
             page = None
             for p_tab in context.pages:
-                if f"/blog/{item_type}/{blog_id}" in p_tab.url or "blogger.com" in p_tab.url:
+                u = p_tab.url
+                if f"/blog/{item_type}/{blog_id}" in u or "blogger.com" in u or "accounts.google.com" in u:
                     page = p_tab
                     break
             if not page:
                 page = context.pages[0] if context.pages else context.new_page()
 
+            # Điều hướng đến target_url nếu chưa ở đó
             if target_url not in page.url:
                 page.goto(target_url, wait_until="domcontentloaded", timeout=15000)
                 time.sleep(2)
 
-            # Chờ bảng danh sách tải
-            try:
-                page.wait_for_selector('a[href*="/edit/"]', timeout=5000)
-            except Exception:
-                pass
+            # Kiểm tra trạng thái đăng nhập hoặc chờ bảng danh sách tải (tối đa 10 giây)
+            for _ in range(12):
+                current_url = page.url
+                if "accounts.google.com" in current_url or "ServiceLogin" in current_url or "signin/identifier" in current_url:
+                    return {
+                        "success": False,
+                        "need_login": True,
+                        "error": "Cửa sổ Chrome chưa đăng nhập tài khoản Google. Vui lòng chuyển sang cửa sổ Chrome đang mở và đăng nhập vào tài khoản Blogger của bạn, sau đó bấm 'Thử Lại'.",
+                        "items": []
+                    }
+                
+                # Kiểm tra xem danh sách đã xuất hiện trong DOM chưa
+                has_items = page.evaluate('''([itemType]) => {
+                    const selector = `a[href*="/${itemType === 'pages' ? 'page' : 'post'}/edit/"], a[href*="/edit/"]`;
+                    return document.querySelectorAll(selector).length > 0;
+                }''', [item_type])
+                
+                if has_items:
+                    break
+                time.sleep(0.8)
 
-            # Extract items from page list
+            # Lần kiểm tra cuối cùng xem có bị redirect sang login không
+            if "accounts.google.com" in page.url or "ServiceLogin" in page.url:
+                return {
+                    "success": False,
+                    "need_login": True,
+                    "error": "Cửa sổ Chrome chưa đăng nhập tài khoản Google. Vui lòng chuyển sang cửa sổ Chrome đang mở và đăng nhập vào tài khoản Blogger của bạn, sau đó bấm 'Thử Lại'.",
+                    "items": []
+                }
+
+            # Trích xuất dữ liệu bài viết / trang
             items = page.evaluate('''([itemType]) => {
                 const results = [];
                 const editRegex = new RegExp(`/(page|post)/edit/\\\\d+/(\\\\d+)`);
-                const editLinks = document.querySelectorAll(`a[href*="/${itemType === 'pages' ? 'page' : 'post'}/edit/"]`);
+                const selector = `a[href*="/${itemType === 'pages' ? 'page' : 'post'}/edit/"], a[href*="/edit/"]`;
+                const editLinks = document.querySelectorAll(selector);
                 
                 editLinks.forEach(a => {
-                    const href = a.getAttribute('href') || '';
+                    const href = a.getAttribute('href') || a.href || '';
                     const m = href.match(editRegex);
                     if (m && m[2]) {
                         const id = m[2];
                         let title = a.innerText.trim();
                         if (!title) {
-                            const row = a.closest('div[role="row"]') || a.closest('.IL5y5c') || a.parentElement;
-                            title = row ? row.innerText.split('\\n')[0].trim() : '';
+                            const row = a.closest('div[role="row"]') || a.closest('.IL5y5c') || a.closest('.W4rOsd') || a.parentElement;
+                            if (row) {
+                                const titleEl = row.querySelector('.W4rOsd, [data-title], [role="heading"]') || row;
+                                title = titleEl.innerText.split('\\n')[0].trim();
+                            }
                         }
-                        if (title && !results.some(r => r.id === id)) {
+                        if (!title) title = `(Mục ID: ${id})`;
+                        if (!results.some(r => r.id === id)) {
                             results.push({ id, title, href });
                         }
                     }
@@ -211,10 +248,9 @@ def push_to_blogger(blog_id="1444221897689962852", target_type="page", target_id
             browser = p.chromium.connect_over_cdp(f"http://127.0.0.1:{port}")
             context = browser.contexts[0]
             
-            # Ưu tiên tái sử dụng tab Blogger đang mở
             page = None
             for p_tab in context.pages:
-                if f"/blog/{target_type}/" in p_tab.url or "blogger.com" in p_tab.url:
+                if f"/blog/{target_type}/" in p_tab.url or "blogger.com" in p_tab.url or "accounts.google.com" in p_tab.url:
                     page = p_tab
                     break
             if not page:
@@ -222,6 +258,14 @@ def push_to_blogger(blog_id="1444221897689962852", target_type="page", target_id
 
             page.goto(edit_url, wait_until="domcontentloaded", timeout=20000)
             time.sleep(2.5)
+
+            # Kiểm tra xem có bị bắt đăng nhập không
+            if "accounts.google.com" in page.url or "ServiceLogin" in page.url:
+                return {
+                    "success": False,
+                    "need_login": True,
+                    "error": "Cửa sổ Chrome chưa đăng nhập tài khoản Google. Vui lòng đăng nhập Blogger trên Chrome trước khi đăng bài."
+                }
 
             # 1. Update Title
             if title:
@@ -255,33 +299,83 @@ def push_to_blogger(blog_id="1444221897689962852", target_type="page", target_id
             if not cm_res:
                 return {"success": False, "error": "Không tìm thấy trình biên tập HTML (CodeMirror) trên trang Blogger."}
 
-            # 4. Search Description
+            # 4. Search Description (Mô tả tìm kiếm - Max 150 ký tự, hỗ trợ id="c12" và dynamic controls)
             if search_desc:
                 try:
-                    desc_btn = page.locator('div[jsname="HSrbLb"]:has-text("Mô tả tìm kiếm")').first
-                    if desc_btn.is_visible():
-                        desc_ta = page.locator('textarea[aria-label="Mô tả tìm kiếm"]').first
-                        if not desc_ta.is_visible():
-                            desc_btn.click()
-                            time.sleep(0.5)
-                        if desc_ta.is_visible():
-                            desc_ta.fill(search_desc)
-                except Exception:
-                    pass
+                    clean_desc = search_desc.strip()[:150]
+                    page.evaluate('''([desc]) => {
+                        const allBtns = Array.from(document.querySelectorAll('div[jsname="HSrbLb"]'));
+                        const descBtn = allBtns.find(b => b.innerText && b.innerText.includes("Mô tả tìm kiếm"));
+                        if (descBtn) {
+                            if (descBtn.getAttribute('aria-expanded') !== 'true') {
+                                descBtn.click();
+                            }
+                            const regionId = descBtn.getAttribute('aria-controls') || 'c12';
+                            const region = document.getElementById(regionId) || descBtn.closest('.mT05K');
+                            if (region) {
+                                const ta = region.querySelector('textarea');
+                                if (ta) {
+                                    ta.focus();
+                                    ta.value = desc;
+                                    ta.dispatchEvent(new Event('input', { bubbles: true }));
+                                    ta.dispatchEvent(new Event('change', { bubbles: true }));
+                                    ta.blur();
+                                    return true;
+                                }
+                            }
+                        }
+                        const fallbackTa = document.querySelector('textarea[aria-label*="mô tả tìm kiếm" i], textarea[aria-label*="Mô tả tìm kiếm"]');
+                        if (fallbackTa) {
+                            fallbackTa.focus();
+                            fallbackTa.value = desc;
+                            fallbackTa.dispatchEvent(new Event('input', { bubbles: true }));
+                            fallbackTa.dispatchEvent(new Event('change', { bubbles: true }));
+                            fallbackTa.blur();
+                            return true;
+                        }
+                        return false;
+                    }''', [clean_desc])
+                except Exception as e:
+                    print("Lỗi điền search_desc:", e)
 
-            # 5. Labels (if target_type == 'post' and labels provided)
+            # 5. Labels (Nhãn bài viết - Hỗ trợ id="c8" và textarea[aria-label="Phân tách các nhãn bằng dấu phẩy"])
             if target_type == 'post' and labels:
                 try:
-                    lbl_btn = page.locator('div[jsname="HSrbLb"]:has-text("Nhãn")').first
-                    if lbl_btn.is_visible():
-                        lbl_inp = page.locator('textarea[aria-label="Nhãn"], input[aria-label="Nhãn"]').first
-                        if not lbl_inp.is_visible():
-                            lbl_btn.click()
-                            time.sleep(0.5)
-                        if lbl_inp.is_visible():
-                            lbl_inp.fill(", ".join(labels) if isinstance(labels, list) else labels)
-                except Exception:
-                    pass
+                    labels_str = ", ".join(labels) if isinstance(labels, list) else str(labels)
+                    page.evaluate('''([lblText]) => {
+                        const allBtns = Array.from(document.querySelectorAll('div[jsname="HSrbLb"]'));
+                        const lblBtn = allBtns.find(b => b.innerText && b.innerText.includes("Nhãn"));
+                        if (lblBtn) {
+                            if (lblBtn.getAttribute('aria-expanded') !== 'true') {
+                                lblBtn.click();
+                            }
+                            const regionId = lblBtn.getAttribute('aria-controls') || 'c8';
+                            const region = document.getElementById(regionId) || lblBtn.closest('.mT05K');
+                            if (region) {
+                                const ta = region.querySelector('textarea');
+                                if (ta) {
+                                    ta.focus();
+                                    ta.value = lblText;
+                                    ta.dispatchEvent(new Event('input', { bubbles: true }));
+                                    ta.dispatchEvent(new Event('change', { bubbles: true }));
+                                    ta.blur();
+                                    return true;
+                                }
+                            }
+                        }
+                        const fallbackTa = document.querySelector('textarea[aria-label*="dấu phẩy" i], textarea[aria-label*="Nhãn"]');
+                        if (fallbackTa) {
+                            fallbackTa.focus();
+                            fallbackTa.value = lblText;
+                            fallbackTa.dispatchEvent(new Event('input', { bubbles: true }));
+                            fallbackTa.dispatchEvent(new Event('change', { bubbles: true }));
+                            fallbackTa.blur();
+                            return true;
+                        }
+                        return false;
+                    }''', [labels_str])
+                except Exception as e:
+                    print("Lỗi điền nhãn:", e)
 
             time.sleep(1)
 
