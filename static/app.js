@@ -1,0 +1,603 @@
+/**
+ * app.js - Blogger AI Studio Pro Frontend Engine
+ */
+
+document.addEventListener("DOMContentLoaded", () => {
+  // Elements
+  const connectionBadge = document.getElementById("connectionBadge");
+  const btnRefreshStatus = document.getElementById("btnRefreshStatus");
+  const btnLaunchChrome = document.getElementById("btnLaunchChrome");
+  const btnGenerateAI = document.getElementById("btnGenerateAI");
+  const htmlEditor = document.getElementById("htmlEditor");
+  const previewFrame = document.getElementById("previewFrame");
+  const deviceContainer = document.getElementById("deviceContainer");
+  const postTitle = document.getElementById("postTitle");
+  const pageType = document.getElementById("pageType");
+  const postKeywords = document.getElementById("postKeywords");
+  const postDesc = document.getElementById("postDesc");
+  const postLabels = document.getElementById("postLabels");
+  const labelsGroup = document.getElementById("labelsGroup");
+  const btnCopyCode = document.getElementById("btnCopyCode");
+  const btnSaveLocal = document.getElementById("btnSaveLocal");
+  const btnSyncBlogger = document.getElementById("btnSyncBlogger");
+  const bloggerModal = document.getElementById("bloggerModal");
+  const btnCloseModal = document.getElementById("btnCloseModal");
+  const btnCancelModal = document.getElementById("btnCancelModal");
+  const btnTabModalPages = document.getElementById("btnTabModalPages");
+  const btnTabModalPosts = document.getElementById("btnTabModalPosts");
+  const modalItemList = document.getElementById("modalItemList");
+  const modalItemCount = document.getElementById("modalItemCount");
+  const btnApplySelected = document.getElementById("btnApplySelected");
+  const toastContainer = document.getElementById("toastContainer");
+
+  let selectedItem = null;
+  let currentModalType = "pages";
+
+  // 1. Toast Notification Helper
+  function showToast(message, type = "info") {
+    const toast = document.createElement("div");
+    toast.className = `toast ${type}`;
+    const icon = type === "success" ? "fa-circle-check" : type === "error" ? "fa-circle-exclamation" : "fa-circle-info";
+    toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${message}</span>`;
+    toastContainer.appendChild(toast);
+    setTimeout(() => {
+      toast.style.opacity = "0";
+      toast.style.transform = "translateX(30px)";
+      setTimeout(() => toast.remove(), 300);
+    }, 3500);
+  }
+
+  // 2. Check & Launch Chrome CDP
+  async function checkStatus() {
+    try {
+      const res = await fetch("/api/status");
+      const data = await res.json();
+      if (data.connected) {
+        connectionBadge.className = "connection-badge connected";
+        const count = data.blogger_tabs ? data.blogger_tabs.length : 0;
+        connectionBadge.innerHTML = `<span class="status-dot"></span><span class="status-text">Chrome Đã Kết Nối (${count} tab Blogger)</span>`;
+        if (btnLaunchChrome) btnLaunchChrome.style.display = "none";
+      } else {
+        connectionBadge.className = "connection-badge disconnected";
+        connectionBadge.innerHTML = `<span class="status-dot"></span><span class="status-text">Chrome Chưa Bật Port 9222</span>`;
+        if (btnLaunchChrome) btnLaunchChrome.style.display = "inline-flex";
+      }
+    } catch (e) {
+      connectionBadge.className = "connection-badge disconnected";
+      connectionBadge.innerHTML = `<span class="status-dot"></span><span class="status-text">Chưa Kết Nối Server</span>`;
+    }
+  }
+
+  async function launchChrome(mode = "profile") {
+    showToast("Đang gửi lệnh khởi động Chrome CDP...", "info");
+    try {
+      const res = await fetch(`/api/launch-chrome?mode=${mode}`, { method: "POST" });
+      const data = await res.json();
+      if (data.success) {
+        showToast(data.message, "success");
+        setTimeout(checkStatus, 2000);
+      } else {
+        showToast("Lỗi mở Chrome: " + (data.error || "Không xác định"), "error");
+      }
+    } catch (e) {
+      showToast("Lỗi kết nối server: " + e.message, "error");
+    }
+  }
+
+  if (btnLaunchChrome) {
+    btnLaunchChrome.addEventListener("click", () => {
+      launchChrome("profile");
+    });
+  }
+
+  btnRefreshStatus.addEventListener("click", () => {
+    checkStatus();
+    showToast("Đã làm mới trạng thái kết nối Chrome.", "info");
+  });
+
+  // 3. Tab Switching
+  document.querySelectorAll(".tab").forEach((tab) => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".tab").forEach((t) => t.classList.remove("active"));
+      document.querySelectorAll(".tab-content").forEach((c) => c.classList.remove("active"));
+      tab.classList.add("active");
+      const target = document.getElementById(tab.dataset.tab);
+      if (target) target.classList.add("active");
+    });
+  });
+
+  // 4. Target Type Radio Switcher
+  document.querySelectorAll('input[name="targetType"]').forEach((radio) => {
+    radio.addEventListener("change", (e) => {
+      if (e.target.value === "post") {
+        labelsGroup.style.display = "block";
+      } else {
+        labelsGroup.style.display = "none";
+      }
+    });
+  });
+
+  // 5. Device Frame Switcher
+  document.querySelectorAll(".dev-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".dev-btn").forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      const dev = btn.dataset.device;
+      deviceContainer.className = `device-container ${dev}`;
+    });
+  });
+
+  // 6. Update Preview Frame
+  function updatePreview() {
+    const html = htmlEditor.value;
+    const doc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+    doc.open();
+    doc.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+        <style>
+          body { margin: 0; padding: 20px 10px; background: #f1f5f9; }
+        </style>
+      </head>
+      <body>
+        ${html}
+      </body>
+      </html>
+    `);
+    doc.close();
+  }
+
+  htmlEditor.addEventListener("input", updatePreview);
+
+  // 7. Generate AI Content
+  btnGenerateAI.addEventListener("click", async () => {
+    const title = postTitle.value.trim();
+    if (!title) {
+      showToast("Vui lòng nhập tiêu đề bài viết!", "error");
+      return;
+    }
+
+    const type = pageType.value;
+    const kwText = postKeywords.value.trim();
+    const keywords = kwText ? kwText.split(",").map((k) => k.trim()) : [];
+
+    btnGenerateAI.disabled = true;
+    btnGenerateAI.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Đang Tạo Giao Diện & Nội Dung...`;
+
+    try {
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ page_type: type, title, keywords }),
+      });
+      const data = await res.json();
+      if (data.success && data.html) {
+        htmlEditor.value = data.html;
+        updatePreview();
+
+        if (!postDesc.value) {
+          postDesc.value = `${title} - Giải pháp thiết kế website chuyên nghiệp, chuẩn SEO Google, tối ưu chuyển đổi và tương thích di động hoàn hảo cùng LuViet.`;
+        }
+
+        showToast("Đã sinh mã giao diện LuViet thành công!", "success");
+
+        // Switch to Code Tab to view
+        document.querySelector('.tab[data-tab="codeTab"]').click();
+      } else {
+        showToast(data.detail || "Không thể sinh mã giao diện.", "error");
+      }
+    } catch (err) {
+      showToast("Lỗi kết nối server: " + err.message, "error");
+    } finally {
+      btnGenerateAI.disabled = false;
+      btnGenerateAI.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i> Tự Động Sinh Mã Giao Diện Chuẩn LuViet`;
+    }
+  });
+
+  // 8. Copy Code
+  btnCopyCode.addEventListener("click", () => {
+    if (!htmlEditor.value) {
+      showToast("Chưa có mã HTML để sao chép!", "info");
+      return;
+    }
+    navigator.clipboard.writeText(htmlEditor.value).then(() => {
+      showToast("Đã sao chép mã HTML vào bộ nhớ tạm (Clipboard)!", "success");
+    });
+  });
+
+  // 9. Save Local File
+  btnSaveLocal.addEventListener("click", async () => {
+    const html = htmlEditor.value.trim();
+    if (!html) {
+      showToast("Chưa có nội dung để lưu!", "error");
+      return;
+    }
+
+    let defaultName = postTitle.value
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+    if (!defaultName) defaultName = "trang-moi";
+    defaultName += ".html";
+
+    const filename = prompt("Nhập tên file HTML muốn lưu (lưu vào Downloads):", defaultName);
+    if (!filename) return;
+
+    try {
+      const res = await fetch("/api/save-file", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ filename, content_html: html }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(`Đã lưu file: ${data.path}`, "success");
+      } else {
+        showToast("Lỗi khi lưu file: " + data.detail, "error");
+      }
+    } catch (e) {
+      showToast("Lỗi lưu file: " + e.message, "error");
+    }
+  });
+
+  // 10. Component Inserter
+  document.querySelectorAll(".comp-card").forEach((card) => {
+    card.addEventListener("click", () => {
+      const compType = card.dataset.comp;
+      let snippet = "";
+      if (compType === "pricing") {
+        snippet = `
+  <!-- BẢNG BÁO GIÁ DỊCH VỤ -->
+  <div class="lv-section-header">
+    <h3>Bảng Giá Dịch Vụ Trọn Gói</h3>
+    <p>Chi phí minh bạch 100% - Không phát sinh chi phí ẩn - Bàn giao trọn đời</p>
+  </div>
+  <div class="lv-pricing-grid">
+    <div class="lv-pricing-card">
+      <div class="lv-pricing-header">
+        <div class="lv-pricing-name">Gói Khởi Nghiệp</div>
+        <div class="lv-pricing-price">2.500.000đ</div>
+        <div class="lv-pricing-note">Phù hợp cá nhân, shop nhỏ</div>
+      </div>
+      <ul class="lv-pricing-features">
+        <li><i class="fa fa-check"></i> Đầy đủ tính năng bán hàng cơ bản</li>
+        <li><i class="fa fa-check"></i> Tối ưu tương thích di động</li>
+        <li><i class="fa fa-check"></i> Bàn giao trong 3 ngày</li>
+      </ul>
+      <a href="https://zalo.me/0914878680" class="lv-pricing-btn lv-btn-secondary">Chọn Gói Này</a>
+    </div>
+    <div class="lv-pricing-card featured">
+      <span class="lv-pricing-badge">Được Chọn Nhiều Nhất</span>
+      <div class="lv-pricing-header">
+        <div class="lv-pricing-name">Gói Chuyên Nghiệp</div>
+        <div class="lv-pricing-price">4.500.000đ</div>
+        <div class="lv-pricing-note">Dành cho cửa hàng kinh doanh bài bản</div>
+      </div>
+      <ul class="lv-pricing-features">
+        <li><i class="fa fa-check"></i> 1-Click Fast Checkout + Quét VietQR</li>
+        <li><i class="fa fa-check"></i> Tặng Tên miền .com + Hosting NVMe</li>
+        <li><i class="fa fa-check"></i> Tối ưu SEO Onpage chuyên sâu Top Google</li>
+      </ul>
+      <a href="https://zalo.me/0914878680" class="lv-pricing-btn lv-btn-primary">Chọn Gói Này</a>
+    </div>
+    <div class="lv-pricing-card">
+      <div class="lv-pricing-header">
+        <div class="lv-pricing-name">Gói VIP</div>
+        <div class="lv-pricing-price">7.500.000đ</div>
+        <div class="lv-pricing-note">Giải pháp doanh nghiệp mở rộng</div>
+      </div>
+      <ul class="lv-pricing-features">
+        <li><i class="fa fa-check"></i> May đo giao diện độc quyền</li>
+        <li><i class="fa fa-check"></i> Tích hợp full cổng thanh toán</li>
+        <li><i class="fa fa-check"></i> Hỗ trợ kỹ thuật 24/7 trọn đời</li>
+      </ul>
+      <a href="https://zalo.me/0914878680" class="lv-pricing-btn lv-btn-secondary">Chọn Gói VIP</a>
+    </div>
+  </div>
+`;
+      } else if (compType === "payment") {
+        snippet = `
+  <!-- THÔNG TIN TÀI KHOẢN THANH TOÁN -->
+  <div class="lv-payment-box">
+    <div class="lv-payment-grid">
+      <div>
+        <div style="font-weight: 800; font-size: 19px; color: #005a3c; margin-bottom: 12px;">
+          <i class="fa fa-university"></i> Vietcombank Chi Nhánh Đồng Nai
+        </div>
+        <p style="margin: 6px 0; font-size: 15px;">Chủ Tài Khoản: <strong>TRAN MINH THUAN</strong></p>
+        <p style="margin: 6px 0; font-size: 18px; color: #d43434; font-family: monospace;">STK: <strong>0121000679358</strong></p>
+        <p style="margin: 6px 0; font-size: 14px; color: #6d3990;">Nội dung: <strong>[Tên Dịch Vụ] + [Số Điện Thoại Zalo]</strong></p>
+      </div>
+      <div style="background: #fffbeb; border: 1px solid #fef3c7; border-radius: 8px; padding: 16px; font-size: 13.5px; color: #92400e;">
+        <strong><i class="fa fa-info-circle"></i> Xác Nhận Nhanh:</strong> Vui lòng chụp biên lai chuyển khoản gửi qua Zalo Hotline <strong>0914.878.680</strong> để được kích hoạt và hỗ trợ ngay trong 5 phút!
+      </div>
+    </div>
+  </div>
+`;
+      } else if (compType === "faq") {
+        snippet = `
+  <!-- FAQ ACCORDION -->
+  <div class="lv-section-header">
+    <h3>Câu Hỏi Thường Gặp</h3>
+    <p>Giải đáp nhanh những câu hỏi phổ biến của khách hàng</p>
+  </div>
+  <div class="lv-faq-list">
+    <div class="lv-faq-item active">
+      <div class="lv-faq-question" onclick="this.parentElement.classList.toggle('active')">
+        <span>1. Tôi có được hỗ trợ cài đặt và vận hành không?</span>
+        <i class="fa fa-chevron-down"></i>
+      </div>
+      <div class="lv-faq-answer">Có! Đội ngũ LuViet hỗ trợ hướng dẫn 1-1 và cài đặt từ xa qua Ultraview/AnyDesk miễn phí trọn đời.</div>
+    </div>
+    <div class="lv-faq-item">
+      <div class="lv-faq-question" onclick="this.parentElement.classList.toggle('active')">
+        <span>2. Chi phí duy trì các năm tiếp theo là bao nhiêu?</span>
+        <i class="fa fa-chevron-down"></i>
+      </div>
+      <div class="lv-faq-answer">Bạn chỉ cần gia hạn tên miền và hosting. Với template Blogspot, bạn được miễn phí máy chủ Google vĩnh viễn!</div>
+    </div>
+  </div>
+`;
+      } else if (compType === "timeline") {
+        snippet = `
+  <!-- QUY TRÌNH 4 BƯỚC -->
+  <div class="lv-section-header">
+    <h3>Quy Trình Triển Khai 4 Bước</h3>
+  </div>
+  <div class="lv-process-grid">
+    <div class="lv-process-step">
+      <div class="lv-process-num">01</div>
+      <h5>Tư Vấn Khảo Sát</h5>
+      <p>Lựa chọn giải pháp và phác thảo giao diện phù hợp.</p>
+    </div>
+    <div class="lv-process-step">
+      <div class="lv-process-num">02</div>
+      <h5>Thiết Kế &amp; Cài Đặt</h5>
+      <p>Tối ưu mã nguồn, nhập liệu và cấu hình chuẩn SEO.</p>
+    </div>
+    <div class="lv-process-step">
+      <div class="lv-process-num">03</div>
+      <h5>Kiểm Thử Mượt Mà</h5>
+      <p>Test kỹ lưỡng trên thiết bị di động và máy tính bảng.</p>
+    </div>
+    <div class="lv-process-step">
+      <div class="lv-process-num">04</div>
+      <h5>Bàn Giao &amp; Bảo Hành</h5>
+      <p>Chuyển giao quyền quản trị và hỗ trợ kỹ thuật trọn đời.</p>
+    </div>
+  </div>
+`;
+      } else if (compType === "internal_links") {
+        snippet = `
+  <!-- MA TRẬN LIÊN KẾT NỘI BỘ SEO -->
+  <div class="lv-internal-grid">
+    <h4><i class="fa fa-sitemap" style="color: var(--lv-purple);"></i> Dịch Vụ Thiết Kế &amp; Cẩm Nang Hữu Ích LuViet</h4>
+    <div class="lv-link-columns">
+      <div class="lv-link-col">
+        <h5>Dịch Vụ Trọng Tâm</h5>
+        <ul class="lv-link-list">
+          <li><a href="https://www.luviet.com/p/thiet-ke-website-tron-goi.html"><i class="fa fa-angle-right"></i> Dịch vụ thiết kế website trọn gói</a></li>
+          <li><a href="https://www.luviet.com/p/dich-vu-thiet-ke-website-ban-hang.html"><i class="fa fa-angle-right"></i> Thiết kế web bán hàng chuyên nghiệp</a></li>
+          <li><a href="https://www.luviet.com/search/label/san-pham"><i class="fa fa-angle-right"></i> Kho mẫu giao diện bán chạy</a></li>
+        </ul>
+      </div>
+      <div class="lv-link-col">
+        <h5>Hướng Dẫn Kỹ Thuật</h5>
+        <ul class="lv-link-list">
+          <li><a href="https://www.luviet.com/p/huong-dan-thiet-ke-website-wordpress.html"><i class="fa fa-angle-right"></i> Hướng dẫn dựng web WordPress theo mẫu</a></li>
+          <li><a href="https://www.luviet.com/p/cach-tro-ten-mien.html"><i class="fa fa-angle-right"></i> Cách trỏ tên miền về hosting mới nhất</a></li>
+          <li><a href="https://www.luviet.com/p/huong-dan-tai-ve.html"><i class="fa fa-angle-right"></i> Hướng dẫn đặt hàng &amp; tải về mã nguồn</a></li>
+        </ul>
+      </div>
+      <div class="lv-link-col">
+        <h5>Giải Pháp Marketing AI</h5>
+        <ul class="lv-link-list">
+          <li><a href="https://www.luviet.com/p/he-thong-tu-ong-hoa-blogger-ai.html"><i class="fa fa-angle-right"></i> Cỗ máy tự động hóa Blogger AI</a></li>
+          <li><a href="https://my.luviet.com" target="_blank"><i class="fa fa-angle-right"></i> Nền tảng Landing Page AILADI</a></li>
+          <li><a href="https://www.luviet.com/search/label/kien-thuc-seo-website"><i class="fa fa-angle-right"></i> Cẩm nang SEO Onpage Google</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+`;
+      } else if (compType === "cta") {
+        snippet = `
+  <!-- CTA BANNER CHỐT KHÁCH -->
+  <div class="lv-cta-banner">
+    <div class="lv-cta-info">
+      <h3>Sẵn Sàng Bùng Nổ Doanh Số Cùng Website Chuyên Nghiệp?</h3>
+      <p>Liên hệ ngay để nhận phác thảo demo miễn phí và ưu đãi dịch vụ trọn gói từ LuViet.</p>
+    </div>
+    <div class="lv-cta-actions">
+      <a href="https://zalo.me/0914878680" target="_blank" class="lv-btn-zalo"><i class="fa fa-comment"></i> Chat Zalo 0914 87 86 80</a>
+      <a href="tel:0914878680" class="lv-btn-white"><i class="fa fa-phone"></i> Gọi Hotline</a>
+    </div>
+  </div>
+`;
+      }
+
+      if (snippet) {
+        // Append inside .lv-service-wrapper if exists
+        let current = htmlEditor.value;
+        if (current.includes("</div>\n</div>") || current.endsWith("</div>")) {
+          const lastIdx = current.lastIndexOf("</div>");
+          htmlEditor.value = current.substring(0, lastIdx) + snippet + "\n</div>";
+        } else {
+          htmlEditor.value += snippet;
+        }
+        updatePreview();
+        showToast("Đã chèn linh kiện vào mã HTML!", "success");
+      }
+    });
+  });
+
+  // 11. Modal Management & Blogger Sync
+  btnOpenBloggerList.addEventListener("click", () => {
+    bloggerModal.classList.add("active");
+    loadBloggerItems(currentModalType);
+  });
+
+  btnCloseModal.addEventListener("click", () => bloggerModal.classList.remove("active"));
+  btnCancelModal.addEventListener("click", () => bloggerModal.classList.remove("active"));
+
+  btnTabModalPages.addEventListener("click", () => {
+    btnTabModalPages.classList.add("active");
+    btnTabModalPosts.classList.remove("active");
+    currentModalType = "pages";
+    loadBloggerItems("pages");
+  });
+
+  btnTabModalPosts.addEventListener("click", () => {
+    btnTabModalPosts.classList.add("active");
+    btnTabModalPages.classList.remove("active");
+    currentModalType = "posts";
+    loadBloggerItems("posts");
+  });
+
+  async function loadBloggerItems(type) {
+    modalItemList.innerHTML = `<div class="modal-loading"><i class="fa-solid fa-spinner fa-spin"></i> Đang đọc danh sách ${type === "pages" ? "Trang" : "Bài viết"} từ Blogger...</div>`;
+    modalItemCount.innerText = "";
+    btnApplySelected.disabled = true;
+    selectedItem = null;
+
+    try {
+      const res = await fetch(`/api/blogger/items?type=${type}`);
+      const data = await res.json();
+      if (data.success && data.items) {
+        modalItemCount.innerText = `Tìm thấy ${data.items.length} mục`;
+        if (data.items.length === 0) {
+          modalItemList.innerHTML = `<div style="text-align: center; color: var(--text-dim); padding: 20px;">Không có mục nào.</div>`;
+          return;
+        }
+        modalItemList.innerHTML = "";
+        data.items.forEach((item) => {
+          const div = document.createElement("div");
+          div.className = "modal-item";
+          div.innerHTML = `
+            <div class="modal-item-icon"><i class="fa-solid ${type === "pages" ? "fa-file-lines" : "fa-newspaper"}"></i></div>
+            <div class="modal-item-title">${item.title || "(Không có tiêu đề)"}</div>
+            <div class="modal-item-id">ID: ${item.id}</div>
+          `;
+          div.addEventListener("click", () => {
+            document.querySelectorAll(".modal-item").forEach((i) => i.classList.remove("selected"));
+            div.classList.add("selected");
+            selectedItem = item;
+            btnApplySelected.disabled = false;
+          });
+          modalItemList.appendChild(div);
+        });
+      } else {
+        modalItemCount.innerText = "Chưa kết nối Chrome";
+        const errMsg = data.error || data.detail || "Chrome CDP (port 9222) chưa sẵn sàng.";
+        modalItemList.innerHTML = `
+          <div class="cdp-troubleshoot-box">
+            <div class="cdp-troubleshoot-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <h4>Chrome CDP (Cổng 9222) Chưa Được Kích Hoạt</h4>
+            <p>${errMsg}</p>
+            <div class="cdp-actions-row">
+              <button id="btnModalLaunchProfile" class="btn-primary">
+                <i class="fa-brands fa-chrome"></i> Mở Chrome CDP Ngay
+              </button>
+              <button id="btnModalRetry" class="btn-secondary">
+                <i class="fa-solid fa-rotate-right"></i> Thử Lại
+              </button>
+            </div>
+            <div class="cdp-guide-hint">
+              💡 Hoặc chạy file <code>mo_chrome_cdp.bat</code> trong thư mục dự án rồi đăng nhập Blogger.
+            </div>
+          </div>
+        `;
+        const launchBtn = document.getElementById("btnModalLaunchProfile");
+        if (launchBtn) {
+          launchBtn.addEventListener("click", async () => {
+            launchBtn.disabled = true;
+            launchBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Đang mở Chrome...`;
+            await launchChrome("profile");
+            setTimeout(() => {
+              loadBloggerItems(type);
+            }, 2500);
+          });
+        }
+        const retryBtn = document.getElementById("btnModalRetry");
+        if (retryBtn) {
+          retryBtn.addEventListener("click", () => loadBloggerItems(type));
+        }
+      }
+    } catch (e) {
+      modalItemList.innerHTML = `<div style="color: #f87171; padding: 20px;">Lỗi kết nối: ${e.message}</div>`;
+    }
+  }
+
+  btnApplySelected.addEventListener("click", () => {
+    if (selectedItem) {
+      bloggerModal.classList.remove("active");
+      postTitle.value = selectedItem.title;
+      pushToBloggerDirectly(currentModalType === "pages" ? "page" : "post", selectedItem.id);
+    }
+  });
+
+  // Direct Publish / Update Button in Navbar
+  btnSyncBlogger.addEventListener("click", () => {
+    const targetType = document.querySelector('input[name="targetType"]:checked').value;
+    pushToBloggerDirectly(targetType, null);
+  });
+
+  async function pushToBloggerDirectly(targetType, targetId) {
+    const title = postTitle.value.trim();
+    const content = htmlEditor.value.trim();
+    const desc = postDesc.value.trim();
+    const labelsText = postLabels.value.trim();
+    const labels = labelsText ? labelsText.split(",").map((l) => l.trim()) : [];
+
+    if (!content) {
+      showToast("Vui lòng sinh mã hoặc soạn thảo nội dung HTML trước khi đăng!", "error");
+      return;
+    }
+
+    const actionText = targetId ? `Cập nhật vào mục [${title}] (ID: ${targetId})` : `Tạo mới ${targetType === "page" ? "Trang Tĩnh" : "Bài Đăng"}`;
+    if (!confirm(`Bạn có chắc chắn muốn đẩy bài lên Blogger?\n\nThao tác: ${actionText}\nTiêu đề: ${title}`)) {
+      return;
+    }
+
+    btnSyncBlogger.disabled = true;
+    btnSyncBlogger.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Đang Đẩy Lên Blogger...`;
+
+    try {
+      const res = await fetch("/api/publish", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          blog_id: "1444221897689962852",
+          target_type: targetType,
+          target_id: targetId,
+          title,
+          content_html: content,
+          search_desc: desc,
+          labels,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(`Đã xuất bản thành công lên Blogger!`, "success");
+        checkStatus();
+      } else {
+        showToast("Lỗi đẩy lên Blogger: " + (data.detail || data.error), "error");
+      }
+    } catch (e) {
+      showToast("Lỗi gửi dữ liệu: " + e.message, "error");
+    } finally {
+      btnSyncBlogger.disabled = false;
+      btnSyncBlogger.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Đẩy Lên Blogger`;
+    }
+  }
+
+  // Initial setup: check status & trigger first sample generation
+  checkStatus();
+  btnGenerateAI.click();
+});

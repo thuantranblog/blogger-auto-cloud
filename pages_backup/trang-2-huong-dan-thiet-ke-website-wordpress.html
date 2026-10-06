@@ -1,0 +1,336 @@
+<div class="lv-service-wrapper">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+    .lv-service-wrapper {
+      --lv-gradient: linear-gradient(135deg, #6d3990 0%, #d43434 50%, #032690 100%);
+      --lv-gradient-soft: linear-gradient(135deg, rgba(109,57,144,0.08) 0%, rgba(212,52,52,0.05) 50%, rgba(3,38,144,0.08) 100%);
+      --lv-gradient-dark: linear-gradient(135deg, #1e1b4b 0%, #2e1065 50%, #032690 100%);
+      --lv-purple: #6d3990;
+      --lv-red: #d43434;
+      --lv-navy: #032690;
+      --lv-zalo: #0068ff;
+      --lv-green: #22c55e;
+      --lv-dark: #1e293b;
+      --lv-text: #334155;
+      --lv-text-muted: #64748b;
+      --lv-bg-light: #f8fafc;
+      --lv-card-bg: #ffffff;
+      --lv-border: #e2e8f0;
+      --lv-shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      --lv-shadow-md: 0 10px 25px -3px rgba(109, 57, 144, 0.08);
+      --lv-shadow-lg: 0 20px 35px -5px rgba(109, 57, 144, 0.15);
+      --lv-radius-sm: 10px;
+      --lv-radius-md: 16px;
+      --lv-radius-lg: 24px;
+      
+      font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: var(--lv-text);
+      line-height: 1.7;
+      font-size: 16px;
+      width: 100%;
+      max-width: 1140px;
+      margin: 15px auto 40px auto;
+      padding: 0 5px;
+      box-sizing: border-box;
+    }
+
+    .lv-service-wrapper * { box-sizing: border-box; transition: all 0.25s ease-in-out; }
+    .lv-service-wrapper h2, .lv-service-wrapper h3, .lv-service-wrapper h4 { color: var(--lv-dark); font-weight: 700; line-height: 1.35; margin-top: 0; }
+    .lv-gradient-text { background: var(--lv-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block; }
+    
+    .lv-badge {
+      display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 9999px;
+      font-size: 13px; font-weight: 700; text-transform: uppercase; background: rgba(109, 57, 144, 0.1);
+      color: var(--lv-purple); margin-bottom: 12px; border: 1px solid rgba(109, 57, 144, 0.15);
+    }
+
+    .lv-hero-card {
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      border: 1px solid var(--lv-border); border-radius: var(--lv-radius-lg); padding: 38px 26px;
+      box-shadow: var(--lv-shadow-md); position: relative; overflow: hidden; margin-bottom: 40px; text-align: center;
+    }
+    .lv-hero-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px; background: var(--lv-gradient); }
+    .lv-hero-title { font-size: 30px; font-weight: 800; margin-bottom: 15px; color: var(--lv-dark); }
+    .lv-hero-desc { font-size: 16.5px; color: var(--lv-text-muted); max-width: 850px; margin: 0 auto 24px auto; }
+    
+    .lv-hero-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 26px; }
+    .lv-hero-pill { background: #ffffff; border: 1px solid var(--lv-border); border-radius: 9999px; padding: 8px 16px; font-size: 13.5px; font-weight: 600; color: var(--lv-dark); display: inline-flex; align-items: center; gap: 8px; }
+    .lv-hero-pill i { color: var(--lv-red); }
+
+    .lv-btn-group { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; }
+    .lv-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 12px 24px; border-radius: 9999px; font-size: 14.5px; font-weight: 700; text-decoration: none; cursor: pointer; }
+    .lv-btn-primary { background: var(--lv-gradient); color: #ffffff !important; border: none; box-shadow: 0 6px 18px rgba(109, 57, 144, 0.3); }
+    .lv-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(212, 52, 52, 0.4); }
+    .lv-btn-outline { background: #ffffff; color: var(--lv-dark) !important; border: 1.5px solid var(--lv-border); }
+    .lv-btn-outline:hover { border-color: var(--lv-purple); color: var(--lv-purple) !important; transform: translateY(-2px); }
+
+    .lv-section-header { text-align: center; max-width: 800px; margin: 0 auto 32px auto; }
+    .lv-section-title { font-size: 25px; font-weight: 800; position: relative; padding-bottom: 12px; margin-bottom: 10px; }
+    .lv-section-title::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 50px; height: 3.5px; border-radius: 2px; background: var(--lv-gradient); }
+    .lv-section-subtitle { font-size: 14.5px; color: var(--lv-text-muted); margin: 0; }
+
+    /* STEP CARDS */
+    .lv-step-card {
+      background: #ffffff; border: 1px solid var(--lv-border); border-radius: var(--lv-radius-md);
+      padding: 28px; margin-bottom: 24px; box-shadow: var(--lv-shadow-sm); position: relative;
+    }
+    .lv-step-card:hover { border-color: rgba(109, 57, 144, 0.3); box-shadow: var(--lv-shadow-md); }
+    .lv-step-badge {
+      display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px;
+      border-radius: 50%; background: var(--lv-gradient); color: #fff; font-weight: 800; font-size: 16px; margin-bottom: 14px;
+    }
+    .lv-step-head { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+    .lv-step-head h3 { margin: 0; font-size: 20px; font-weight: 800; }
+    .lv-step-body { font-size: 15px; color: var(--lv-text); line-height: 1.7; }
+
+    .lv-highlight-box {
+      background: rgba(109, 57, 144, 0.04); border-left: 4px solid var(--lv-purple);
+      padding: 14px 18px; border-radius: 0 10px 10px 0; margin: 16px 0; font-size: 14.5px;
+    }
+
+    .lv-checklist { list-style: none; padding: 0; margin: 12px 0; }
+    .lv-checklist li { position: relative; padding-left: 26px; margin-bottom: 10px; font-size: 14.5px; }
+    .lv-checklist li::before { content: '\f058'; font-family: 'Font Awesome 5 Free', 'FontAwesome'; font-weight: 900; position: absolute; left: 0; top: 1px; color: var(--lv-green); }
+
+    /* COMPARISON TABLE */
+    .lv-compare-table { width: 100%; border-collapse: collapse; background: #ffffff; border-radius: var(--lv-radius-md); overflow: hidden; box-shadow: var(--lv-shadow-sm); margin: 25px 0 35px 0; border: 1px solid var(--lv-border); }
+    .lv-compare-table th { background: var(--lv-gradient-dark); color: #ffffff; padding: 14px 18px; font-weight: 700; text-align: left; font-size: 14.5px; }
+    .lv-compare-table td { padding: 14px 18px; border-bottom: 1px solid var(--lv-border); font-size: 14px; }
+    .lv-compare-table tr:hover td { background-color: #f8fafc; }
+
+    /* CTA CARD */
+    .lv-cta-card { background: var(--lv-gradient-dark); border-radius: var(--lv-radius-lg); padding: 40px 24px; color: #ffffff; text-align: center; box-shadow: var(--lv-shadow-lg); margin: 35px 0; }
+    .lv-cta-title { font-size: 26px; font-weight: 800; color: #ffffff !important; margin-bottom: 12px; }
+    .lv-cta-desc { font-size: 15.5px; color: #e2e8f0; max-width: 650px; margin: 0 auto 24px auto; }
+
+    /* INTERNAL LINKS */
+    .lv-links-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .lv-link-col h4 { font-size: 15.5px; font-weight: 700; color: var(--lv-purple); margin-bottom: 12px; padding-bottom: 6px; border-bottom: 2px solid rgba(109, 57, 144, 0.15); }
+    .lv-link-list { list-style: none; padding: 0; margin: 0; }
+    .lv-link-list li { margin-bottom: 8px; }
+    .lv-link-list a { color: var(--lv-text); text-decoration: none; font-size: 13.5px; display: inline-flex; align-items: center; gap: 6px; }
+    .lv-link-list a:hover { color: var(--lv-purple); text-decoration: underline; }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .lv-hero-title { font-size: 24px; }
+      .lv-hero-card { padding: 26px 16px; }
+      .lv-btn { width: 100%; }
+      .lv-btn-group { flex-direction: column; }
+      .lv-links-grid { grid-template-columns: 1fr; gap: 15px; }
+      .lv-step-card { padding: 20px 16px; }
+      .lv-step-head h3 { font-size: 18px; }
+      .lv-compare-table { display: block; overflow-x: auto; }
+    }
+  </style>
+
+  <!-- HERO -->
+  <div class="lv-hero-card">
+    <div class="lv-badge"><i class="fa fa-book"></i> TÀI LIỆU CHUYÊN SÂU TỪ LUVIET</div>
+    <h2 class="lv-hero-title">Hướng Dẫn <span class="lv-gradient-text">Thiết Kế Website WordPress</span> Theo Mẫu Có Sẵn Từ A - Z</h2>
+    <p class="lv-hero-desc">
+      Cẩm nang từng bước giúp bạn tự tay dựng một website WordPress chuyên nghiệp, chuẩn SEO Google, load nhanh và bảo mật mà không cần biết viết mã code phức tạp.
+    </p>
+    <div class="lv-hero-pills">
+      <div class="lv-hero-pill"><i class="fa fa-check"></i> Không Cần Biết Lập Trình</div>
+      <div class="lv-hero-pill"><i class="fa fa-wordpress"></i> Theme Bản Quyền Đầy Đủ</div>
+      <div class="lv-hero-pill"><i class="fa fa-bolt"></i> Dựng Xong Trong 30 Phút</div>
+    </div>
+    <div class="lv-btn-group">
+      <a href="https://www.luviet.com/search/label/website-wordpress" target="_blank" class="lv-btn lv-btn-primary">
+        <i class="fa fa-cubes"></i> XEM MẪU WORDPRESS ĐẸP
+      </a>
+      <a href="https://www.luviet.com/p/thiet-ke-website-tron-goi.html" class="lv-btn lv-btn-outline">
+        <i class="fa fa-gift"></i> GÓI THIẾT KẾ WEB TRỌN GÓI
+      </a>
+      <a href="https://zalo.me/1501073926693571291" target="_blank" class="lv-btn lv-btn-outline">
+        <i class="fa fa-comments"></i> HỖ TRỢ KỸ THUẬT QUA ZALO
+      </a>
+    </div>
+  </div>
+
+  <!-- BƯỚC 1 -->
+  <div class="lv-step-card">
+    <div class="lv-step-head">
+      <div class="lv-step-badge">1</div>
+      <h3>Bước 1: Chuẩn Bị Tên Miền (Domain) & Hosting Tốc Độ Cao</h3>
+    </div>
+    <div class="lv-step-body">
+      <p>Để website WordPress hoạt động mượt mà, bạn cần 2 nguyên liệu bắt buộc:</p>
+      <ul class="lv-checklist">
+        <li><strong>Tên miền (Domain):</strong> Là địa chỉ thương hiệu (VD: <code>tencongty.com</code>, <code>shopcuaban.vn</code>). Bạn có thể đăng ký tại nhà đăng ký uy tín như <a href="https://inet.vn?aff=452290" target="_blank" rel="nofollow">iNET</a> hoặc các đối tác chính thức.</li>
+        <li><strong>Hosting lưu trữ:</strong> Nên sử dụng Hosting NVMe SSD chạy cPanel hoặc DirectAdmin có hỗ trợ LiteSpeed Cache để web tải nhanh dưới 1.5 giây.</li>
+      </ul>
+      <div class="lv-highlight-box">
+        <i class="fa fa-info-circle"></i> <strong>Mẹo hay:</strong> Nếu bạn chưa biết cách trỏ tên miền về hosting, hãy xem ngay bài viết: <a href="https://www.luviet.com/p/cach-tro-ten-mien.html"><strong>Hướng dẫn cách trỏ tên miền về hosting chi tiết nhất</strong></a>.
+      </div>
+    </div>
+  </div>
+
+  <!-- BƯỚC 2 -->
+  <div class="lv-step-card">
+    <div class="lv-step-head">
+      <div class="lv-step-badge">2</div>
+      <h3>Bước 2: Cài Đặt WordPress & Kích Hoạt Chứng Chỉ Bảo Mật SSL</h3>
+    </div>
+    <div class="lv-step-body">
+      <p>Sau khi đã kết nối tên miền về hosting, tiến hành cài đặt nền tảng:</p>
+      <ul class="lv-checklist">
+        <li>Đăng nhập vào trình quản lý Hosting (cPanel / DirectAdmin / OneHost).</li>
+        <li>Tìm công cụ <strong>WordPress Installer</strong> (Softaculous App Installer) $	o$ Nhấn <strong>Install Now</strong>.</li>
+        <li>Chọn giao thức an toàn <code>https://</code> và kích hoạt chứng chỉ SSL miễn phí (Let's Encrypt) để website có biểu tượng ổ khóa xanh an toàn.</li>
+        <li>Đặt tên người dùng quản trị (Admin Username) và mật khẩu bảo mật cao.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- BƯỚC 3 -->
+  <div class="lv-step-card">
+    <div class="lv-step-head">
+      <div class="lv-step-badge">3</div>
+      <h3>Bước 3: Cài Đặt Theme & Nhập Dữ Liệu Mẫu (Import Demo)</h3>
+    </div>
+    <div class="lv-step-body">
+      <p>Để có một website hoàn thiện chỉ trong vài phút thay vì tự thiết kế từ đầu:</p>
+      <ul class="lv-checklist">
+        <li>Truy cập vào trang quản trị WordPress: <code>yourdomain.com/wp-admin</code>.</li>
+        <li>Vào mục <strong>Giao diện (Appearance) $	o$ Giao diện (Themes) $	o$ Thêm mới (Add New)</strong>.</li>
+        <li>Tải file Theme bản quyền (hoặc theme Flatsome, Astra, GeneratePress) $	o$ Kích hoạt (Activate).</li>
+        <li>Dùng tính năng <strong>Import Demo Data / One Click Demo</strong> để tự động nhập toàn bộ giao diện mẫu, bài viết, sản phẩm và trang chủ vào web.</li>
+      </ul>
+      <div class="lv-highlight-box">
+        <i class="fa fa-star"></i> <strong>Tham khảo:</strong> Kho hơn 100+ <a href="https://www.luviet.com/search/label/website-wordpress" target="_blank"><strong>mẫu website WordPress chuẩn SEO đẹp nhất tại LuViet</strong></a> được cấu hình sẵn tính năng đặt hàng tự động.
+      </div>
+    </div>
+  </div>
+
+  <!-- BƯỚC 4 -->
+  <div class="lv-step-card">
+    <div class="lv-step-head">
+      <div class="lv-step-badge">4</div>
+      <h3>Bước 4: Thay Đổi Logo, Menu, Thông Tin Liên Hệ & Sản Phẩm</h3>
+    </div>
+    <div class="lv-step-body">
+      <p>Sau khi nhập dữ liệu mẫu, bạn chỉ cần thay đổi thông tin thương hiệu của bạn:</p>
+      <ul class="lv-checklist">
+        <li><strong>Thay Logo & Favicon:</strong> Vào <em>Tùy biến (Customize) $	o$ Header / Site Identity</em> để tải lên logo riêng.</li>
+        <li><strong>Cập nhật Menu điều hướng:</strong> Vào <em>Giao diện $	o$ Menu</em> để tạo các danh mục: Trang chủ, Giới thiệu, Sản phẩm, Báo giá, Liên hệ.</li>
+        <li><strong>Cài đặt nút liên hệ nổi:</strong> Cài plugin nút gọi Hotline, nút Chat Zalo OA và Messenger ghim đáy màn hình để khách hàng bấm gọi ngay.</li>
+        <li><strong>Đăng sản phẩm/bài viết:</strong> Xóa sản phẩm demo và đăng các sản phẩm thực tế cùng hình ảnh sắc nét, giá bán rõ ràng.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- BƯỚC 5 -->
+  <div class="lv-step-card">
+    <div class="lv-step-head">
+      <div class="lv-step-badge">5</div>
+      <h3>Bước 5: Cài Đặt Plugin Tối Ưu Tốc Độ & Chuẩn SEO Google</h3>
+    </div>
+    <div class="lv-step-body">
+      <p>Các plugin bắt buộc phải có cho một website WordPress hoàn chỉnh:</p>
+      <ul class="lv-checklist">
+        <li><strong>Rank Math SEO (hoặc Yoast SEO):</strong> Tối ưu tiêu đề, thẻ meta description, sitemap XML và cấu trúc Schema chuẩn Google.</li>
+        <li><strong>LiteSpeed Cache / WP Rocket:</strong> Nén ảnh WebP, tối ưu CSS/JS, tăng điểm PageSpeed lên trên 85 điểm xanh.</li>
+        <li><strong>Wordfence Security:</strong> Tường lửa bảo vệ website chống hack, chống brute-force và quét mã độc.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- BẢNG SO SÁNH -->
+  <div style="margin: 40px 0;">
+    <div class="lv-section-header">
+      <div class="lv-badge"><i class="fa fa-balance-scale"></i> PHÂN TÍCH GIẢI PHÁP</div>
+      <h3 class="lv-section-title">Nên Tự Thiết Kế Hay Chọn Dịch Vụ Thiết Kế Trọn Gói?</h3>
+      <p class="lv-section-subtitle">So sánh khách quan giúp bạn đưa ra lựa chọn phù hợp nhất với quỹ thời gian và ngân sách</p>
+    </div>
+
+    <table class="lv-compare-table">
+      <thead>
+        <tr>
+          <th>Tiêu Chí So Sánh</th>
+          <th>Tự Mày Mò Thiết Kế</th>
+          <th>Dịch Vụ Trọn Gói Tại LuViet</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Thời gian thực hiện</strong></td>
+          <td>Mất 2 - 4 tuần mày mò, sửa lỗi</td>
+          <td><strong>Chỉ 7 - 10 ngày bàn giao chìa khóa trao tay</strong></td>
+        </tr>
+        <tr>
+          <td><strong>Chi phí bản quyền Theme/Plugin</strong></td>
+          <td>Phải tự mua theme $59 - $79, plugin bảo mật</td>
+          <td><strong>Tặng kèm 100% bản quyền trọn đời</strong></td>
+        </tr>
+        <tr>
+          <td><strong>Tối ưu SEO & Tốc độ</strong></td>
+          <td>Dễ bị xung đột mã nguồn, web chậm</td>
+          <td><strong>Tối ưu chuẩn Google PageSpeed 85+, chuẩn On-Page</strong></td>
+        </tr>
+        <tr>
+          <td><strong>Bảo hành & Hỗ trợ</strong></td>
+          <td>Tự chịu trách nhiệm khi bị lỗi/hack</td>
+          <td><strong>Bảo hành kỹ thuật trọn đời, hỗ trợ 1:1 qua UltraView</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- CTA -->
+  <div class="lv-cta-card">
+    <div class="lv-badge" style="background: rgba(255,255,255,0.15); color: #fff; border-color: rgba(255,255,255,0.25);">
+      <i class="fa fa-handshake-o"></i> TIẾT KIỆM 90% THỜI GIAN
+    </div>
+    <h3 class="lv-cta-title">Bạn Muốn Sở Hữu Website Chuẩn SEO Ngay Mà Không Cần Mày Mò?</h3>
+    <p class="lv-cta-desc">
+      Hãy để đội ngũ chuyên gia tại LuViet thay bạn xây dựng website hoàn chỉnh từ A - Z. Tặng Tên miền quốc tế + Hosting NVMe VIP + Cam kết bảo hành trọn đời!
+    </p>
+    <div class="lv-btn-group">
+      <a href="https://www.luviet.com/p/thiet-ke-website-tron-goi.html" class="lv-btn lv-btn-primary">
+        <i class="fa fa-gift"></i> XEM BÁO GIÁ THIẾT KẾ TRỌN GÓI
+      </a>
+      <a href="https://zalo.me/1501073926693571291" target="_blank" class="lv-btn" style="background: #0068ff; color: #fff !important;">
+        <i class="fa fa-comments"></i> TƯ VẤN NHANH QUA ZALO
+      </a>
+      <a href="tel:0914878680" class="lv-btn lv-btn-outline" style="background: rgba(255,255,255,0.12); color: #fff !important; border-color: rgba(255,255,255,0.3);">
+        <i class="fa fa-phone"></i> HOTLINE: 0914 87 86 80
+      </a>
+    </div>
+  </div>
+
+  <!-- LIÊN KẾT DỊCH VỤ LIÊN QUAN -->
+  <div style="background: #fff; border: 1px solid var(--lv-border); border-radius: var(--lv-radius-md); padding: 24px; box-shadow: var(--lv-shadow-sm);">
+    <h4 style="color: var(--lv-purple); margin-top: 0; margin-bottom: 15px; font-size: 16px;">
+      <i class="fa fa-sitemap"></i> Dịch Vụ & Kiến Thức Hữu Ích Cùng Chủ Đề:
+    </h4>
+    <div class="lv-links-grid">
+      <div class="lv-link-col">
+        <h4>Dịch Vụ Thiết Kế</h4>
+        <ul class="lv-link-list">
+          <li><a href="https://www.luviet.com/p/thiet-ke-website-tron-goi.html"><i class="fa fa-angle-right"></i> Thiết kế website trọn gói</a></li>
+          <li><a href="https://www.luviet.com/p/dich-vu-thiet-ke-website-ban-hang.html"><i class="fa fa-angle-right"></i> Thiết kế website bán hàng</a></li>
+          <li><a href="https://www.luviet.com/p/bao-gia-thiet-ke-landingpage.html"><i class="fa fa-angle-right"></i> Báo giá thiết kế Landing Page</a></li>
+        </ul>
+      </div>
+      <div class="lv-link-col">
+        <h4>Kho Mẫu Website</h4>
+        <ul class="lv-link-list">
+          <li><a href="https://www.luviet.com/search/label/website-wordpress" target="_blank"><i class="fa fa-angle-right"></i> Mẫu Website WordPress chuẩn SEO</a></li>
+          <li><a href="https://www.luviet.com/search/label/website-blogspot" target="_blank"><i class="fa fa-angle-right"></i> Mẫu Website Blogspot bán hàng</a></li>
+          <li><a href="https://www.luviet.com/search/label/san-pham" target="_blank"><i class="fa fa-angle-right"></i> Mẫu website bán chạy nhất</a></li>
+        </ul>
+      </div>
+      <div class="lv-link-col">
+        <h4>Tài Liệu Hướng Dẫn</h4>
+        <ul class="lv-link-list">
+          <li><a href="https://www.luviet.com/p/cach-tro-ten-mien.html"><i class="fa fa-angle-right"></i> Hướng dẫn trỏ tên miền về hosting</a></li>
+          <li><a href="https://www.luviet.com/p/huong-dan-tai-ve.html"><i class="fa fa-angle-right"></i> Hướng dẫn đặt hàng & tải về</a></li>
+          <li><a href="https://www.luviet.com/p/he-thong-tu-ong-hoa-blogger-ai.html"><i class="fa fa-angle-right"></i> Hệ thống tự động hóa Blogger AI</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

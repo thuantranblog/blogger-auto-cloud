@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.pyo
+.env
+client_secrets.json
+.DS_Store
+.chrome_cdp_profile/
+*.log
+scratch/
+README_REMOTE.md

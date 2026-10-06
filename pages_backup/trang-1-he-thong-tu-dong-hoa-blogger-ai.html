@@ -1,0 +1,1116 @@
+<div class="lv-service-wrapper">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+    .lv-service-wrapper {
+      --lv-gradient: linear-gradient(135deg, #6d3990 0%, #d43434 50%, #032690 100%);
+      --lv-gradient-soft: linear-gradient(135deg, rgba(109,57,144,0.08) 0%, rgba(212,52,52,0.05) 50%, rgba(3,38,144,0.08) 100%);
+      --lv-gradient-dark: linear-gradient(135deg, #1e1b4b 0%, #2e1065 50%, #032690 100%);
+      --lv-purple: #6d3990;
+      --lv-red: #d43434;
+      --lv-navy: #032690;
+      --lv-zalo: #0068ff;
+      --lv-green: #22c55e;
+      --lv-dark: #1e293b;
+      --lv-text: #334155;
+      --lv-text-muted: #64748b;
+      --lv-bg-light: #f8fafc;
+      --lv-card-bg: #ffffff;
+      --lv-border: #e2e8f0;
+      --lv-shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      --lv-shadow-md: 0 10px 25px -3px rgba(109, 57, 144, 0.08);
+      --lv-shadow-lg: 0 20px 35px -5px rgba(109, 57, 144, 0.15);
+      --lv-radius-sm: 10px;
+      --lv-radius-md: 16px;
+      --lv-radius-lg: 24px;
+      
+      font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: var(--lv-text);
+      line-height: 1.7;
+      font-size: 16px;
+      width: 100%;
+      max-width: 1140px;
+      margin: 15px auto 40px auto;
+      box-sizing: border-box;
+    }
+
+    .lv-service-wrapper * {
+      box-sizing: border-box;
+    }
+
+    /* HERO CARD */
+    .lv-hero-card {
+      background: var(--lv-gradient);
+      color: #ffffff;
+      border-radius: var(--lv-radius-lg);
+      padding: 48px 36px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--lv-shadow-lg);
+      margin-bottom: 35px;
+      text-align: center;
+    }
+
+    .lv-hero-card::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      right: -20%;
+      width: 480px;
+      height: 480px;
+      background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .lv-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.22);
+      backdrop-filter: blur(10px);
+      padding: 7px 20px;
+      border-radius: 50px;
+      font-size: 13.5px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+    }
+
+    .lv-hero-card h2 {
+      font-size: 32px;
+      font-weight: 800;
+      color: #ffffff;
+      margin: 0 0 16px 0;
+      line-height: 1.35;
+    }
+
+    .lv-hero-card p {
+      font-size: 17px;
+      color: rgba(255, 255, 255, 0.95);
+      max-width: 860px;
+      margin: 0 auto 26px auto;
+      line-height: 1.65;
+    }
+
+    .lv-hero-chips {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .lv-hero-chip {
+      background: rgba(255, 255, 255, 0.16);
+      backdrop-filter: blur(6px);
+      padding: 8px 18px;
+      border-radius: 30px;
+      font-size: 14px;
+      font-weight: 600;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* VIDEO CONTAINER */
+    .bga-video-box {
+      background: #ffffff;
+      border: 1px solid var(--lv-border);
+      border-radius: var(--lv-radius-md);
+      padding: 24px;
+      margin-bottom: 35px;
+      box-shadow: var(--lv-shadow-sm);
+    }
+    .bga-video-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--lv-dark);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .bga-video-responsive {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+      border-radius: 12px;
+      background: #0f172a;
+    }
+    .bga-video-placeholder-inner {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #94a3b8;
+      text-align: center;
+      padding: 20px;
+    }
+    .bga-play-btn {
+      width: 68px;
+      height: 68px;
+      background: var(--lv-gradient);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-size: 26px;
+      margin-bottom: 14px;
+      box-shadow: 0 4px 15px rgba(109, 57, 144, 0.4);
+    }
+
+    /* ROADMAP / CHECKLIST */
+    .bga-roadmap-box {
+      background: var(--lv-card-bg);
+      border: 1px solid var(--lv-border);
+      border-radius: var(--lv-radius-md);
+      padding: 28px;
+      margin-bottom: 35px;
+      box-shadow: var(--lv-shadow-sm);
+    }
+    .bga-roadmap-title {
+      font-size: 19px;
+      font-weight: 800;
+      color: var(--lv-dark);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .bga-roadmap-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .bga-check-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--lv-bg-light);
+      border: 1px solid var(--lv-border);
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--lv-dark);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .bga-check-item:hover {
+      background: #ffffff;
+      border-color: var(--lv-purple);
+      transform: translateY(-2px);
+    }
+    .bga-check-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--lv-purple);
+      cursor: pointer;
+    }
+
+    /* STEP CARDS */
+    .bga-step {
+      background: #ffffff;
+      border: 1px solid var(--lv-border);
+      border-radius: var(--lv-radius-md);
+      padding: 30px 26px;
+      margin-bottom: 30px;
+      box-shadow: var(--lv-shadow-sm);
+      transition: all 0.25s ease;
+    }
+    .bga-step:hover {
+      box-shadow: var(--lv-shadow-md);
+      border-color: rgba(109, 57, 144, 0.4);
+    }
+    .bga-step-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 22px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .bga-step-num {
+      width: 48px;
+      height: 48px;
+      background: var(--lv-gradient);
+      color: #ffffff;
+      font-size: 20px;
+      font-weight: 800;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(109, 57, 144, 0.25);
+    }
+    .bga-step-title h3 {
+      font-size: 21px !important;
+      font-weight: 800 !important;
+      color: var(--lv-dark) !important;
+      margin: 0 0 6px 0 !important;
+      line-height: 1.35 !important;
+      border: none !important;
+    }
+    .bga-step-title p {
+      font-size: 14.5px;
+      color: var(--lv-text-muted);
+      margin: 0;
+    }
+    .bga-step-body p, .bga-step-body li {
+      font-size: 15px;
+      color: var(--lv-text);
+      line-height: 1.7;
+    }
+    .bga-step-body ol, .bga-step-body ul {
+      margin: 12px 0 18px 22px;
+      padding: 0;
+    }
+    .bga-step-body li {
+      margin-bottom: 10px;
+    }
+
+    /* CODE & SNIPPETS */
+    .bga-code {
+      background: #fdf2f8;
+      color: #be185d;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      font-size: 13.5px;
+      border: 1px solid #fbcfe8;
+      font-weight: 600;
+    }
+    .bga-code-block {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 18px 20px;
+      border-radius: 10px;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      font-size: 14px;
+      overflow-x: auto;
+      margin: 16px 0;
+      line-height: 1.5;
+    }
+
+    /* ALERTS */
+    .bga-alert {
+      padding: 16px 20px;
+      border-radius: 10px;
+      margin: 18px 0;
+      font-size: 14.5px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      line-height: 1.6;
+    }
+    .bga-alert-info {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1e40af;
+    }
+    .bga-alert-warning {
+      background: #fffbeb;
+      border: 1px solid #fef3c7;
+      color: #92400e;
+    }
+    .bga-alert-success {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #166534;
+    }
+
+    /* TABLES */
+    .bga-table-wrap {
+      overflow-x: auto;
+      margin: 20px 0;
+      border-radius: 10px;
+      border: 1px solid var(--lv-border);
+    }
+    .bga-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14.5px;
+      background: #ffffff;
+    }
+    .bga-table th {
+      background: var(--lv-gradient-soft);
+      color: var(--lv-purple);
+      font-weight: 800;
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 2px solid var(--lv-border);
+    }
+    .bga-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--lv-border);
+      vertical-align: top;
+    }
+    .bga-table tr:hover {
+      background: #faf5ff;
+    }
+
+    /* MOCK IMAGE BOX */
+    .bga-mock-img {
+      background: #f8fafc;
+      border: 2px dashed #cbd5e1;
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      margin: 18px 0;
+    }
+    .bga-mock-badge {
+      display: inline-block;
+      background: var(--lv-purple);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .bga-mock-title {
+      font-size: 15.5px;
+      font-weight: 700;
+      color: var(--lv-dark);
+      margin-bottom: 4px;
+    }
+    .bga-mock-desc {
+      font-size: 13px;
+      color: var(--lv-text-muted);
+      margin: 0;
+    }
+
+    /* SECTION HEADER */
+    .lv-section-header {
+      text-align: center;
+      margin: 45px 0 28px 0;
+    }
+    .lv-section-header h3 {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--lv-dark);
+      margin: 0 0 10px 0;
+      position: relative;
+      display: inline-block;
+    }
+    .lv-section-header h3::after {
+      content: '';
+      display: block;
+      width: 60px;
+      height: 4px;
+      background: var(--lv-gradient);
+      border-radius: 2px;
+      margin: 8px auto 0 auto;
+    }
+    .lv-section-header p {
+      font-size: 15.5px;
+      color: var(--lv-text-muted);
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    /* FAQ ACCORDION */
+    .lv-faq-list {
+      margin-bottom: 40px;
+    }
+    .lv-faq-item {
+      background: var(--lv-card-bg);
+      border: 1px solid var(--lv-border);
+      border-radius: var(--lv-radius-sm);
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+    .lv-faq-question {
+      padding: 18px 22px;
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--lv-dark);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #ffffff;
+      user-select: none;
+    }
+    .lv-faq-question:hover {
+      background: var(--lv-bg-light);
+      color: var(--lv-purple);
+    }
+    .lv-faq-question i {
+      transition: transform 0.3s ease;
+      color: var(--lv-purple);
+    }
+    .lv-faq-item.active .lv-faq-question i {
+      transform: rotate(180deg);
+    }
+    .lv-faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+      background: #fafafa;
+      color: var(--lv-text);
+      font-size: 15px;
+      line-height: 1.7;
+      padding: 0 22px;
+    }
+    .lv-faq-item.active .lv-faq-answer {
+      max-height: 350px;
+      padding: 16px 22px 20px 22px;
+      border-top: 1px solid var(--lv-border);
+    }
+
+    /* CTA FOOTER */
+    .lv-cta-banner {
+      background: var(--lv-gradient-dark);
+      border-radius: var(--lv-radius-md);
+      padding: 38px 32px;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 25px;
+      margin-bottom: 40px;
+      box-shadow: var(--lv-shadow-md);
+    }
+    .lv-cta-info h3 {
+      font-size: 23px;
+      font-weight: 800;
+      color: #ffffff;
+      margin: 0 0 8px 0;
+    }
+    .lv-cta-info p {
+      font-size: 15px;
+      color: rgba(255, 255, 255, 0.88);
+      margin: 0;
+      max-width: 620px;
+    }
+    .lv-cta-actions {
+      display: flex;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .lv-btn-zalo {
+      background: var(--lv-zalo);
+      color: #ffffff !important;
+      padding: 12px 22px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 14.5px;
+      text-decoration: none !important;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .lv-btn-white {
+      background: #ffffff;
+      color: var(--lv-navy) !important;
+      padding: 12px 22px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 14.5px;
+      text-decoration: none !important;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* INTERNAL LINKS */
+    .lv-internal-grid {
+      background: var(--lv-bg-light);
+      border: 1px solid var(--lv-border);
+      border-radius: var(--lv-radius-md);
+      padding: 30px;
+      margin-top: 30px;
+    }
+    .lv-internal-grid h4 {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--lv-dark);
+      margin: 0 0 18px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .lv-link-columns {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .lv-link-col h5 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--lv-purple);
+      margin: 0 0 10px 0;
+    }
+    .lv-link-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .lv-link-list li {
+      margin-bottom: 8px;
+    }
+    .lv-link-list a {
+      color: var(--lv-text);
+      text-decoration: none;
+      font-size: 14px;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .lv-link-list a:hover {
+      color: var(--lv-red);
+      transform: translateX(3px);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 991px) {
+      .lv-cta-banner {
+        flex-direction: column;
+        text-align: center;
+      }
+      .lv-cta-actions {
+        width: 100%;
+        justify-content: center;
+      }
+      .lv-link-columns {
+        grid-template-columns: 1fr;
+      }
+    }
+    @media (max-width: 576px) {
+      .lv-hero-card {
+        padding: 32px 20px;
+      }
+      .lv-hero-card h2 {
+        font-size: 24px;
+      }
+      .lv-hero-card p {
+        font-size: 15px;
+      }
+      .lv-cta-actions {
+        flex-direction: column;
+      }
+      .lv-btn-zalo, .lv-btn-white {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+
+  <!-- SCHEMA JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "Hướng Dẫn Cài Đặt Hệ Thống Tự Động Hóa Blogger AI Toàn Diện",
+    "description": "Cẩm nang 8 bước thiết lập cỗ máy viết bài và xuất bản tự động trên nền tảng Blogger bằng GitHub Actions, Google Sheets, Gemini AI và Telegram Bot.",
+    "totalTime": "PT30M",
+    "step": [
+      {"@type": "HowToStep", "name": "BƯỚC 1: Chuẩn Bị & Nhân Bản Kho Mã Nguồn GitHub"},
+      {"@type": "HowToStep", "name": "BƯỚC 2: Thiết Lập Bảng Đề Tài Google Sheets"},
+      {"@type": "HowToStep", "name": "BƯỚC 3: Lấy API Key Google Gemini AI"},
+      {"@type": "HowToStep", "name": "BƯỚC 4: Tạo Telegram Bot Nhận Báo Cáo"},
+      {"@type": "HowToStep", "name": "BƯỚC 5: Kết Nối Google Blogger API"},
+      {"@type": "HowToStep", "name": "BƯỚC 6: Cấu Hình Google Indexing API"},
+      {"@type": "HowToStep", "name": "BƯỚC 7: Nạp Toàn Bộ Secrets Vào GitHub Actions"},
+      {"@type": "HowToStep", "name": "BƯỚC 8: Kích Hoạt Vận Hành Thử Nghiệm"}
+    ]
+  }
+  </script>
+
+  <!-- HERO SECTION -->
+  <div class="lv-hero-card">
+    <div class="lv-badge"><i class="fa fa-android"></i> Giải Pháp Tự Động Hóa Nội Dung 4.0</div>
+    <h2>Hệ Thống Tự Động Hóa Blogger AI - Tự Động Viết &amp; Index Tức Thì</h2>
+    <p>Cỗ máy tự động hóa hoàn toàn từ đề tài Google Sheets, viết bài chuẩn SEO bằng Gemini AI, tạo thumbnail 16:9 phong cách doanh nhân và bắn Indexing lên Google Search Console 24/7 trên hạ tầng Cloud GitHub Actions miễn phí 100%.</p>
+    <div class="lv-hero-chips">
+      <div class="lv-hero-chip"><i class="fa fa-cloud"></i> 100% Miễn Phí Hạ Tầng Cloud</div>
+      <div class="lv-hero-chip"><i class="fa fa-picture-o"></i> Thumbnail Chuẩn 16:9 Tự Động</div>
+      <div class="lv-hero-chip"><i class="fa fa-paper-plane"></i> Báo Cáo Trực Tiếp Qua Telegram</div>
+      <div class="lv-hero-chip"><i class="fa fa-search"></i> Bắn Google Index Tức Thời</div>
+    </div>
+  </div>
+
+  <!-- NỘI DUNG 8 BƯỚC NÂNG CẤP -->
+  <div class="bga-hero">
+    <div class="bga-badge">🚀 HƯỚNG DẪN HỆ THỐNG TỰ ĐỘNG HÓA BLOGGER BẰNG AI 2026 • KHÔNG CẦN BIẾT CODE</div>
+    <h2>Cài Đặt Hệ Thống Tự Động Hóa Blogger AI Đám Mây (A-Z)</h2>
+    <p>Giải pháp tự động lấy đề tài từ Google Sheets ➔ Gemini AI viết bài SEO 1500+ từ &amp; thiết kế Thumbnail Doanh Nhân ➔ Đăng bài theo 3 khung giờ vàng ➔ Lập chỉ mục Google Indexing siêu tốc ➔ Báo cáo Telegram nhóm.</p>
+    <div class="bga-meta-chips">
+      <div class="bga-chip">⏱️ Thời gian: <b>15 - 20 phút</b></div>
+      <div class="bga-chip">☁️ Nền tảng: <b>GitHub Actions (Miễn phí 100%)</b></div>
+      <div class="bga-chip">💻 Thiết bị: <b>Chỉ cần trình duyệt web (Không cần treo máy)</b></div>
+    </div>
+  </div>
+
+  <!--2. KHUNG VIDEO YOUTUBE HƯỚNG DẪN-->
+  <div class="bga-video-box">
+    <div class="bga-video-title">
+      <span>📺</span> Video Hướng Dẫn Chi Tiết Từng Bước (Cầm Tay Chỉ Việc)
+    </div>
+   <iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="" frameborder="0" height="315" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/43IxEYLM5sA?si=dDVNG7v9U1po7xVP" title="YouTube video player" width="560"></iframe>
+  </div>
+
+  <!--3. LỘ TRÌNH 8 BƯỚC CHECKLIST-->
+  <div class="bga-roadmap">
+    <h3>📋 Lộ Trình 8 Bước Cài Đặt (Đánh dấu khi hoàn thành)</h3>
+    <p style="color: #64748b; font-size: 14.5px; margin: 0px;">Bạn chỉ cần thiết lập một lần duy nhất. Sau đó hệ thống sẽ tự động vận hành trên đám mây 24/7 mãi mãi mà không tốn tiền thuê máy chủ VPS.</p>
+    <div class="bga-roadmap-grid">
+      <label class="bga-check-item"><input type="checkbox" /> Bước 1: Chuẩn bị Blogger &amp; Lấy Blog ID</label>
+      <label class="bga-check-item"><input type="checkbox" /> Bước 2: Bật Blogger API &amp; Lấy Refresh Token</label>
+      <label class="bga-check-item"><input type="checkbox" /> Bước 3: Lấy Google Gemini API Key</label>
+      <label class="bga-check-item"><input type="checkbox" /> Bước 4: Tạo Telegram Bot &amp; Nhóm Báo Cáo</label>
+      <label class="bga-check-item"><input type="checkbox" /> Bước 5: Cấu hình Bảng Tính Google Sheets</label>
+      <label class="bga-check-item"><input type="checkbox" /> Bước 6: Cài Google Indexing API (Lập chỉ mục)</label>
+      <label class="bga-check-item"><input type="checkbox" /> Bước 7: Nhập 9 Khóa Bí Mật vào GitHub</label>
+      <label class="bga-check-item"><input type="checkbox" /> Bước 8: Bấm Chạy Thử &amp; Tận Hưởng Thành Quả</label>
+    </div>
+  </div>
+
+  <!--==================== BƯỚC 1 ====================-->
+  <div class="bga-step">
+    <div class="bga-step-head">
+      <div class="bga-step-num">01</div>
+      <div class="bga-step-title">
+        <h3>Chuẩn Bị Trang Blogger &amp; Lấy Blog ID</h3>
+        <p>Tìm mã định danh duy nhất của blog để robot biết chính xác địa chỉ cần đăng bài.</p>
+      </div>
+    </div>
+    <div class="bga-step-body">
+      <ol>
+        <li>Truy cập vào trang quản trị Blogger: <a href="https://www.blogger.com" rel="noopener" target="_blank">https://www.blogger.com</a>.</li>
+        <li>Tạo một blog mới (nếu chưa có) hoặc chọn đúng blog bạn muốn cài đặt tự động hóa.</li>
+        <li>Nhìn lên thanh địa chỉ của trình duyệt web (URL), bạn sẽ thấy một dãy số dài ở sau chữ <span class="bga-code">/blog/posts/</span> hoặc <span class="bga-code">/blog/settings/</span>.</li>
+        <li>Dãy số đó chính là <strong>BLOGGER_BLOG_ID</strong> của bạn. Hãy copy dãy số này lưu vào Notepad.</li>
+      </ol>
+
+      <div class="bga-mock-img">
+        <span class="bga-mock-badge">Ảnh minh họa 01</span>
+        <div class="bga-mock-title">Vị Trí Lấy Blogger Blog ID Trên Thanh URL Trình Duyệt</div>
+        <div class="separator" style="clear: both;"><a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhT5XoiD3TxLglsciGtjjnFUqSUmUPDnn_i561TJFUK4JdPxFQL-yh-J90syZUGurNNXFa7inKOOFWqtXCTdXaxdvGEiAKskerIjqYAgGljXKC8hT9Q9Zd8DapTvXp9hb76QWV8hbfB0wD-EugC_1YWFJBj29g5FR2eXOD30UQYhMICdLgh-PlXYnYAztc/s1920/lay-id-blogger.png" style="display: block; padding: 1em 0px; text-align: center;"><img alt="Giao diện bảng điều khiển quản lý bài viết trên nền tảng blog thông minh" border="0" data-original-height="1080" data-original-width="1920" height="361" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhT5XoiD3TxLglsciGtjjnFUqSUmUPDnn_i561TJFUK4JdPxFQL-yh-J90syZUGurNNXFa7inKOOFWqtXCTdXaxdvGEiAKskerIjqYAgGljXKC8hT9Q9Zd8DapTvXp9hb76QWV8hbfB0wD-EugC_1YWFJBj29g5FR2eXOD30UQYhMICdLgh-PlXYnYAztc/w640-h361/lay-id-blogger.png" title="Giao diện bảng điều khiển quản lý bài viết trên nền tảng blog thông minh" width="640" /></a></div>
+      </div>
+
+      <div class="bga-alert bga-alert-info">
+        <div>💡</div>
+        <div><strong>Ví dụ trực quan:</strong> Nếu thanh địa chỉ hiển thị <span class="bga-code">https://www.blogger.com/blog/posts/1444221897689962852</span> thì Blog ID của bạn chính là: <span class="bga-code">1444221897689962852</span>.</div>
+      </div>
+    </div>
+  </div>
+
+  <!--==================== BƯỚC 2 ====================-->
+  <div class="bga-step">
+    <div class="bga-step-head">
+      <div class="bga-step-num">02</div>
+      <div class="bga-step-title">
+        <h3>Bật Blogger API &amp; Lấy Google OAuth (Client ID, Secret, Refresh Token)</h3>
+        <p>Cấp quyền hợp pháp cho robot thay mặt bạn đăng bài và đặt lịch hẹn giờ lên Blogger.</p>
+      </div>
+    </div>
+    <div class="bga-step-body">
+      <ol>
+        <li>Truy cập <strong>Google Cloud Console</strong>: <a href="https://console.cloud.google.com" rel="noopener" target="_blank">https://console.cloud.google.com</a> và đăng nhập cùng tài khoản quản trị Blog.</li>
+        <li>Bấm <strong>Select a project</strong> ➔ <strong>New Project</strong> ➔ Đặt tên <span class="bga-code">Blogger-Auto-Cloud</span> ➔ Nhấn <strong>Create</strong>.</li>
+        <li>Gõ tìm kiếm <strong>Blogger API v3</strong> ➔ Chọn kết quả và nhấn nút <strong>Enable (Bật)</strong>.</li>
+        <li>Ở menu bên trái, vào <strong>APIs &amp; Services</strong> ➔ <strong>OAuth consent screen (Màn hình đồng ý OAuth)</strong>:
+          <ul>
+            <li>Chọn <strong>External (Bên ngoài)</strong> ➔ Bấm <strong>Create</strong>.</li>
+            <li>Điền tên ứng dụng (vd: <i>Blogger Cloud Poster</i>) và email của bạn ở các ô bắt buộc.</li>
+            <li>Bấm <strong>Save and Continue</strong> cho đến khi hoàn tất.</li>
+            <li>Tại mục <strong>Test users (Người dùng thử nghiệm)</strong>: bấm <strong>+ Add Users</strong> và thêm chính địa chỉ Gmail của bạn vào.</li>
+          </ul>
+        </li>
+        <li>Vào mục <strong>Credentials (Thông tin xác thực)</strong>:
+          <ul>
+            <li>Bấm <strong>+ Create Credentials</strong> ➔ Chọn <strong>OAuth client ID</strong>.</li>
+            <li>Mục <i>Application type</i>: chọn <strong>Desktop app</strong>.</li>
+            <li>Bấm <strong>Create</strong>. Bạn sẽ nhận được <strong>Client ID</strong> và <strong>Client Secret</strong>. Hãy lưu lại.</li>
+          </ul>
+        </li>
+        <li><strong>Lấy Refresh Token:</strong>
+          <ul>
+            <li>Sử dụng công cụ <a href="https://developers.google.com/oauthplayground" rel="noopener" target="_blank">Google OAuth 2.0 Playground</a> (hoặc script lấy token).</li>
+            <li>Phạm vi quyền (Scope) tích chọn: <span class="bga-code">https://www.googleapis.com/auth/blogger</span>.</li>
+            <li>Cấp quyền xong, bạn sẽ nhận được mã <strong>GOOGLE_REFRESH_TOKEN</strong> (bắt đầu bằng <span class="bga-code">1//0...</span>).</li>
+          </ul>
+        </li>
+      </ol>
+
+      <div class="bga-mock-img">
+        <span class="bga-mock-badge">Ảnh minh họa 02</span>
+        <div class="bga-mock-title">Màn Hình Tạo OAuth Client ID Trên Google Cloud Console</div>
+        <div class="separator" style="clear: both;"><a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjJpvuRoI7PHBmVuMh6FfBIfQgAISMIgzHuW2WT6rovjmxNlqqlvMpEuIAakeAN2frcv_WFwkP68SfwzPACJOC4EM8-H_YvzSBbpwn2KDqLhgepzVtst-sP1Z6jolJF3h3T71QwK-wmnPeljW2IoG8accF41-nno6fA27EQw53ZJSzGhFqJ-Dm1M8mcwuA/s1920/Screenshot%20%283517%29.png" style="display: block; padding: 1em 0px; text-align: center;"><img alt="Quy trình vận hành công nghệ trí tuệ nhân tạo trong việc tạo và đăng tải bài viết tự động" border="0" data-original-height="1080" data-original-width="1920" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjJpvuRoI7PHBmVuMh6FfBIfQgAISMIgzHuW2WT6rovjmxNlqqlvMpEuIAakeAN2frcv_WFwkP68SfwzPACJOC4EM8-H_YvzSBbpwn2KDqLhgepzVtst-sP1Z6jolJF3h3T71QwK-wmnPeljW2IoG8accF41-nno6fA27EQw53ZJSzGhFqJ-Dm1M8mcwuA/s600/Screenshot%20%283517%29.png" width="600" /></a></div>
+      </div>
+    </div>
+  </div>
+
+  <!--==================== BƯỚC 3 ====================-->
+  <div class="bga-step">
+    <div class="bga-step-head">
+      <div class="bga-step-num">03</div>
+      <div class="bga-step-title">
+        <h3>Lấy Google Gemini API Key (Bộ Não Viết Bài Miễn Phí)</h3>
+        <p>Trí tuệ nhân tạo Gemini 2.5 Flash thông minh sẽ tự động sinh nội dung chuẩn SEO 1500+ từ.</p>
+      </div>
+    </div>
+    <div class="bga-step-body">
+      <ol>
+        <li>Truy cập trang Google AI Studio: <a href="https://aistudio.google.com/app/apikey" rel="noopener" target="_blank">https://aistudio.google.com/app/apikey</a>.</li>
+        <li>Đăng nhập bằng tài khoản Google của bạn.</li>
+        <li>Bấm nút <strong>Create API Key</strong> (Tạo khóa API).</li>
+        <li>Chọn đúng dự án Google Cloud bạn vừa tạo ở Bước 2.</li>
+        <li>Bấm <strong>Create API Key in existing project</strong>.</li>
+        <li>Copy chuỗi khóa API (bắt đầu bằng <span class="bga-code">AIzaSy...</span> hoặc <span class="bga-code">AQ...</span>) lưu lại. Đây chính là <strong>GEMINI_API_KEY</strong>.</li>
+      </ol>
+
+      <div class="bga-mock-img">
+        <span class="bga-mock-badge">Ảnh minh họa 03</span>
+        <div class="bga-mock-title">Giao Diện Tạo Khóa Gemini API Key Miễn Phí Tại AI Studio</div>
+        <div class="separator" style="clear: both;"><a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg-lTqF8yniDgfgryie6MhsmGYEQcxZwE4_JNYQ9BBFxTFM6wSZKtZyriDn_HZTi9Enyjbl7aCP0RS23osiVS8Wt9R9REglcg8kHAWVx68zzF1osWsoK3agmSdAkWHBmCK98x3_sZSAUSy9M4Et2HlkbMVlQrSd4ew9OC6q9AJ77Knb-HFy6Pf4URfnCo8/s1920/Screenshot%20%283518%29.png" style="display: block; padding: 1em 0px; text-align: center;"><img alt="Giao Diện Tạo Khóa Gemini API Key Miễn Phí Tại AI Studio" border="0" data-original-height="1080" data-original-width="1920" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg-lTqF8yniDgfgryie6MhsmGYEQcxZwE4_JNYQ9BBFxTFM6wSZKtZyriDn_HZTi9Enyjbl7aCP0RS23osiVS8Wt9R9REglcg8kHAWVx68zzF1osWsoK3agmSdAkWHBmCK98x3_sZSAUSy9M4Et2HlkbMVlQrSd4ew9OC6q9AJ77Knb-HFy6Pf4URfnCo8/s600/Screenshot%20%283518%29.png" width="600" /></a></div>
+      </div>
+
+      <div class="bga-alert bga-alert-success">
+        <div>✨</div>
+        <div><strong>Mẹo xoay vòng khóa (Key Pool):</strong> Bạn có thể tạo 3 đến 5 khóa Gemini API Key từ các tài khoản Gmail khác nhau và điền cách nhau bằng dấu phẩy (<span class="bga-code">KEY_1,KEY_2,KEY_3</span>) vào biến <strong>GEMINI_API_KEYS</strong> để hệ thống tự động xoay vòng dự phòng, không bao giờ lo gián đoạn vì quá tải!</div>
+      </div>
+    </div>
+  </div>
+
+  <!--==================== BƯỚC 4 ====================-->
+  <div class="bga-step">
+    <div class="bga-step-head">
+      <div class="bga-step-num">04</div>
+      <div class="bga-step-title">
+        <h3>Tạo Telegram Bot &amp; Nhóm Nhận Báo Cáo Tự Động</h3>
+        <p>Mỗi khi có bài viết được lên lịch hay gửi Indexing thành công, điện thoại sẽ báo ngay lập tức.</p>
+      </div>
+    </div>
+    <div class="bga-step-body">
+      <ol>
+        <li>Mở ứng dụng Telegram trên điện thoại hoặc máy tính.</li>
+        <li>Tìm kiếm bot chính thức của Telegram: <strong>@BotFather</strong>.</li>
+        <li>Gõ lệnh <span class="bga-code">/newbot</span>, đặt tên cho bot (vd: <i>Blogger LuViet Bot</i>) và đặt username kết thúc bằng <span class="bga-code">bot</span> (vd: <i>my_blogger_post_bot</i>).</li>
+        <li>BotFather sẽ gửi một chuỗi token dạng: <span class="bga-code">8480459173:AAHhSTEG...</span>. Lưu lại làm <strong>TELEGRAM_BOT_TOKEN</strong>.</li>
+        <li>Tạo một nhóm Telegram mới (vd: <i>Báo Cáo Blogger Tự Động</i>) và thêm con Bot vừa tạo vào nhóm.</li>
+        <li>Thêm bot <strong>@RawDataBot</strong> hoặc <strong>@userinfobot</strong> vào nhóm để lấy số <strong>Chat ID</strong> của nhóm (dãy số âm bắt đầu bằng dấu trừ, ví dụ: <span class="bga-code">-5074952407</span> hoặc <span class="bga-code">-100...</span>). Lấy xong Chat ID, bạn có thể xóa bot lấy ID ra khỏi nhóm.</li>
+      </ol>
+
+      <div class="bga-mock-img">
+        <span class="bga-mock-badge">Ảnh minh họa 04</span>
+        <div class="bga-mock-title">Nhận Token Từ @BotFather &amp; Thông Báo Báo Cáo Trong Nhóm Telegram</div>
+        <div class="separator" style="clear: both;"><a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiFIyAH2eOs3VrgUnOsFp5pDDcdCx0-HbuaRuI2p4tBnogm3BKpmxKNAopPqrHk56to5K2As46jaMJ6zEQf3lJZ9mn7hsLxy2cirJiYMo4wipzwFDJnD9HqnKimIBbVvo4Oj5SCM4WaogmXLgZIMxIl7fzkKAYnX42O9tYBIWARAG4bEsyCj7g1mIeULdo/s866/tao-telegram-bot.jpg" style="display: block; padding: 1em 0px; text-align: center;"><img alt="Nhận Token Từ @BotFather &amp; Thông Báo Báo Cáo Trong Nhóm Telegram" border="0" data-original-height="806" data-original-width="866" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiFIyAH2eOs3VrgUnOsFp5pDDcdCx0-HbuaRuI2p4tBnogm3BKpmxKNAopPqrHk56to5K2As46jaMJ6zEQf3lJZ9mn7hsLxy2cirJiYMo4wipzwFDJnD9HqnKimIBbVvo4Oj5SCM4WaogmXLgZIMxIl7fzkKAYnX42O9tYBIWARAG4bEsyCj7g1mIeULdo/s600/tao-telegram-bot.jpg" width="600" /></a></div>
+      </div>
+    </div>
+  </div>
+
+  <!--==================== BƯỚC 5 ====================-->
+  <div class="bga-step">
+    <div class="bga-step-head">
+      <div class="bga-step-num">05</div>
+      <div class="bga-step-title">
+        <h3>Cấu Hình Google Sheets (Kho Đề Tài &amp; Webhook Báo Cáo)</h3>
+        <p>Nơi nhập hàng trăm tiêu đề bài viết và tự động đổi màu xanh khi bài viết xuất bản thành công.</p>
+      </div>
+    </div>
+    <div class="bga-step-body">
+      <ol>
+        <li>Mở bảng tính Google Sheets kế hoạch bài viết. Chuẩn hóa tiêu đề cột từ <strong>Cột A đến Cột I</strong>:
+          <ul>
+            <li><strong>Cột A:</strong> Số Thứ Tự (STT)</li>
+            <li><strong>Cột B:</strong> Tiêu Đề Bài Viết</li>
+            <li><strong>Cột C:</strong> Từ Khóa SEO Chính</li>
+            <li><strong>Cột D:</strong> Ý Định Tìm Kiếm (Search Intent)</li>
+            <li><strong>Cột E:</strong> Nhóm Chuyên Mục (Labels, vd: <i>dich-vu, tin-tuc</i>)</li>
+            <li><strong>Cột F:</strong> Link Ảnh Tùy Chọn (Để trống robot sẽ tự sinh Thumbnail Doanh Nhân YouTube)</li>
+            <li><strong>Cột G:</strong> Trạng Thái (Robot tự cập nhật: <i>Đã lên lịch</i> hoặc <i>Đã đăng</i> và tô màu xanh lá)</li>
+            <li><strong>Cột H:</strong> Ngày Lên Lịch / Xuất Bản</li>
+            <li><strong>Cột I:</strong> Link Bài Viết Thực Tế</li>
+          </ul>
+        </li>
+        <li>Bấm <strong>Chia sẻ (Share)</strong> ở góc trên bảng tính ➔ Quyền truy cập chung: chọn <strong>Bất kỳ ai có đường liên kết</strong> ➔ Chọn quyền <strong>Người xem</strong> ➔ Sao chép link này làm <strong>GOOGLE_SHEET_URL</strong>.</li>
+        <li><strong>Cài đặt Webhook cập nhật trạng thái tự động:</strong>
+          <ul>
+            <li>Trên menu Google Sheets, bấm <strong>Tiện ích mở rộng (Extensions)</strong> ➔ <strong>Apps Script</strong>.</li>
+            <li>Dán mã nguồn file <span class="bga-code">google_sheets_webhook.js</span> vào rồi nhấn biểu tượng <strong>Lưu (Save)</strong>.</li>
+            <li>Bấm <strong>Triển khai (Deploy)</strong> ➔ <strong>Bản triển khai mới (New deployment)</strong>:
+              <ul>
+                <li>Loại triển khai: <strong>Ứng dụng web (Web app)</strong>.</li>
+                <li>Thực thi dưới dạng: <strong>Tôi (Tài khoản của bạn)</strong>.</li>
+                <li>Ai có quyền truy cập: <strong>Bất kỳ ai (Anyone)</strong>.</li>
+              </ul>
+            </li>
+            <li>Bấm <strong>Triển khai</strong> ➔ Copy đường link Web App có đuôi kết thúc bằng <span class="bga-code">/exec</span> lưu làm <strong>GOOGLE_SHEET_WEBHOOK_URL</strong>.</li>
+          </ul>
+        </li>
+      </ol>
+
+      <div class="bga-mock-img">
+        <span class="bga-mock-badge">Ảnh minh họa 05</span>
+        <div class="bga-mock-title">Triển Khai Web App Trên Google Apps Script</div>
+        <p class="bga-mock-desc">(Giao diện Deploy Web App với quyền Anyone và khung copy đường dẫn kết thúc bằng /exec)</p>
+      </div>
+
+      <div class="bga-alert bga-alert-warning">
+        <div>⚠️</div>
+        <div><strong>Lưu ý quan trọng:</strong> Tuyệt đối <strong>KHÔNG</strong> tự thêm Bộ kích hoạt (Triggers - biểu tượng đồng hồ) loại "Khi chỉnh sửa (On edit)". Webhook giao tiếp độc lập qua link Web App, thêm trigger thừa sẽ khiến Google gửi email báo lỗi!</div>
+      </div>
+    </div>
+  </div>
+
+  <!--==================== BƯỚC 6 ====================-->
+  <div class="bga-step">
+    <div class="bga-step-head">
+      <div class="bga-step-num">06</div>
+      <div class="bga-step-title">
+        <h3>Cấu Hình Google Indexing API (Lập Chỉ Mục Siêu Tốc)</h3>
+        <p>Tự động bắn URL bài viết đã Live lên thẳng Google Bot để bài viết xuất hiện trên Google chỉ sau vài phút.</p>
+      </div>
+    </div>
+    <div class="bga-step-body">
+      <ol>
+        <li>Quay lại <strong>Google Cloud Console</strong>: <a href="https://console.cloud.google.com" rel="noopener" target="_blank">https://console.cloud.google.com</a>.</li>
+        <li>Tìm kiếm <strong>Web Search Indexing API</strong> ➔ Bấm vào và nhấn <strong>Enable (Bật)</strong>.</li>
+        <li>Vào mục <strong>IAM &amp; Admin</strong> ➔ <strong>Service Accounts (Tài khoản dịch vụ)</strong> ➔ Bấm <strong>+ Create Service Account</strong>.
+          <ul>
+            <li>Đặt tên: <span class="bga-code">blogger-indexing-bot</span> ➔ Nhấn <strong>Create and Continue</strong> ➔ Nhấn <strong>Done</strong>.</li>
+            <li>Copy địa chỉ email robot dạng: <span class="bga-code">blogger-indexing-bot@du-an.iam.gserviceaccount.com</span>.</li>
+          </ul>
+        </li>
+        <li>Bấm vào email robot vừa tạo ➔ Chuyển sang tab <strong>Keys (Khóa)</strong> ➔ Bấm <strong>Add Key</strong> ➔ <strong>Create new key</strong> ➔ Chọn loại <strong>JSON</strong> ➔ Nhấn <strong>Create</strong>.
+          <ul>
+            <li>File đuôi <span class="bga-code">.json</span> sẽ tải về máy tính. Mở file bằng Notepad và copy toàn bộ nội dung bên trong.</li>
+          </ul>
+        </li>
+        <li><strong>Phân quyền trong Google Search Console:</strong>
+          <ul>
+            <li>Truy cập <a href="https://search.google.com/search-console" rel="noopener" target="_blank">Google Search Console</a> của website Blogger của bạn.</li>
+            <li>Vào <strong>Cài đặt (Settings)</strong> ➔ <strong>Người dùng và quyền (Users and permissions)</strong>.</li>
+            <li>Bấm <strong>Thêm người dùng (Add user)</strong> ➔ Dán email robot Service Account ở trên vào ➔ Phân quyền: <strong>Chủ sở hữu (Owner)</strong> ➔ Nhấn <strong>Thêm (Add)</strong>.</li>
+          </ul>
+        </li>
+      </ol>
+
+      <div class="bga-mock-img">
+        <span class="bga-mock-badge">Ảnh minh họa 06</span>
+        <div class="bga-mock-title">Thêm Email Service Account Quyền Owner Trong Google Search Console</div>
+        <p class="bga-mock-desc">(Cửa sổ phân quyền Search Console hiển thị email robot với quyền Chủ sở hữu)</p>
+      </div>
+    </div>
+  </div>
+
+  <!--==================== BƯỚC 7 ====================-->
+  <div class="bga-step">
+    <div class="bga-step-head">
+      <div class="bga-step-num">07</div>
+      <div class="bga-step-title">
+        <h3>Fork Mã Nguồn &amp; Cài Đặt 9 Khóa Bí Mật Vào GitHub Secrets</h3>
+        <p>Lưu trữ an toàn tuyệt đối các thông tin đăng nhập, bảo mật 100% trên hạ tầng của GitHub.</p>
+      </div>
+    </div>
+    <div class="bga-step-body">
+      <ol>
+        <li>Đăng nhập tài khoản GitHub: <a href="https://github.com" rel="noopener" target="_blank">https://github.com</a>.</li>
+        <li>Truy cập vào kho lưu trữ mã nguồn hệ thống và nhấn nút <strong>Fork</strong> về tài khoản cá nhân.</li>
+        <li>Trên kho mã nguồn cá nhân, bấm vào tab <strong>Settings</strong> trên thanh menu.</li>
+        <li>Ở cột bên trái, vào mục <strong>Secrets and variables</strong> ➔ chọn <strong>Actions</strong>.</li>
+        <li>Bấm nút xanh <strong>New repository secret</strong> và lần lượt tạo đúng 9 biến sau:</li>
+      </ol>
+
+      <div class="bga-table-wrap">
+        <table class="bga-table">
+          <thead>
+            <tr>
+              <th style="width: 32%;">Tên Secret (Gõ chính xác)</th>
+              <th>Giá trị cần điền vào</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="bga-code">BLOGGER_BLOG_ID</span></td>
+              <td>Dãy số ID blog lấy ở Bước 1.</td>
+            </tr>
+            <tr>
+              <td><span class="bga-code">GEMINI_API_KEY</span></td>
+              <td>Khóa Gemini API lấy ở Bước 3.</td>
+            </tr>
+            <tr>
+              <td><span class="bga-code">GOOGLE_CLIENT_ID</span></td>
+              <td>OAuth Client ID lấy ở Bước 2 (...apps.googleusercontent.com).</td>
+            </tr>
+            <tr>
+              <td><span class="bga-code">GOOGLE_CLIENT_SECRET</span></td>
+              <td>OAuth Client Secret lấy ở Bước 2.</td>
+            </tr>
+            <tr>
+              <td><span class="bga-code">GOOGLE_REFRESH_TOKEN</span></td>
+              <td>Refresh Token Blogger lấy ở Bước 2 (bắt đầu bằng 1//0...).</td>
+            </tr>
+            <tr>
+              <td><span class="bga-code">GOOGLE_SHEET_URL</span></td>
+              <td>Đường link chia sẻ file Google Sheets ở Bước 5.</td>
+            </tr>
+            <tr>
+              <td><span class="bga-code">GOOGLE_SHEET_WEBHOOK_URL</span></td>
+              <td>Đường link Web App Apps Script đuôi <span class="bga-code">/exec</span> ở Bước 5.</td>
+            </tr>
+            <tr>
+              <td><span class="bga-code">TELEGRAM_BOT_TOKEN</span></td>
+              <td>Chuỗi Token bot từ @BotFather ở Bước 4.</td>
+            </tr>
+            <tr>
+              <td><span class="bga-code">TELEGRAM_CHAT_ID</span></td>
+              <td>Dãy số Chat ID nhóm nhận báo cáo ở Bước 4 (ví dụ: -5074952407).</td>
+            </tr>
+            <tr>
+              <td><span class="bga-code">INDEXING_SERVICE_ACCOUNT_JSON</span></td>
+              <td>Toàn bộ nội dung file JSON Service Account ở Bước 6 (từ dấu { đến dấu }).</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="bga-mock-img">
+        <span class="bga-mock-badge">Ảnh minh họa 07</span>
+        <div class="bga-mock-title">Danh Sách 9 Biến Môi Trường Trong GitHub Repository Secrets</div>
+        <p class="bga-mock-desc">(Giao diện Settings &gt; Secrets and variables &gt; Actions hiển thị danh sách secret)</p>
+      </div>
+    </div>
+  </div>
+
+  <!--==================== BƯỚC 8 ====================-->
+  <div class="bga-step">
+    <div class="bga-step-head">
+      <div class="bga-step-num">08</div>
+      <div class="bga-step-title">
+        <h3>Bấm Chạy Thử Nghiệm &amp; Tận Hưởng Thành Quả</h3>
+        <p>Kích hoạt lần đầu tiên bằng tay và ngắm nhìn cỗ máy tự động làm việc hoàn toàn từ A-Z.</p>
+      </div>
+    </div>
+    <div class="bga-step-body">
+      <ol>
+        <li>Trên kho mã nguồn GitHub của bạn, bấm vào tab <strong>Actions</strong>.</li>
+        <li>Ở cột bên trái, bấm chọn quy trình: <strong>🤖 Tự Động Viết &amp; Đăng Bài Blogger Chuẩn SEO</strong>.</li>
+        <li>Bấm nút <strong>Run workflow</strong> ở góc phải ➔ Chọn nhánh <span class="bga-code">main</span> ➔ Bấm nút màu xanh <strong>Run workflow</strong>.</li>
+        <li>Chờ khoảng 1-2 phút:
+          <ul>
+            <li>Vòng tròn chuyển sang <strong>màu xanh lá cây (Success ✓)</strong>.</li>
+            <li>Telegram báo thông báo bài viết đã được lên lịch thành công!</li>
+            <li>Google Sheets: dòng đề tài tự động đổi sang màu xanh lá cây kèm link bài viết.</li>
+            <li>Blogger: bài viết đã sẵn sàng trong mục <i>Đã lên lịch</i> với ảnh Thumbnail YouTube Doanh Nhân chuẩn mực.</li>
+            <li>Đến giờ xuất bản, robot quét bài Live sẽ tự động bắn Indexing lên Google Search Console ngay tức khắc!</li>
+          </ul>
+        </li>
+      </ol>
+
+      <div class="bga-mock-img">
+        <span class="bga-mock-badge">Ảnh minh họa 08</span>
+        <div class="bga-mock-title">Kết Quả Vận Hành: Nút Run Workflow Báo Success &amp; Báo Cáo Telegram</div>
+        <p class="bga-mock-desc">(Tab Actions hiển thị tick xanh thành công cùng thông báo Telegram báo cáo xuất bản)</p>
+      </div>
+
+      <div class="bga-alert bga-alert-success">
+        <div>🎉</div>
+        <div><strong>XIN CHÚC MỪNG BẠN!</strong> Bạn đã hoàn tất cài đặt cỗ máy tự động hóa nội dung số 1 cho Blogger. Từ nay, cứ mỗi <strong>20 phút</strong>, GitHub Actions sẽ tự động làm toàn bộ mọi việc từ A-Z mà bạn không cần phải đụng tay hay tốn một đồng chi phí nào!</div>
+      </div>
+    </div>
+  </div>
+
+  <!--4. CTA BANNER CUỐI BÀI-->
+  
+
+  <!-- FAQ BỔ SUNG -->
+  <div class="lv-section-header">
+    <h3>Câu Hỏi Thường Gặp Về Hệ Thống Blogger AI</h3>
+    <p>Giải đáp những thắc mắc kỹ thuật phổ biến nhất trong quá trình vận hành</p>
+  </div>
+
+  <div class="lv-faq-list">
+    <div class="lv-faq-item active">
+      <div class="lv-faq-question" onclick="this.parentElement.classList.toggle('active')">
+        <span>1. Chạy GitHub Actions có bị tính phí hay giới hạn thời gian không?</span>
+        <i class="fa fa-chevron-down"></i>
+      </div>
+      <div class="lv-faq-answer">
+        GitHub cung cấp 2.000 phút chạy Actions miễn phí mỗi tháng cho tài khoản cá nhân. Mỗi chu kỳ xuất bản bài viết của robot chỉ tốn khoảng 45 - 60 giây, nên bạn hoàn toàn có thể chạy hàng trăm bài mỗi tháng mà không tốn bất kỳ chi phí nào!
+      </div>
+    </div>
+
+    <div class="lv-faq-item">
+      <div class="lv-faq-question" onclick="this.parentElement.classList.toggle('active')">
+        <span>2. Bài viết do AI viết có bị Google phạt thứ hạng SEO không?</span>
+        <i class="fa fa-chevron-down"></i>
+      </div>
+      <div class="lv-faq-answer">
+        Theo nguyên tắc chính thức của Google Search Central, Google đánh giá nội dung dựa trên chất lượng thông tin cung cấp cho người đọc (E-E-A-T), không phân biệt do con người hay AI viết. Hệ thống Blogger AI của LuViet được tối ưu prompt chuyên sâu: có phân cảnh tiêu đề, đoạn văn logic, bảng số liệu so sánh, FAQ schema và danh mục liên kết nội bộ chuẩn SEO nên được Google đánh giá rất cao.
+      </div>
+    </div>
+
+    <div class="lv-faq-item">
+      <div class="lv-faq-question" onclick="this.parentElement.classList.toggle('active')">
+        <span>3. Nếu tôi muốn thuê cài đặt trọn gói hệ thống này thì LuViet có nhận không?</span>
+        <i class="fa fa-chevron-down"></i>
+      </div>
+      <div class="lv-faq-answer">
+        Có! Nếu bạn không rành về mã nguồn hay các bước cài đặt Google Cloud API, LuViet có gói dịch vụ cài đặt setup trọn gói từ A-Z, kết nối sẵn tên miền, cài đặt bot Telegram và bàn giao hệ thống chìa khóa trao tay chỉ sau 24h.
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA BANNER CHỐT -->
+  <div class="lv-cta-banner">
+    <div class="lv-cta-info">
+      <h3>Bạn Cần Cài Đặt Trọn Gói Hoặc Tùy Biến Hệ Thống AI Riêng?</h3>
+      <p>LuViet hỗ trợ setup hệ thống tự động hóa viết bài cho Blogger, WordPress và kết nối đa kênh theo yêu cầu riêng của doanh nghiệp.</p>
+    </div>
+    <div class="lv-cta-actions">
+      <a href="https://zalo.me/0914878680?text=TuVanCaiDatBloggerAI" target="_blank" class="lv-btn-zalo"><i class="fa fa-comment"></i> Hỗ Trợ Kỹ Thuật Zalo</a>
+      <a href="https://www.luviet.com/p/thiet-ke-website-tron-goi.html" class="lv-btn-white"><i class="fa fa-laptop"></i> Khám Phá Dịch Vụ LuViet</a>
+    </div>
+  </div>
+
+  <!-- DANH MỤC LIÊN KẾT NỘI BỘ SEO -->
+  <div class="lv-internal-grid">
+    <h4><i class="fa fa-sitemap" style="color: var(--lv-purple);"></i> Dịch Vụ Thiết Kế &amp; Cẩm Nang Kỹ Thuật LuViet</h4>
+    <div class="lv-link-columns">
+      <div class="lv-link-col">
+        <h5>Dịch Vụ Thiết Kế Website</h5>
+        <ul class="lv-link-list">
+          <li><a href="https://www.luviet.com/p/thiet-ke-website-tron-goi.html"><i class="fa fa-angle-right"></i> Dịch vụ thiết kế website trọn gói</a></li>
+          <li><a href="https://www.luviet.com/p/dich-vu-thiet-ke-website-ban-hang.html"><i class="fa fa-angle-right"></i> Dịch vụ thiết kế website bán hàng</a></li>
+          <li><a href="https://www.luviet.com/search/label/khoa-hoc-google-ads"><i class="fa fa-angle-right"></i> Thiết kế web WordPress chuẩn SEO</a></li>
+          <li><a href="https://www.luviet.com/search/label/san-pham"><i class="fa fa-angle-right"></i> Kho mẫu giao diện website bán chạy</a></li>
+        </ul>
+      </div>
+
+      <div class="lv-link-col">
+        <h5>Hướng Dẫn Kỹ Thuật Nền Tảng</h5>
+        <ul class="lv-link-list">
+          <li><a href="https://www.luviet.com/p/huong-dan-thiet-ke-website-wordpress.html"><i class="fa fa-angle-right"></i> Hướng dẫn dựng web WordPress theo mẫu</a></li>
+          <li><a href="https://www.luviet.com/p/cach-tro-ten-mien.html"><i class="fa fa-angle-right"></i> Cách trỏ tên miền về hosting mới nhất</a></li>
+          <li><a href="https://www.luviet.com/p/huong-dan-tai-ve.html"><i class="fa fa-angle-right"></i> Hướng dẫn đặt hàng &amp; tải về mã nguồn</a></li>
+          <li><a href="https://www.luviet.com/search/label/kien-thuc-domain-hosting"><i class="fa fa-angle-right"></i> Kiến thức Domain &amp; Web Hosting</a></li>
+        </ul>
+      </div>
+
+      <div class="lv-link-col">
+        <h5>Hệ Thống Marketing Tự Động</h5>
+        <ul class="lv-link-list">
+          <li><a href="https://www.luviet.com/p/he-thong-tu-ong-hoa-blogger-ai.html"><i class="fa fa-angle-right"></i> Hệ thống tự động hóa Blogger AI</a></li>
+          <li><a href="https://my.luviet.com" target="_blank"><i class="fa fa-angle-right"></i> Nền tảng tiếp thị số AILADI Platform</a></li>
+          <li><a href="https://www.luviet.com/search/label/viet-content-thue"><i class="fa fa-angle-right"></i> Bảng giá dịch vụ viết content chuẩn SEO</a></li>
+          <li><a href="https://www.luviet.com/search/label/kien-thuc-seo-website"><i class="fa fa-angle-right"></i> Cẩm nang tối ưu SEO Onpage đỉnh cao</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

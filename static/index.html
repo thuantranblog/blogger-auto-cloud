@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blogger AI Studio Pro - Tự Động Hóa Viết Bài & Thiết Kế Trang Blogger</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+  <link rel="stylesheet" href="/static/index.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- TOP NAVIGATION BAR -->
+    <header class="top-nav">
+      <div class="brand">
+        <div class="brand-logo"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+        <div class="brand-text">
+          <h1>Blogger Studio <span>Pro</span></h1>
+          <span class="sub-brand">LuViet Automation Suite</span>
+        </div>
+      </div>
+
+      <div class="nav-actions">
+        <!-- CONNECTION STATUS -->
+        <div id="connectionBadge" class="connection-badge disconnected" title="Trạng thái kết nối Chrome CDP (Cổng 9222)">
+          <span class="status-dot"></span>
+          <span class="status-text">Đang kiểm tra Chrome...</span>
+        </div>
+
+        <button id="btnRefreshStatus" class="btn-icon" title="Làm mới trạng thái">
+          <i class="fa-solid fa-arrows-rotate"></i>
+        </button>
+
+        <button id="btnLaunchChrome" class="btn-secondary" title="Tự động mở trình duyệt Chrome với cổng kết nối CDP 9222">
+          <i class="fa-brands fa-chrome"></i> Mở Chrome CDP
+        </button>
+
+        <button id="btnOpenBloggerList" class="btn-secondary">
+          <i class="fa-solid fa-list-check"></i> Quản Lý Trang &amp; Bài Viết
+        </button>
+
+        <button id="btnSaveLocal" class="btn-secondary">
+          <i class="fa-solid fa-floppy-disk"></i> Lưu File HTML
+        </button>
+
+        <button id="btnSyncBlogger" class="btn-primary">
+          <i class="fa-solid fa-cloud-arrow-up"></i> Đẩy Lên Blogger
+        </button>
+      </div>
+    </header>
+
+    <!-- MAIN WORKBENCH -->
+    <main class="workbench">
+      <!-- LEFT PANEL: GENERATOR & CODE EDITOR -->
+      <section class="panel editor-panel">
+        <div class="panel-header">
+          <div class="tabs">
+            <button class="tab active" data-tab="generatorTab"><i class="fa-solid fa-sliders"></i> Cấu Hình &amp; Sinh Mã AI</button>
+            <button class="tab" data-tab="codeTab"><i class="fa-solid fa-code"></i> Mã HTML Trực Tiếp</button>
+            <button class="tab" data-tab="componentsTab"><i class="fa-solid fa-cubes"></i> Thư Viện Linh Kiện</button>
+          </div>
+          <div class="editor-actions">
+            <button id="btnCopyCode" class="btn-sm" title="Sao chép toàn bộ HTML"><i class="fa-regular fa-copy"></i> Copy HTML</button>
+          </div>
+        </div>
+
+        <div class="panel-body">
+          <!-- TAB 1: GENERATOR -->
+          <div id="generatorTab" class="tab-content active">
+            <div class="form-group">
+              <label for="targetType">Mục tiêu xuất bản:</label>
+              <div class="radio-group">
+                <label class="radio-item">
+                  <input type="radio" name="targetType" value="page" checked>
+                  <span><i class="fa-solid fa-file-lines"></i> Trang Tĩnh (Page)</span>
+                </label>
+                <label class="radio-item">
+                  <input type="radio" name="targetType" value="post">
+                  <span><i class="fa-solid fa-newspaper"></i> Bài Đăng Mới (Post)</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="pageType">Loại hình nội dung:</label>
+              <select id="pageType" class="input-select">
+                <option value="service">Trang Dịch Vụ Trọn Gói (Service Page)</option>
+                <option value="sales">Trang Website Bán Hàng E-Commerce (High CRO)</option>
+                <option value="guide">Cẩm Nang Hướng Dẫn Kỹ Thuật (Tutorial / Guide)</option>
+                <option value="article">Bài Viết Chia Sẻ Chuẩn SEO (Blog Post)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="postTitle">Tiêu đề trang / bài viết:</label>
+              <input type="text" id="postTitle" class="input-text" placeholder="Ví dụ: Dịch Vụ Thiết Kế Website Trọn Gói Chuẩn SEO 2026..." value="Dịch Vụ Thiết Kế Website Chuẩn SEO Bùng Nổ Doanh Số">
+            </div>
+
+            <div class="form-group">
+              <label for="postKeywords">Từ khóa SEO (ngăn cách bằng dấu phẩy):</label>
+              <input type="text" id="postKeywords" class="input-text" placeholder="thiết kế website, web bán hàng, chuẩn seo google, tốc độ cao" value="thiết kế website trọn gói, chuẩn seo google, giao diện di động, giá tốt">
+            </div>
+
+            <div class="form-group">
+              <label for="postDesc">Mô tả tìm kiếm (Search Meta Description):</label>
+              <textarea id="postDesc" class="input-textarea" rows="2" placeholder="Tóm tắt ngắn 150-160 ký tự chuẩn SEO Google..."></textarea>
+            </div>
+
+            <div class="form-group" id="labelsGroup" style="display: none;">
+              <label for="postLabels">Nhãn bài viết (Dành cho Post):</label>
+              <input type="text" id="postLabels" class="input-text" placeholder="kien-thuc-website, san-pham, huong-dan">
+            </div>
+
+            <button id="btnGenerateAI" class="btn-generate">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Tự Động Sinh Mã Giao Diện Chuẩn LuViet
+            </button>
+          </div>
+
+          <!-- TAB 2: CODE HTML -->
+          <div id="codeTab" class="tab-content">
+            <textarea id="htmlEditor" class="code-editor" spellcheck="false" placeholder="Mã HTML Blogger sẽ xuất hiện tại đây..."></textarea>
+          </div>
+
+          <!-- TAB 3: COMPONENTS DRAWER -->
+          <div id="componentsTab" class="tab-content">
+            <p class="components-desc">Bấm vào linh kiện bên dưới để chèn nhanh vào mã HTML hiện tại:</p>
+            <div class="component-list">
+              <div class="comp-card" data-comp="pricing">
+                <div class="comp-icon"><i class="fa-solid fa-tags"></i></div>
+                <div class="comp-info">
+                  <h4>Bảng Giá 3 Gói Dịch Vụ</h4>
+                  <p>Gói Khởi Nghiệp, Chuyên Nghiệp (Featured) và VIP</p>
+                </div>
+                <button class="btn-insert"><i class="fa-solid fa-plus"></i></button>
+              </div>
+
+              <div class="comp-card" data-comp="payment">
+                <div class="comp-icon"><i class="fa-solid fa-qrcode"></i></div>
+                <div class="comp-info">
+                  <h4>Khung Thanh Toán Vietcombank</h4>
+                  <p>Tài khoản Tran Minh Thuan + VietQR chuẩn mực</p>
+                </div>
+                <button class="btn-insert"><i class="fa-solid fa-plus"></i></button>
+              </div>
+
+              <div class="comp-card" data-comp="timeline">
+                <div class="comp-icon"><i class="fa-solid fa-list-ol"></i></div>
+                <div class="comp-info">
+                  <h4>Quy Trình 4 Bước Đánh Số</h4>
+                  <p>Lộ trình triển khai dịch vụ trực quan theo hình tròn gradient</p>
+                </div>
+                <button class="btn-insert"><i class="fa-solid fa-plus"></i></button>
+              </div>
+
+              <div class="comp-card" data-comp="faq">
+                <div class="comp-icon"><i class="fa-solid fa-circle-question"></i></div>
+                <div class="comp-info">
+                  <h4>Bảng Câu Hỏi Thường Gặp (FAQ)</h4>
+                  <p>Khung câu hỏi dạng Accordion click đóng mở mượt mà</p>
+                </div>
+                <button class="btn-insert"><i class="fa-solid fa-plus"></i></button>
+              </div>
+
+              <div class="comp-card" data-comp="internal_links">
+                <div class="comp-icon"><i class="fa-solid fa-sitemap"></i></div>
+                <div class="comp-info">
+                  <h4>Lưới Liên Kết Nội Bộ SEO (3 Cột)</h4>
+                  <p>Ma trận backlink trỏ về các dịch vụ trọng tâm của LuViet</p>
+                </div>
+                <button class="btn-insert"><i class="fa-solid fa-plus"></i></button>
+              </div>
+
+              <div class="comp-card" data-comp="cta">
+                <div class="comp-icon"><i class="fa-solid fa-phone-volume"></i></div>
+                <div class="comp-info">
+                  <h4>Banner Chốt Khách (CTA Zalo)</h4>
+                  <p>Khung màu tím đậm kèm nút Zalo 0914878680 và Hotline</p>
+                </div>
+                <button class="btn-insert"><i class="fa-solid fa-plus"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT PANEL: LIVE PREVIEW -->
+      <section class="panel preview-panel">
+        <div class="panel-header">
+          <div class="preview-title">
+            <i class="fa-solid fa-eye"></i> Xem Trước Trực Quan (Live Preview)
+          </div>
+          <div class="device-switcher">
+            <button class="dev-btn active" data-device="desktop" title="Chế độ Máy Tính (100%)">
+              <i class="fa-solid fa-desktop"></i> Desktop
+            </button>
+            <button class="dev-btn" data-device="tablet" title="Chế độ Máy Tính Bảng (768px)">
+              <i class="fa-solid fa-tablet-screen-button"></i> Tablet
+            </button>
+            <button class="dev-btn" data-device="mobile" title="Chế độ Điện Thoại Di Động (375px)">
+              <i class="fa-solid fa-mobile-screen-button"></i> Mobile
+            </button>
+          </div>
+        </div>
+
+        <div class="panel-body preview-body">
+          <div class="device-container desktop" id="deviceContainer">
+            <iframe id="previewFrame" title="Xem trước giao diện"></iframe>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- MODAL: DANH SÁCH BÀI & TRANG BLOGGER -->
+    <div id="bloggerModal" class="modal-overlay">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h3><i class="fa-solid fa-layer-group"></i> Chọn Trang / Bài Viết Trên Blogger Để Cập Nhật</h3>
+          <button id="btnCloseModal" class="btn-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="modal-filters">
+            <button id="btnTabModalPages" class="btn-sm active">Danh Sách Trang (Pages)</button>
+            <button id="btnTabModalPosts" class="btn-sm">Danh Sách Bài Đăng (Posts)</button>
+            <span id="modalItemCount" class="modal-count">Đang tải...</span>
+          </div>
+          <div id="modalItemList" class="modal-item-list">
+            <div class="modal-loading"><i class="fa-solid fa-spinner fa-spin"></i> Đang đọc dữ liệu từ Blogger...</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="btnCancelModal" class="btn-secondary">Đóng</button>
+          <button id="btnApplySelected" class="btn-primary" disabled>
+            <i class="fa-solid fa-check"></i> Cập Nhật Trang Này
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toastContainer" class="toast-container"></div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

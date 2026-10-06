@@ -1,0 +1,1051 @@
+<div class="lv-service-wrapper">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+    .lv-service-wrapper {
+      --lv-gradient: linear-gradient(135deg, #6d3990 0%, #d43434 50%, #032690 100%);
+      --lv-gradient-soft: linear-gradient(135deg, rgba(109,57,144,0.08) 0%, rgba(212,52,52,0.05) 50%, rgba(3,38,144,0.08) 100%);
+      --lv-gradient-dark: linear-gradient(135deg, #1e1b4b 0%, #2e1065 50%, #032690 100%);
+      --lv-purple: #6d3990;
+      --lv-red: #d43434;
+      --lv-navy: #032690;
+      --lv-zalo: #0068ff;
+      --lv-green: #22c55e;
+      --lv-dark: #1e293b;
+      --lv-text: #334155;
+      --lv-text-muted: #64748b;
+      --lv-bg-light: #f8fafc;
+      --lv-card-bg: #ffffff;
+      --lv-border: #e2e8f0;
+      --lv-shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      --lv-shadow-md: 0 10px 25px -3px rgba(109, 57, 144, 0.08);
+      --lv-shadow-lg: 0 20px 35px -5px rgba(109, 57, 144, 0.15);
+      --lv-radius-sm: 10px;
+      --lv-radius-md: 16px;
+      --lv-radius-lg: 24px;
+      
+      font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: var(--lv-text);
+      line-height: 1.7;
+      font-size: 16px;
+      width: 100%;
+      max-width: 1140px;
+      margin: 15px auto 40px auto;
+      box-sizing: border-box;
+    }
+
+    .lv-service-wrapper * {
+      box-sizing: border-box;
+    }
+
+    /* HERO CARD */
+    .lv-hero-card {
+      background: var(--lv-gradient);
+      color: #ffffff;
+      border-radius: var(--lv-radius-lg);
+      padding: 48px 36px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--lv-shadow-lg);
+      margin-bottom: 35px;
+      text-align: center;
+    }
+
+    .lv-hero-card::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      left: -20%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .lv-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.22);
+      backdrop-filter: blur(10px);
+      padding: 7px 20px;
+      border-radius: 50px;
+      font-size: 13.5px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+    }
+
+    .lv-hero-card h2 {
+      font-size: 34px;
+      font-weight: 800;
+      color: #ffffff;
+      margin: 0 0 16px 0;
+      line-height: 1.35;
+    }
+
+    .lv-hero-card p {
+      font-size: 17.5px;
+      color: rgba(255, 255, 255, 0.95);
+      max-width: 860px;
+      margin: 0 auto 26px auto;
+      line-height: 1.65;
+    }
+
+    .lv-hero-chips {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .lv-hero-chip {
+      background: rgba(255, 255, 255, 0.16);
+      backdrop-filter: blur(6px);
+      padding: 8px 18px;
+      border-radius: 30px;
+      font-size: 14px;
+      font-weight: 600;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* SECTION HEADERS */
+    .lv-section-header {
+      text-align: center;
+      margin: 50px 0 30px 0;
+    }
+
+    .lv-section-header h3 {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--lv-dark);
+      margin: 0 0 10px 0;
+      position: relative;
+      display: inline-block;
+    }
+
+    .lv-section-header h3::after {
+      content: '';
+      display: block;
+      width: 60px;
+      height: 4px;
+      background: var(--lv-gradient);
+      border-radius: 2px;
+      margin: 8px auto 0 auto;
+    }
+
+    .lv-section-header p {
+      font-size: 15.5px;
+      color: var(--lv-text-muted);
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    /* PAIN POINT BANNER */
+    .lv-pain-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .lv-pain-card {
+      background: #ffffff;
+      border: 1px solid #fee2e2;
+      border-radius: var(--lv-radius-md);
+      padding: 24px;
+      box-shadow: var(--lv-shadow-sm);
+      text-align: center;
+    }
+
+    .lv-pain-card i {
+      font-size: 32px;
+      color: #ef4444;
+      margin-bottom: 12px;
+    }
+
+    .lv-pain-card h4 {
+      font-size: 16.5px;
+      font-weight: 700;
+      color: #991b1b;
+      margin: 0 0 8px 0;
+    }
+
+    .lv-pain-card p {
+      font-size: 14px;
+      color: var(--lv-text-muted);
+      margin: 0;
+      line-height: 1.55;
+    }
+
+    /* FEATURES GRID (8 WEAPONS) */
+    .lv-features-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 22px;
+      margin-bottom: 45px;
+    }
+
+    .lv-feature-card {
+      background: var(--lv-card-bg);
+      border-radius: var(--lv-radius-md);
+      border: 1px solid var(--lv-border);
+      padding: 24px 20px;
+      box-shadow: var(--lv-shadow-sm);
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .lv-feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--lv-shadow-lg);
+      border-color: var(--lv-purple);
+    }
+
+    .lv-feature-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
+      background: var(--lv-gradient-soft);
+      color: var(--lv-purple);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 16px;
+    }
+
+    .lv-feature-card h4 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--lv-dark);
+      margin: 0 0 8px 0;
+      line-height: 1.4;
+    }
+
+    .lv-feature-card p {
+      font-size: 14px;
+      color: var(--lv-text-muted);
+      margin: 0;
+      line-height: 1.55;
+      flex-grow: 1;
+    }
+
+    /* PRICING TABLE */
+    .lv-pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 45px;
+      align-items: stretch;
+    }
+
+    .lv-pricing-card {
+      background: var(--lv-card-bg);
+      border-radius: var(--lv-radius-md);
+      border: 1px solid var(--lv-border);
+      padding: 32px 26px;
+      box-shadow: var(--lv-shadow-sm);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .lv-pricing-card:hover {
+      box-shadow: var(--lv-shadow-lg);
+      transform: translateY(-4px);
+    }
+
+    .lv-pricing-card.featured {
+      border: 2px solid var(--lv-purple);
+      background: linear-gradient(180deg, #ffffff 0%, #faf5ff 100%);
+      box-shadow: var(--lv-shadow-md);
+    }
+
+    .lv-pricing-badge {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--lv-gradient);
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 5px 16px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    .lv-pricing-header {
+      text-align: center;
+      border-bottom: 1px solid var(--lv-border);
+      padding-bottom: 22px;
+      margin-bottom: 22px;
+    }
+
+    .lv-pricing-name {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--lv-dark);
+      margin-bottom: 8px;
+    }
+
+    .lv-pricing-price {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--lv-purple);
+      margin-bottom: 4px;
+    }
+
+    .lv-pricing-note {
+      font-size: 13px;
+      color: var(--lv-text-muted);
+    }
+
+    .lv-pricing-features {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 25px 0;
+      flex-grow: 1;
+    }
+
+    .lv-pricing-features li {
+      font-size: 14.5px;
+      color: var(--lv-text);
+      padding: 8px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px dashed rgba(226, 232, 240, 0.7);
+    }
+
+    .lv-pricing-features li i.fa-check {
+      color: var(--lv-green);
+      font-weight: 700;
+    }
+
+    .lv-pricing-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 13px 20px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      text-decoration: none !important;
+      transition: all 0.25s ease;
+      text-align: center;
+    }
+
+    .lv-btn-primary {
+      background: var(--lv-gradient);
+      color: #ffffff !important;
+      box-shadow: 0 4px 14px rgba(109, 57, 144, 0.25);
+    }
+
+    .lv-btn-primary:hover {
+      opacity: 0.92;
+      transform: translateY(-2px);
+    }
+
+    .lv-btn-secondary {
+      background: var(--lv-bg-light);
+      color: var(--lv-dark) !important;
+      border: 1px solid var(--lv-border);
+    }
+
+    .lv-btn-secondary:hover {
+      background: #e2e8f0;
+    }
+
+    /* GIFT BONUSES */
+    .lv-gift-box {
+      background: linear-gradient(135deg, #fdf4ff 0%, #fff1f2 50%, #eff6ff 100%);
+      border: 2px dashed #d8b4fe;
+      border-radius: var(--lv-radius-md);
+      padding: 30px;
+      margin-bottom: 40px;
+    }
+
+    .lv-gift-header {
+      text-align: center;
+      margin-bottom: 22px;
+    }
+
+    .lv-gift-header h4 {
+      font-size: 21px;
+      font-weight: 800;
+      color: #701a75;
+      margin: 0 0 6px 0;
+    }
+
+    .lv-gift-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .lv-gift-item {
+      background: #ffffff;
+      border-radius: var(--lv-radius-sm);
+      padding: 16px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      border: 1px solid #f1f5f9;
+    }
+
+    .lv-gift-icon {
+      font-size: 24px;
+      color: #d946ef;
+      margin-bottom: 8px;
+    }
+
+    .lv-gift-title {
+      font-weight: 700;
+      font-size: 14.5px;
+      color: var(--lv-dark);
+      margin-bottom: 4px;
+    }
+
+    .lv-gift-val {
+      font-size: 12.5px;
+      color: #d43434;
+      font-weight: 700;
+    }
+
+    /* PROCESS TIMELINE */
+    .lv-process-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+      margin-bottom: 45px;
+    }
+
+    .lv-process-step {
+      background: var(--lv-card-bg);
+      border: 1px solid var(--lv-border);
+      border-radius: var(--lv-radius-sm);
+      padding: 20px 16px;
+      text-align: center;
+      position: relative;
+    }
+
+    .lv-process-num {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--lv-gradient);
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px auto;
+    }
+
+    .lv-process-step h5 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--lv-dark);
+      margin: 0 0 6px 0;
+    }
+
+    .lv-process-step p {
+      font-size: 13px;
+      color: var(--lv-text-muted);
+      margin: 0;
+      line-height: 1.45;
+    }
+
+    /* FAQ ACCORDION */
+    .lv-faq-list {
+      margin-bottom: 40px;
+    }
+
+    .lv-faq-item {
+      background: var(--lv-card-bg);
+      border: 1px solid var(--lv-border);
+      border-radius: var(--lv-radius-sm);
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    .lv-faq-question {
+      padding: 18px 22px;
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--lv-dark);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #ffffff;
+      user-select: none;
+    }
+
+    .lv-faq-question:hover {
+      background: var(--lv-bg-light);
+      color: var(--lv-purple);
+    }
+
+    .lv-faq-question i {
+      transition: transform 0.3s ease;
+      color: var(--lv-purple);
+    }
+
+    .lv-faq-item.active .lv-faq-question i {
+      transform: rotate(180deg);
+    }
+
+    .lv-faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+      background: #fafafa;
+      color: var(--lv-text);
+      font-size: 15px;
+      line-height: 1.7;
+      padding: 0 22px;
+    }
+
+    .lv-faq-item.active .lv-faq-answer {
+      max-height: 350px;
+      padding: 16px 22px 20px 22px;
+      border-top: 1px solid var(--lv-border);
+    }
+
+    /* CTA FOOTER */
+    .lv-cta-banner {
+      background: var(--lv-gradient-dark);
+      border-radius: var(--lv-radius-md);
+      padding: 38px 32px;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 25px;
+      margin-bottom: 40px;
+      box-shadow: var(--lv-shadow-md);
+    }
+
+    .lv-cta-info h3 {
+      font-size: 23px;
+      font-weight: 800;
+      color: #ffffff;
+      margin: 0 0 8px 0;
+    }
+
+    .lv-cta-info p {
+      font-size: 15px;
+      color: rgba(255, 255, 255, 0.88);
+      margin: 0;
+      max-width: 620px;
+    }
+
+    .lv-cta-actions {
+      display: flex;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .lv-btn-zalo {
+      background: var(--lv-zalo);
+      color: #ffffff !important;
+      padding: 12px 22px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 14.5px;
+      text-decoration: none !important;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .lv-btn-white {
+      background: #ffffff;
+      color: var(--lv-navy) !important;
+      padding: 12px 22px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 14.5px;
+      text-decoration: none !important;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* INTERNAL LINKS */
+    .lv-internal-grid {
+      background: var(--lv-bg-light);
+      border: 1px solid var(--lv-border);
+      border-radius: var(--lv-radius-md);
+      padding: 30px;
+      margin-top: 30px;
+    }
+
+    .lv-internal-grid h4 {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--lv-dark);
+      margin: 0 0 18px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .lv-link-columns {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .lv-link-col h5 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--lv-purple);
+      margin: 0 0 10px 0;
+    }
+
+    .lv-link-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .lv-link-list li {
+      margin-bottom: 8px;
+    }
+
+    .lv-link-list a {
+      color: var(--lv-text);
+      text-decoration: none;
+      font-size: 14px;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .lv-link-list a:hover {
+      color: var(--lv-red);
+      transform: translateX(3px);
+    }
+
+    /* RESPONSIVE TABLET & MOBILE */
+    @media (max-width: 991px) {
+      .lv-pain-grid {
+        grid-template-columns: 1fr;
+      }
+      .lv-features-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .lv-pricing-grid {
+        grid-template-columns: 1fr;
+      }
+      .lv-gift-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .lv-process-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .lv-cta-banner {
+        flex-direction: column;
+        text-align: center;
+      }
+      .lv-cta-actions {
+        width: 100%;
+        justify-content: center;
+      }
+      .lv-link-columns {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .lv-hero-card {
+        padding: 32px 20px;
+      }
+      .lv-hero-card h2 {
+        font-size: 24px;
+      }
+      .lv-hero-card p {
+        font-size: 15px;
+      }
+      .lv-features-grid {
+        grid-template-columns: 1fr;
+      }
+      .lv-gift-grid {
+        grid-template-columns: 1fr;
+      }
+      .lv-process-grid {
+        grid-template-columns: 1fr;
+      }
+      .lv-cta-actions {
+        flex-direction: column;
+      }
+      .lv-btn-zalo, .lv-btn-white {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+
+  <!-- SCHEMA JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "Dịch Vụ Thiết Kế Website Bán Hàng Chuyên Nghiệp LuViet",
+    "image": "https://www.luviet.com/favicon.ico",
+    "description": "Dịch vụ thiết kế website bán hàng trực tuyến chuẩn SEO, tối ưu tỷ lệ chuyển đổi CRO, tích hợp thanh toán VietQR tự động, bảo mật và tốc độ tải trang dưới 1.5s.",
+    "brand": {
+      "@type": "Brand",
+      "name": "LuViet"
+    },
+    "offers": {
+      "@type": "AggregateOffer",
+      "priceCurrency": "VND",
+      "lowPrice": "2500000",
+      "highPrice": "7500000",
+      "offerCount": "3"
+    }
+  }
+  </script>
+
+  <!-- HERO SECTION -->
+  <div class="lv-hero-card">
+    <div class="lv-badge"><i class="fa fa-shopping-cart"></i> Giải Pháp Kinh Doanh Online Đột Phá 2026</div>
+    <h2>Dịch Vụ Thiết Kế Website Bán Hàng Chuẩn SEO &amp; Chuyển Đổi Cao</h2>
+    <p>Biến website thành cỗ máy bán hàng tự động 24/7. Tối ưu giao diện Mobile &amp; Tablet mượt mà, tích hợp thanh toán tự động, bứt phá doanh số với chi phí tối ưu nhất thị trường.</p>
+    <div class="lv-hero-chips">
+      <div class="lv-hero-chip"><i class="fa fa-bolt"></i> Tốc Độ Tải Siêu Tốc &lt; 1.5s</div>
+      <div class="lv-hero-chip"><i class="fa fa-qrcode"></i> Thanh Toán VietQR Tự Động</div>
+      <div class="lv-hero-chip"><i class="fa fa-google"></i> Cấu Trúc Chuẩn SEO Top Google</div>
+      <div class="lv-hero-chip"><i class="fa fa-clock-o"></i> Bàn Giao Nhanh 3 - 5 Ngày</div>
+    </div>
+  </div>
+
+  <!-- VẤN ĐỀ THỰC TẾ KHI KINH DOANH ONLINE -->
+  <div class="lv-section-header">
+    <h3>Tại Sao 85% Doanh Nghiệp Thất Bại Khi Bán Hàng Trực Tuyến?</h3>
+    <p>Những sai lầm chí mạng khiến khách hàng vào website rồi lập tức rời đi</p>
+  </div>
+
+  <div class="lv-pain-grid">
+    <div class="lv-pain-card">
+      <i class="fa fa-mobile"></i>
+      <h4>Giao Diện Mobile Vỡ Khung</h4>
+      <p>Hơn 78% khách hàng mua sắm qua điện thoại. Nếu website không tương thích mobile/tablet, bạn đã mất hơn 3/4 cơ hội bán hàng.</p>
+    </div>
+    <div class="lv-pain-card">
+      <i class="fa fa-hourglass-o"></i>
+      <h4>Tốc Độ Tải Trang Chậm Chạp</h4>
+      <p>Chỉ cần web tải quá 3 giây, 53% người dùng sẽ nhấn nút Back sang đối thủ. Tốc độ là yếu tố sống còn giữ chân người mua.</p>
+    </div>
+    <div class="lv-pain-card">
+      <i class="fa fa-ban"></i>
+      <h4>Quy Trình Đặt Hàng Phức Tạp</h4>
+      <p>Bắt đăng ký tài khoản rườm rà, thiếu quét mã QR thanh toán nhanh khiến tỷ lệ bỏ rơi giỏ hàng lên tới hơn 70%.</p>
+    </div>
+  </div>
+
+  <!-- 8 VŨ KHÍ TỐI THƯỢNG CHO WEB BÁN HÀNG -->
+  <div class="lv-section-header">
+    <h3>08 Vũ Khí Bán Hàng Đỉnh Cao Tích Hợp Sẵn Trong Website LuViet</h3>
+    <p>Được nghiên cứu và hoàn thiện dựa trên trải nghiệm mua hàng thực tế của hàng chục ngàn người dùng Việt Nam</p>
+  </div>
+
+  <div class="lv-features-grid">
+    <div class="lv-feature-card">
+      <div class="lv-feature-icon"><i class="fa fa-mobile-phone"></i></div>
+      <h4>Chuẩn Mobile-First</h4>
+      <p>Tương thích hoàn hảo mọi thiết bị di động, thao tác vuốt chạm thêm giỏ hàng mượt mà như một ứng dụng App chuyên nghiệp.</p>
+    </div>
+
+    <div class="lv-feature-card">
+      <div class="lv-feature-icon"><i class="fa fa-mouse-pointer"></i></div>
+      <h4>1-Click Fast Checkout</h4>
+      <p>Khách hàng chỉ cần nhập Tên + Số điện thoại + Địa chỉ là đặt hàng thành công trong 10 giây, giảm tỷ lệ thoát trang tối đa.</p>
+    </div>
+
+    <div class="lv-feature-card">
+      <div class="lv-feature-icon"><i class="fa fa-qrcode"></i></div>
+      <h4>Thanh Toán QR Tự Động</h4>
+      <p>Tích hợp cổng quét mã VietQR tự khớp số tiền và nội dung, Momo, VNPAY, Thẻ Quốc Tế và hình thức COD thông dụng.</p>
+    </div>
+
+    <div class="lv-feature-card">
+      <div class="lv-feature-icon"><i class="fa fa-bell-o"></i></div>
+      <h4>Báo Đơn Hàng Tức Thì</h4>
+      <p>Mỗi khi có khách mua, hệ thống gửi thông báo ngay lập tức qua Email, Zalo hoặc Telegram để bạn chốt đơn trong tích tắc.</p>
+    </div>
+
+    <div class="lv-feature-card">
+      <div class="lv-feature-icon"><i class="fa fa-line-chart"></i></div>
+      <h4>Tối Ưu Chuẩn SEO Onpage</h4>
+      <p>Khai báo Schema Product, Review đánh giá 5 sao, Breadcrumb, URL thân thiện giúp sản phẩm nhanh chóng lên trang 1 Google.</p>
+    </div>
+
+    <div class="lv-feature-card">
+      <div class="lv-feature-icon"><i class="fa fa-fire"></i></div>
+      <h4>Kích Hoạt Chuyển Đổi (CRO)</h4>
+      <p>Đồng hồ đếm ngược Flash Sale, thông báo "khách vừa mua", thanh tiến trình Freeship kích thích mua hàng không thể cưỡng lại.</p>
+    </div>
+
+    <div class="lv-feature-card">
+      <div class="lv-feature-icon"><i class="fa fa-share-alt"></i></div>
+      <h4>Đồng Bộ Đa Kênh</h4>
+      <p>Dễ dàng kết nối sản phẩm lên TikTok Shop, Facebook Shop, Google Merchant Center và Zalo Mini App.</p>
+    </div>
+
+    <div class="lv-feature-card">
+      <div class="lv-feature-icon"><i class="fa fa-shield"></i></div>
+      <h4>Bảo Mật &amp; Tốc Độ Cao</h4>
+      <p>Tích hợp SSL vĩnh viễn, hạ tầng máy chủ NVMe Cloud thế hệ mới cam kết thời gian uptime 99.9% và bảo mật dữ liệu khách hàng.</p>
+    </div>
+  </div>
+
+  <!-- BẢNG BÁO GIÁ CÁC GÓI THIẾT KẾ WEB BÁN HÀNG -->
+  <div class="lv-section-header">
+    <h3>Bảng Giá Thiết Kế Website Bán Hàng Trọn Gói</h3>
+    <p>Chi phí minh bạch 100% - Không phát sinh chi phí ẩn - Bàn giao trọn đời</p>
+  </div>
+
+  <div class="lv-pricing-grid">
+    <!-- GÓI 1 -->
+    <div class="lv-pricing-card">
+      <div class="lv-pricing-header">
+        <div class="lv-pricing-name">Gói Khởi Nghiệp</div>
+        <div class="lv-pricing-price">2.500.000đ</div>
+        <div class="lv-pricing-note">Phù hợp shop nhỏ, cá nhân bán lẻ dưới 50 sản phẩm</div>
+      </div>
+      <ul class="lv-pricing-features">
+        <li><i class="fa fa-check"></i> Giao diện Blogger hoặc WordPress chuẩn</li>
+        <li><i class="fa fa-check"></i> Đầy đủ giỏ hàng &amp; đặt hàng online</li>
+        <li><i class="fa fa-check"></i> Tối ưu tương thích điện thoại di động</li>
+        <li><i class="fa fa-check"></i> Tặng tên miền quốc tế (.com) 1 năm</li>
+        <li><i class="fa fa-check"></i> Nhập sẵn 15 sản phẩm mẫu demo</li>
+        <li><i class="fa fa-check"></i> Bàn giao trong 3 ngày làm việc</li>
+      </ul>
+      <a href="https://zalo.me/0914878680?text=TuVanWebBanHangKhoiNghiep" target="_blank" class="lv-pricing-btn lv-btn-secondary">
+        <i class="fa fa-hand-o-right"></i> Chọn Gói Khởi Nghiệp
+      </a>
+    </div>
+
+    <!-- GÓI 2 -->
+    <div class="lv-pricing-card featured">
+      <span class="lv-pricing-badge">Phổ Biến &amp; Bán Chạy Nhất</span>
+      <div class="lv-pricing-header">
+        <div class="lv-pricing-name">Gói Chuyên Nghiệp</div>
+        <div class="lv-pricing-price">4.500.000đ</div>
+        <div class="lv-pricing-note">Dành cho cửa hàng kinh doanh chuyên nghiệp, bứt phá doanh số</div>
+      </div>
+      <ul class="lv-pricing-features">
+        <li><i class="fa fa-check"></i> Giao diện chuẩn phong cách thương hiệu cao cấp</li>
+        <li><i class="fa fa-check"></i> 1-Click Fast Checkout + Quét VietQR tự động</li>
+        <li><i class="fa fa-check"></i> Báo đơn hàng tức thì qua Zalo &amp; Telegram</li>
+        <li><i class="fa fa-check"></i> Tặng Tên miền Quốc tế + Hosting NVMe Siêu Tốc 1 năm</li>
+        <li><i class="fa fa-check"></i> Bộ công cụ CRO: Flash Sale, Mua kèm giá sốc</li>
+        <li><i class="fa fa-check"></i> Tối ưu SEO Onpage Top Google chuyên sâu</li>
+        <li><i class="fa fa-check"></i> Nhập sẵn 40 sản phẩm chuẩn SEO</li>
+        <li><i class="fa fa-check"></i> Bàn giao sau 3 - 5 ngày</li>
+      </ul>
+      <a href="https://zalo.me/0914878680?text=TuVanWebBanHangChuyenNghiep" target="_blank" class="lv-pricing-btn lv-btn-primary">
+        <i class="fa fa-star"></i> Chọn Gói Chuyên Nghiệp
+      </a>
+    </div>
+
+    <!-- GÓI 3 -->
+    <div class="lv-pricing-card">
+      <div class="lv-pricing-header">
+        <div class="lv-pricing-name">Gói Doanh Nghiệp VIP</div>
+        <div class="lv-pricing-price">7.500.000đ</div>
+        <div class="lv-pricing-note">Giải pháp sàn E-Commerce đa ngành, thiết kế may đo riêng biệt</div>
+      </div>
+      <ul class="lv-pricing-features">
+        <li><i class="fa fa-check"></i> Thiết kế UI/UX độc quyền theo bộ nhận diện</li>
+        <li><i class="fa fa-check"></i> Tích hợp full cổng thanh toán: Visa, VNPAY, Momo</li>
+        <li><i class="fa fa-check"></i> Hệ thống phân quyền đại lý, tích điểm &amp; Coupon VIP</li>
+        <li><i class="fa fa-check"></i> Tặng Tên miền .vn + Hosting NVMe Cloud 1 năm</li>
+        <li><i class="fa fa-check"></i> Đồng bộ đa sàn Shopee, TikTok Shop tự động</li>
+        <li><i class="fa fa-check"></i> Cam kết bảo mật, chống DDoS và backup hàng ngày</li>
+        <li><i class="fa fa-check"></i> Hỗ trợ kỹ thuật 24/7 trọn đời</li>
+      </ul>
+      <a href="https://zalo.me/0914878680?text=TuVanWebBanHangVIP" target="_blank" class="lv-pricing-btn lv-btn-secondary">
+        <i class="fa fa-diamond"></i> Chọn Gói Doanh Nghiệp
+      </a>
+    </div>
+  </div>
+
+  <!-- QUÀ TẶNG KHI ĐĂNG KÝ HÔM NAY -->
+  <div class="lv-gift-box">
+    <div class="lv-gift-header">
+      <h4><i class="fa fa-gift"></i> Quà Tặng Độc Quyền Trị Giá 4.500.000đ Khi Ký Hợp Đồng Tuần Này</h4>
+      <p style="font-size: 14.5px; color: #86198f; margin: 0;">Trang bị trọn gói mọi nền tảng kỹ thuật - Bạn chỉ việc tập trung tư vấn chốt đơn</p>
+    </div>
+    <div class="lv-gift-grid">
+      <div class="lv-gift-item">
+        <div class="lv-gift-icon"><i class="fa fa-globe"></i></div>
+        <div class="lv-gift-title">Tên Miền .COM Quốc Tế</div>
+        <div class="lv-gift-val">Trị giá 350.000đ</div>
+      </div>
+      <div class="lv-gift-item">
+        <div class="lv-gift-icon"><i class="fa fa-server"></i></div>
+        <div class="lv-gift-title">Hosting NVMe Siêu Tốc</div>
+        <div class="lv-gift-val">Trị giá 1.800.000đ</div>
+      </div>
+      <div class="lv-gift-item">
+        <div class="lv-gift-icon"><i class="fa fa-lock"></i></div>
+        <div class="lv-gift-title">Chứng Chỉ SSL Cao Cấp</div>
+        <div class="lv-gift-val">Trị giá 500.000đ</div>
+      </div>
+      <div class="lv-gift-item">
+        <div class="lv-gift-icon"><i class="fa fa-youtube-play"></i></div>
+        <div class="lv-gift-title">Kho Video Quản Trị 1-1</div>
+        <div class="lv-gift-val">Trị giá 1.500.000đ</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUY TRÌNH 5 BƯỚC TRIỂN KHAI -->
+  <div class="lv-section-header">
+    <h3>Quy Trình Triển Khai Chuyên Nghiệp 5 Bước</h3>
+    <p>Minh bạch, bài bản và cam kết đúng tiến độ 100%</p>
+  </div>
+
+  <div class="lv-process-grid">
+    <div class="lv-process-step">
+      <div class="lv-process-num">01</div>
+      <h5>Tư Vấn &amp; Khảo Sát</h5>
+      <p>Phân tích ngành hàng, đối tượng khách hàng và tư vấn bố cục tối ưu chuyển đổi.</p>
+    </div>
+    <div class="lv-process-step">
+      <div class="lv-process-num">02</div>
+      <h5>Phác Thảo Giao Diện</h5>
+      <p>Lựa chọn và tùy biến mẫu giao diện theo đúng màu sắc nhận diện thương hiệu.</p>
+    </div>
+    <div class="lv-process-step">
+      <div class="lv-process-num">03</div>
+      <h5>Lập Trình &amp; Nhập Liệu</h5>
+      <p>Tích hợp giỏ hàng, cổng thanh toán, tối ưu tốc độ và nhập liệu sản phẩm demo.</p>
+    </div>
+    <div class="lv-process-step">
+      <div class="lv-process-num">04</div>
+      <h5>Chạy Thử &amp; Tối Ưu</h5>
+      <p>Kiểm tra kỹ lưỡng trên đa thiết bị iPhone, iPad, Android, PC trước khi chạy chính thức.</p>
+    </div>
+    <div class="lv-process-step">
+      <div class="lv-process-num">05</div>
+      <h5>Bàn Giao &amp; Bảo Hành</h5>
+      <p>Bàn giao toàn bộ quyền quản trị, hướng dẫn vận hành 1-1 và bảo hành trọn đời.</p>
+    </div>
+  </div>
+
+  <!-- FAQ ACCORDION -->
+  <div class="lv-section-header">
+    <h3>Giải Đáp Thắc Mắc Về Website Bán Hàng</h3>
+    <p>Những câu hỏi thường gặp của khách hàng trước khi bắt đầu</p>
+  </div>
+
+  <div class="lv-faq-list">
+    <div class="lv-faq-item active">
+      <div class="lv-faq-question" onclick="this.parentElement.classList.toggle('active')">
+        <span>1. Tôi không biết lập trình thì có tự đăng sản phẩm và chỉnh giá được không?</span>
+        <i class="fa fa-chevron-down"></i>
+      </div>
+      <div class="lv-faq-answer">
+        Chắc chắn được! Hệ thống quản trị được LuViet tối ưu cực kỳ trực quan bằng tiếng Việt. Việc thêm mới sản phẩm, đổi giá, tạo mã giảm giá dễ dàng như đăng ảnh Facebook. Ngoài ra LuViet cung cấp video hướng dẫn chi tiết và hỗ trợ kỹ thuật tận nơi khi bạn cần.
+      </div>
+    </div>
+
+    <div class="lv-faq-item">
+      <div class="lv-faq-question" onclick="this.parentElement.classList.toggle('active')">
+        <span>2. Website bán hàng làm xong sau bao lâu thì lên Top Google?</span>
+        <i class="fa fa-chevron-down"></i>
+      </div>
+      <div class="lv-faq-answer">
+        Website của LuViet được cấu hình chuẩn SEO 100% từ cấu trúc code, URL, Schema dữ liệu có cấu trúc và tốc độ tải trang. Ngay sau khi đưa vào hoạt động, website sẽ được index Google trong vòng 24 - 48h. Với các từ khóa sản phẩm cụ thể và ngách kinh doanh, thời gian đạt thứ hạng cao dao động từ 1 - 3 tháng tùy theo mức độ cạnh tranh.
+      </div>
+    </div>
+
+    <div class="lv-faq-item">
+      <div class="lv-faq-question" onclick="this.parentElement.classList.toggle('active')">
+        <span>3. Sau này tôi muốn nâng cấp thêm tính năng thì có được không?</span>
+        <i class="fa fa-chevron-down"></i>
+      </div>
+      <div class="lv-faq-answer">
+        Hoàn toàn được. Mã nguồn website do LuViet thiết kế có khả năng mở rộng không giới hạn. Khi quy mô kinh doanh lớn hơn, bạn có thể dễ dàng bổ sung tính năng quản lý tồn kho, kết nối API nhà vận chuyển (GHTK, Viettel Post) hay tích hợp thêm cổng thanh toán bất kỳ lúc nào.
+      </div>
+    </div>
+
+    <div class="lv-faq-item">
+      <div class="lv-faq-question" onclick="this.parentElement.classList.toggle('active')">
+        <span>4. Chi phí duy trì website các năm tiếp theo là bao nhiêu?</span>
+        <i class="fa fa-chevron-down"></i>
+      </div>
+      <div class="lv-faq-answer">
+        Bạn chỉ cần gia hạn Tên miền (khoảng 350k/năm) và Hosting lưu trữ (khoảng 700k - 1tr2/năm tùy dung lượng). Nếu sử dụng nền tảng Blogspot (Blogger), bạn chỉ tốn duy nhất tiền gia hạn tên miền mà không phải trả tiền hosting hàng năm!
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA BANNER CHỐT KHÁCH -->
+  <div class="lv-cta-banner">
+    <div class="lv-cta-info">
+      <h3>Sẵn Sàng Bùng Nổ Doanh Số Cùng Website Bán Hàng LuViet?</h3>
+      <p>Liên hệ ngay để nhận bản phác thảo giao diện demo miễn phí và nhận trọn bộ quà tặng 4.500.000đ dành cho 10 khách hàng đăng ký sớm nhất trong tháng!</p>
+    </div>
+    <div class="lv-cta-actions">
+      <a href="https://zalo.me/0914878680" target="_blank" class="lv-btn-zalo"><i class="fa fa-comment"></i> Chat Zalo 0914 87 86 80</a>
+      <a href="tel:0914878680" class="lv-btn-white"><i class="fa fa-phone"></i> Gọi Hotline Tư Vấn</a>
+    </div>
+  </div>
+
+  <!-- DANH MỤC LIÊN KẾT NỘI BỘ SEO -->
+  <div class="lv-internal-grid">
+    <h4><i class="fa fa-sitemap" style="color: var(--lv-purple);"></i> Hệ Sinh Thái Dịch Vụ &amp; Cẩm Nang Hữu Ích LuViet</h4>
+    <div class="lv-link-columns">
+      <div class="lv-link-col">
+        <h5>Dịch Vụ Thiết Kế Trọng Tâm</h5>
+        <ul class="lv-link-list">
+          <li><a href="https://www.luviet.com/p/thiet-ke-website-tron-goi.html"><i class="fa fa-angle-right"></i> Dịch vụ thiết kế website trọn gói</a></li>
+          <li><a href="https://www.luviet.com/p/dich-vu-thiet-ke-website-ban-hang.html"><i class="fa fa-angle-right"></i> Thiết kế web bán hàng chuyên nghiệp</a></li>
+          <li><a href="https://www.luviet.com/search/label/khoa-hoc-google-ads"><i class="fa fa-angle-right"></i> Dịch vụ thiết kế web WordPress</a></li>
+          <li><a href="https://www.luviet.com/search/label/san-pham"><i class="fa fa-angle-right"></i> Kho mẫu website bán hàng bán chạy</a></li>
+        </ul>
+      </div>
+
+      <div class="lv-link-col">
+        <h5>Tài Liệu &amp; Hướng Dẫn Vận Hành</h5>
+        <ul class="lv-link-list">
+          <li><a href="https://www.luviet.com/p/huong-dan-thiet-ke-website-wordpress.html"><i class="fa fa-angle-right"></i> Hướng dẫn dựng web WordPress theo mẫu</a></li>
+          <li><a href="https://www.luviet.com/p/cach-tro-ten-mien.html"><i class="fa fa-angle-right"></i> Cách trỏ tên miền về hosting mới nhất</a></li>
+          <li><a href="https://www.luviet.com/p/huong-dan-tai-ve.html"><i class="fa fa-angle-right"></i> Hướng dẫn đặt hàng &amp; tải về mã nguồn</a></li>
+          <li><a href="https://www.luviet.com/search/label/kien-thuc-domain-hosting"><i class="fa fa-angle-right"></i> Kinh nghiệm chọn tên miền &amp; hosting chuẩn</a></li>
+        </ul>
+      </div>
+
+      <div class="lv-link-col">
+        <h5>Giải Pháp Tăng Trưởng Doanh Số</h5>
+        <ul class="lv-link-list">
+          <li><a href="https://www.luviet.com/p/he-thong-tu-ong-hoa-blogger-ai.html"><i class="fa fa-angle-right"></i> Cỗ máy tự động hóa viết bài Blogger AI</a></li>
+          <li><a href="https://my.luviet.com" target="_blank"><i class="fa fa-angle-right"></i> Nền tảng Landing Page AILADI Platform</a></li>
+          <li><a href="https://www.luviet.com/search/label/viet-content-thue"><i class="fa fa-angle-right"></i> Bảng giá dịch vụ viết content chuẩn SEO</a></li>
+          <li><a href="https://www.luviet.com/search/label/kien-thuc-seo-website"><i class="fa fa-angle-right"></i> Chiến lược SEO Onpage bứt phá thứ hạng</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
