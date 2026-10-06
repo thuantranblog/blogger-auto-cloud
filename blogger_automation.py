@@ -33,14 +33,30 @@ def is_cdp_available(port=9222):
     except Exception as e:
         return False, str(e)
 
-def find_chrome_path(prefer_isolated=False):
-    """Tự động tìm kiếm đường dẫn chrome.exe hoặc Chromium trên máy Windows"""
-    import glob
-    if prefer_isolated:
-        playwright_chromiums = glob.glob(os.path.expandvars(r"%LOCALAPPDATA%\ms-playwright\chromium-*\chrome-win64\chrome.exe"))
-        if playwright_chromiums and os.path.exists(playwright_chromiums[0]):
-            return playwright_chromiums[0]
+def find_best_chrome_profile():
+    """Tự động tìm profile Chrome có tài khoản thuantranblog hoặc blogger"""
+    base = os.path.expandvars(r'%LOCALAPPDATA%\Google\Chrome\User Data')
+    if not os.path.exists(base):
+        return "Default"
+    best = None
+    for entry in os.listdir(base):
+        pref_path = os.path.join(base, entry, 'Preferences')
+        if os.path.isfile(pref_path):
+            try:
+                with open(pref_path, 'r', encoding='utf-8') as f:
+                    pref = json.load(f)
+                    for acc in pref.get('account_info', []):
+                        email = acc.get('email', '').lower()
+                        if 'thuantran' in email or 'blogger' in email:
+                            return entry
+                    if not best and ('Profile' in entry or entry == 'Default'):
+                        best = entry
+            except Exception:
+                pass
+    return best or "Profile 2"
 
+def find_chrome_path(prefer_isolated=False):
+    """Tự động tìm kiếm đường dẫn Google Chrome chính thức trên máy Windows"""
     candidates = [
         r"C:\Program Files\Google\Chrome\Application\chrome.exe",
         r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
@@ -52,30 +68,35 @@ def find_chrome_path(prefer_isolated=False):
         if os.path.exists(p):
             return p
 
-    # Fallback to Playwright Chromium if Google Chrome not found
+    # Fallback chỉ khi không tìm thấy Google Chrome chính
+    import glob
     playwright_chromiums = glob.glob(os.path.expandvars(r"%LOCALAPPDATA%\ms-playwright\chromium-*\chrome-win64\chrome.exe"))
     if playwright_chromiums and os.path.exists(playwright_chromiums[0]):
         return playwright_chromiums[0]
     return None
 
-def launch_chrome_cdp(mode="profile", port=9222, target_url="https://www.blogger.com/blog/pages/1444221897689962852"):
+def launch_chrome_cdp(mode="restart", port=9222, target_url="https://www.blogger.com/blog/pages/1444221897689962852"):
     """
     Khởi động Chrome với cờ CDP --remote-debugging-port
-    - mode='profile': Khởi chạy với thư mục profile riêng biệt (hoạt động ngay kể cả khi Chrome thông thường đang mở nhiều tab)
-    - mode='restart': Đóng Chrome hiện tại và khởi động lại với port 9222 (dùng lại tài khoản Google đã đăng nhập)
+    - mode='restart': Đóng Chrome hiện tại và khởi động lại với port 9222 (dùng ngay tài khoản Google đã có, không cần đăng nhập lại)
+    - mode='profile': Khởi chạy với thư mục profile riêng biệt (hoạt động song song)
     """
     try:
+        chrome_path = find_chrome_path()
+        if not chrome_path:
+            return {"success": False, "error": "Không tìm thấy file Google Chrome trên máy tính."}
+
         if mode == "restart":
-            chrome_path = find_chrome_path(prefer_isolated=False)
-            if not chrome_path:
-                return {"success": False, "error": "Không tìm thấy file Google Chrome chính để khởi động lại."}
-            # Đóng tất cả process chrome đang chạy để mở lại với port 9222 bằng default profile
+            best_profile = find_best_chrome_profile()
+            # Đóng tất cả process chrome đang chạy để mở lại với port 9222 bằng profile chính
             subprocess.run(["taskkill", "/F", "/IM", "chrome.exe"], capture_output=True)
             time.sleep(1.5)
             cmd = [
                 chrome_path,
                 f"--remote-debugging-port={port}",
                 "--remote-allow-origins=*",
+                f"--profile-directory={best_profile}",
+                "http://127.0.0.1:8888",
                 target_url
             ]
             subprocess.Popen(cmd)
@@ -83,10 +104,6 @@ def launch_chrome_cdp(mode="profile", port=9222, target_url="https://www.blogger
             # Nếu port đã mở sẵn ở profile riêng
             if is_port_open("127.0.0.1", port):
                 return {"success": True, "message": f"Chrome CDP đã sẵn sàng trên cổng {port}."}
-
-            chrome_path = find_chrome_path(prefer_isolated=True)
-            if not chrome_path:
-                return {"success": False, "error": "Không tìm thấy Chrome hoặc Chromium trên máy."}
 
             profile_dir = os.path.expandvars(r"%LOCALAPPDATA%\BloggerStudioProfile")
             os.makedirs(profile_dir, exist_ok=True)
@@ -97,12 +114,13 @@ def launch_chrome_cdp(mode="profile", port=9222, target_url="https://www.blogger
                 f"--user-data-dir={profile_dir}",
                 "--no-first-run",
                 "--no-default-browser-check",
-                target_url
+                target_url,
+                "http://127.0.0.1:8888"
             ]
             subprocess.Popen(cmd)
 
-        # Chờ tối đa 5 giây để port sẵn sàng
-        for _ in range(10):
+        # Chờ tối đa 6 giây để port sẵn sàng
+        for _ in range(12):
             time.sleep(0.5)
             if is_port_open("127.0.0.1", port):
                 return {

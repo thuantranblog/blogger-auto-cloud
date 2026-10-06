@@ -56,14 +56,28 @@ document.addEventListener("DOMContentLoaded", () => {
       const res = await fetch("/api/status");
       const data = await res.json();
       if (data.connected) {
-        connectionBadge.className = "connection-badge connected";
-        const count = data.blogger_tabs ? data.blogger_tabs.length : 0;
-        connectionBadge.innerHTML = `<span class="status-dot"></span><span class="status-text">Chrome Đã Kết Nối (${count} tab Blogger)</span>`;
-        if (btnLaunchChrome) btnLaunchChrome.style.display = "none";
+        if (data.need_login) {
+          connectionBadge.className = "connection-badge warning";
+          connectionBadge.innerHTML = `<span class="status-dot" style="background:#fbbf24;box-shadow:0 0 10px #fbbf24;"></span><span class="status-text" style="color:#fbbf24;">Chrome Chưa Đăng Nhập Blogger</span>`;
+          if (btnLaunchChrome) {
+            btnLaunchChrome.style.display = "inline-flex";
+            btnLaunchChrome.innerHTML = `<i class="fa-solid fa-arrows-rotate"></i> Dùng Tài Khoản Đang Có`;
+            btnLaunchChrome.onclick = () => launchChrome("restart");
+          }
+        } else {
+          connectionBadge.className = "connection-badge connected";
+          const count = data.blogger_tabs ? data.blogger_tabs.length : 0;
+          connectionBadge.innerHTML = `<span class="status-dot"></span><span class="status-text">Chrome Đã Kết Nối (${count} tab Blogger)</span>`;
+          if (btnLaunchChrome) btnLaunchChrome.style.display = "none";
+        }
       } else {
         connectionBadge.className = "connection-badge disconnected";
         connectionBadge.innerHTML = `<span class="status-dot"></span><span class="status-text">Chrome Chưa Bật Port 9222</span>`;
-        if (btnLaunchChrome) btnLaunchChrome.style.display = "inline-flex";
+        if (btnLaunchChrome) {
+          btnLaunchChrome.style.display = "inline-flex";
+          btnLaunchChrome.innerHTML = `<i class="fa-brands fa-chrome"></i> Mở Chrome CDP`;
+          btnLaunchChrome.onclick = () => launchChrome("restart");
+        }
       }
     } catch (e) {
       connectionBadge.className = "connection-badge disconnected";
@@ -71,14 +85,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  async function launchChrome(mode = "profile") {
-    showToast("Đang gửi lệnh khởi động Chrome CDP...", "info");
+  async function launchChrome(mode = "restart") {
+    showToast("Đang khởi động Google Chrome trên cổng CDP 9222...", "info");
     try {
       const res = await fetch(`/api/launch-chrome?mode=${mode}`, { method: "POST" });
       const data = await res.json();
       if (data.success) {
         showToast(data.message, "success");
-        setTimeout(checkStatus, 2000);
+        setTimeout(checkStatus, 2500);
       } else {
         showToast("Lỗi mở Chrome: " + (data.error || "Không xác định"), "error");
       }
@@ -89,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (btnLaunchChrome) {
     btnLaunchChrome.addEventListener("click", () => {
-      launchChrome("profile");
+      launchChrome("restart");
     });
   }
 
@@ -573,36 +587,85 @@ document.addEventListener("DOMContentLoaded", () => {
           });
           modalItemList.appendChild(div);
         });
+      } else if (data.need_login) {
+        modalItemCount.innerText = "Chưa đăng nhập Blogger";
+        modalItemList.innerHTML = `
+          <div class="cdp-troubleshoot-box">
+            <div class="cdp-troubleshoot-icon" style="color: #fbbf24;"><i class="fa-solid fa-user-lock"></i></div>
+            <h4 style="color: #fbbf24;">Cửa Sổ Chrome Chưa Đăng Nhập Blogger</h4>
+            <p>${data.error || "Chrome đã kết nối qua cổng 9222 nhưng đang ở màn hình đăng nhập Google."}</p>
+            <div class="cdp-actions-row">
+              <button id="btnModalRestartProfile" class="btn-primary">
+                <i class="fa-solid fa-arrows-rotate"></i> Dùng Tài Khoản Đang Có (Khởi Động Lại Chrome)
+              </button>
+              <button id="btnModalRetry" class="btn-secondary">
+                <i class="fa-solid fa-rotate-right"></i> Đã Đăng Nhập Xong - Thử Lại
+              </button>
+            </div>
+            <div class="cdp-guide-hint">
+              💡 <b>Khuyên dùng:</b> Bấm nút xanh để tự động mở Chrome bằng tài khoản Thuantranblog (giữ nguyên tất cả tab, không cần gõ mật khẩu). Hoặc chuyển sang cửa sổ Chrome đang mở và đăng nhập vào Blogger.
+            </div>
+          </div>
+        `;
+        const restartBtn = document.getElementById("btnModalRestartProfile");
+        if (restartBtn) {
+          restartBtn.addEventListener("click", async () => {
+            restartBtn.disabled = true;
+            restartBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Đang khởi động lại Chrome...`;
+            await launchChrome("restart");
+            setTimeout(() => {
+              loadBloggerItems(type);
+            }, 3000);
+          });
+        }
+        const retryBtn = document.getElementById("btnModalRetry");
+        if (retryBtn) {
+          retryBtn.addEventListener("click", () => loadBloggerItems(type));
+        }
       } else {
         modalItemCount.innerText = "Chưa kết nối Chrome";
         const errMsg = data.error || data.detail || "Chrome CDP (port 9222) chưa sẵn sàng.";
         modalItemList.innerHTML = `
           <div class="cdp-troubleshoot-box">
-            <div class="cdp-troubleshoot-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
-            <h4>Chrome CDP (Cổng 9222) Chưa Được Kích Hoạt</h4>
+            <div class="cdp-troubleshoot-icon"><i class="fa-solid fa-plug-circle-xmark"></i></div>
+            <h4>Chrome CDP (Cổng 9222) Chưa Được Bật</h4>
             <p>${errMsg}</p>
             <div class="cdp-actions-row">
-              <button id="btnModalLaunchProfile" class="btn-primary">
-                <i class="fa-brands fa-chrome"></i> Mở Chrome CDP Ngay
+              <button id="btnModalLaunchRestart" class="btn-primary">
+                <i class="fa-brands fa-chrome"></i> Bật Chrome Chính Với Cổng 9222 (Khuyên dùng)
+              </button>
+              <button id="btnModalLaunchProfile" class="btn-secondary">
+                <i class="fa-solid fa-window-restore"></i> Mở Cửa Sổ Riêng Biệt
               </button>
               <button id="btnModalRetry" class="btn-secondary">
                 <i class="fa-solid fa-rotate-right"></i> Thử Lại
               </button>
             </div>
             <div class="cdp-guide-hint">
-              💡 Hoặc chạy file <code>mo_chrome_cdp.bat</code> trong thư mục dự án rồi đăng nhập Blogger.
+              💡 Bấm nút xanh để tự động kích hoạt Chrome với tài khoản Blogger của bạn, hoặc chạy file <code>mo_chrome_cdp.bat</code>.
             </div>
           </div>
         `;
-        const launchBtn = document.getElementById("btnModalLaunchProfile");
-        if (launchBtn) {
-          launchBtn.addEventListener("click", async () => {
-            launchBtn.disabled = true;
-            launchBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Đang mở Chrome...`;
+        const launchRestartBtn = document.getElementById("btnModalLaunchRestart");
+        if (launchRestartBtn) {
+          launchRestartBtn.addEventListener("click", async () => {
+            launchRestartBtn.disabled = true;
+            launchRestartBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Đang mở Chrome...`;
+            await launchChrome("restart");
+            setTimeout(() => {
+              loadBloggerItems(type);
+            }, 3000);
+          });
+        }
+        const launchProfileBtn = document.getElementById("btnModalLaunchProfile");
+        if (launchProfileBtn) {
+          launchProfileBtn.addEventListener("click", async () => {
+            launchProfileBtn.disabled = true;
+            launchProfileBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Đang mở Chrome...`;
             await launchChrome("profile");
             setTimeout(() => {
               loadBloggerItems(type);
-            }, 2500);
+            }, 3000);
           });
         }
         const retryBtn = document.getElementById("btnModalRetry");

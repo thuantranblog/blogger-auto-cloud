@@ -62,7 +62,7 @@ def get_status(port: int = 9222):
 
 @app.get("/api/launch-chrome")
 @app.post("/api/launch-chrome")
-def launch_chrome(mode: str = "profile", port: int = 9222):
+def launch_chrome(mode: str = "restart", port: int = 9222):
     return blogger_automation.launch_chrome_cdp(mode=mode, port=port)
 
 @app.get("/api/blogger/items")
