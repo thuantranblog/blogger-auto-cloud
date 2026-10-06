@@ -124,22 +124,21 @@ def launch_chrome_cdp(mode="profile", port=9222, target_url="https://www.blogger
         # Cố gắng đồng bộ cookie từ Profile 2
         sync_profile_cookies()
 
-        cmd = [
-            chrome_path,
-            f"--remote-debugging-port={port}",
-            "--remote-allow-origins=*",
-            f"--user-data-dir={profile_dir}",
-            "--no-first-run",
-            "--no-default-browser-check",
-            "http://127.0.0.1:8888",
-            target_url
-        ]
-
-        creationflags = 0
         if sys.platform == "win32":
-            creationflags = subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP
-
-        subprocess.Popen(cmd, creationflags=creationflags)
+            cmd_str = f'cmd.exe /c start "" "{chrome_path}" --remote-debugging-port={port} --remote-allow-origins=* --user-data-dir="{profile_dir}" --no-first-run --no-default-browser-check "http://127.0.0.1:8888" "{target_url}"'
+            subprocess.Popen(cmd_str, shell=True)
+        else:
+            cmd = [
+                chrome_path,
+                f"--remote-debugging-port={port}",
+                "--remote-allow-origins=*",
+                f"--user-data-dir={profile_dir}",
+                "--no-first-run",
+                "--no-default-browser-check",
+                "http://127.0.0.1:8888",
+                target_url
+            ]
+            subprocess.Popen(cmd)
 
         # Chờ tối đa 6 giây để port sẵn sàng
         for _ in range(12):
@@ -259,14 +258,35 @@ def get_items_list(blog_id="1444221897689962852", item_type="pages", port=9222):
                     const m = href.match(editRegex);
                     if (m && m[2]) {
                         const id = m[2];
-                        let title = a.innerText.trim();
-                        if (!title) {
-                            const row = a.closest('div[role="row"]') || a.closest('.IL5y5c') || a.closest('.W4rOsd') || a.parentElement;
-                            if (row) {
-                                const titleEl = row.querySelector('.W4rOsd, [data-title], [role="heading"]') || row;
-                                title = titleEl.innerText.split('\\n')[0].trim();
+                        let title = '';
+
+                        // 1. Tìm qua các class tiêu đề chuẩn của Blogger (.hqBifb, .wCHCXe, [data-title])
+                        const row = a.closest('.rb4Lrd') || a.closest('div[role="listitem"]') || a.closest('div[role="row"]') || a.closest('.IL5y5c') || a.parentElement;
+                        if (row) {
+                            const titleNode = row.querySelector('.hqBifb, .wCHCXe, [data-title], [role="heading"]');
+                            if (titleNode && titleNode.innerText.trim()) {
+                                title = titleNode.innerText.trim();
                             }
                         }
+
+                        // 2. Thử lấy text của thẻ a nếu dài hơn 2 ký tự (loại trừ avatar chữ cái đầu)
+                        if (!title && a.innerText.trim().length > 2) {
+                            title = a.innerText.trim();
+                        }
+
+                        // 3. Fallback: duyệt qua các dòng của row, lọc bỏ avatar 1 ký tự, ngày tháng, trạng thái
+                        if (!title && row) {
+                            const lines = row.innerText.split('\\n').map(s => s.trim()).filter(s => s.length > 0);
+                            for (const line of lines) {
+                                if (line.length <= 2) continue;
+                                const lower = line.toLowerCase();
+                                if (['đã xuất bản', 'bản nháp', 'thuấn luviet', 'scheduled', 'draft', 'published'].includes(lower)) continue;
+                                if (line.startsWith('•')) continue;
+                                title = line;
+                                break;
+                            }
+                        }
+
                         if (!title) title = `(Mục ID: ${id})`;
                         if (!results.some(r => r.id === id)) {
                             results.push({ id, title, href });
@@ -473,3 +493,67 @@ def push_to_blogger(blog_id="1444221897689962852", target_type="page", target_id
             }
         except Exception as e:
             return {"success": False, "error": str(e)}
+
+def get_item_detail(blog_id="1444221897689962852", item_type="pages", item_id="", port=9222):
+    """
+    Trích xuất toàn bộ tiêu đề, nội dung HTML và mô tả tìm kiếm của 1 bài viết/trang từ Blogger về Studio
+    """
+    ok, err = is_cdp_available(port)
+    if not ok:
+        return {"success": False, "error": err}
+        
+    singular = 'page' if item_type == 'pages' or item_type == 'page' else 'post'
+    edit_url = f"https://www.blogger.com/blog/{singular}/edit/{blog_id}/{item_id}"
+    
+    with sync_playwright() as p:
+        try:
+            browser = p.chromium.connect_over_cdp(f"http://127.0.0.1:{port}")
+            context = browser.contexts[0]
+            
+            # Check if an existing tab is on this edit url
+            page = None
+            for p_tab in context.pages:
+                if f"/{singular}/edit/{blog_id}/{item_id}" in p_tab.url:
+                    page = p_tab
+                    break
+            if not page:
+                page = context.new_page()
+                page.goto(edit_url, wait_until="domcontentloaded", timeout=20000)
+                time.sleep(2.5)
+            
+            # Chuyển sang chế độ HTML nếu cần
+            is_html_mode = page.evaluate('() => !!document.querySelector(".CodeMirror")')
+            if not is_html_mode:
+                view_mode_btn = page.locator('div[aria-label="Chế độ xem Soạn thảo"], div[aria-label="Chế độ xem HTML"], div[jsname="xw1cm"][aria-haspopup="menu"]').first
+                if view_mode_btn.is_visible():
+                    view_mode_btn.click()
+                    time.sleep(0.5)
+                    html_option = page.locator('div[role="menuitem"]:has-text("Chế độ xem HTML")').first
+                    if html_option.is_visible():
+                        html_option.click()
+                        time.sleep(0.8)
+                        
+            data = page.evaluate('''() => {
+                const titleInp = document.querySelector('input[aria-label="Tiêu đề"], input[aria-label="Title"]');
+                const title = titleInp ? titleInp.value : "";
+                
+                const cm = document.querySelector(".CodeMirror")?.CodeMirror;
+                const html = cm ? cm.getValue() : (document.querySelector('div[contenteditable="true"]')?.innerHTML || "");
+                
+                let desc = "";
+                const sideBtns = Array.from(document.querySelectorAll('div[jsname="HSrbLb"]'));
+                const descBtn = sideBtns.find(b => b.textContent && b.textContent.includes("Mô tả tìm kiếm"));
+                if (descBtn) {
+                    const regionId = descBtn.getAttribute('aria-controls') || 'c12';
+                    const region = document.getElementById(regionId) || descBtn.closest('.mT05K');
+                    const ta = region ? region.querySelector('textarea') : null;
+                    if (ta) desc = ta.value;
+                }
+                
+                return { title, html, desc };
+            }''')
+            
+            return {"success": True, "data": data}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+

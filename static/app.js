@@ -33,6 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalItemList = document.getElementById("modalItemList");
   const modalItemCount = document.getElementById("modalItemCount");
   const btnApplySelected = document.getElementById("btnApplySelected");
+  const btnPullSelected = document.getElementById("btnPullSelected");
   const toastContainer = document.getElementById("toastContainer");
 
   // Blog Manager & Onboarding Elements
@@ -709,6 +710,7 @@ document.addEventListener("DOMContentLoaded", () => {
     modalItemList.innerHTML = `<div class="modal-loading"><i class="fa-solid fa-spinner fa-spin"></i> Đang đọc danh sách ${type === "pages" ? "Trang" : "Bài viết"} từ Blogger...</div>`;
     modalItemCount.innerText = "";
     btnApplySelected.disabled = true;
+    if (btnPullSelected) btnPullSelected.disabled = true;
     selectedItem = null;
 
     try {
@@ -735,6 +737,7 @@ document.addEventListener("DOMContentLoaded", () => {
             div.classList.add("selected");
             selectedItem = item;
             btnApplySelected.disabled = false;
+            if (btnPullSelected) btnPullSelected.disabled = false;
           });
           modalItemList.appendChild(div);
         });
@@ -827,6 +830,50 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (e) {
       modalItemList.innerHTML = `<div style="color: #f87171; padding: 20px;">Lỗi kết nối: ${e.message}</div>`;
     }
+  }
+
+  // Pull content from Blogger item into Studio Workbench
+  if (btnPullSelected) {
+    btnPullSelected.addEventListener("click", async () => {
+      if (!selectedItem) return;
+      btnPullSelected.disabled = true;
+      btnPullSelected.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Đang nạp từ Blogger...`;
+      try {
+        const currentBlogId = getActiveBlogId();
+        const res = await fetch(`/api/blogger/item-detail?type=${currentModalType}&item_id=${selectedItem.id}&blog_id=${currentBlogId}`);
+        const json = await res.json();
+        if (json.success && json.data) {
+          const d = json.data;
+          if (d.title) postTitle.value = d.title;
+          if (d.html) {
+            htmlEditor.value = d.html;
+            updatePreview();
+            auditSeoLinks(d.html);
+          }
+          if (d.desc) {
+            postDesc.value = d.desc;
+            updateDescCounter();
+          }
+          const isPost = currentModalType === "posts";
+          const rad = document.querySelector(`input[name="targetType"][value="${isPost ? 'post' : 'page'}"]`);
+          if (rad) {
+            rad.checked = true;
+            labelsGroup.style.display = isPost ? "block" : "none";
+          }
+          syncDraftToServer();
+          bloggerModal.classList.remove("active");
+          showToast(`Đã tải toàn bộ nội dung [${d.title || selectedItem.title}] về Studio!`, "success");
+          document.querySelector('.tab[data-tab="codeTab"]').click();
+        } else {
+          showToast("Lỗi tải bài viết: " + (json.error || "Không rõ"), "error");
+        }
+      } catch (err) {
+        showToast("Lỗi kết nối: " + err.message, "error");
+      } finally {
+        btnPullSelected.disabled = false;
+        btnPullSelected.innerHTML = `<i class="fa-solid fa-cloud-arrow-down"></i> Kéo Về Studio Để Sửa`;
+      }
+    });
   }
 
   btnApplySelected.addEventListener("click", () => {

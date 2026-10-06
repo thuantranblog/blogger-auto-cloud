@@ -89,6 +89,11 @@ def get_blogger_items(blog_id: str = "1444221897689962852", type: str = "pages",
     res = blogger_automation.get_items_list(blog_id=blog_id, item_type=type, port=port)
     return res
 
+@app.get("/api/blogger/item-detail")
+def get_blogger_item_detail(blog_id: str = "1444221897689962852", type: str = "pages", item_id: str = "", port: int = 9222):
+    return blogger_automation.get_item_detail(blog_id=blog_id, item_type=type, item_id=item_id, port=port)
+
+
 class SeoDescRequest(BaseModel):
     title: str
     keywords: Optional[Union[List[str], str]] = []
