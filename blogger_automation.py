@@ -75,49 +75,71 @@ def find_chrome_path(prefer_isolated=False):
         return playwright_chromiums[0]
     return None
 
-def launch_chrome_cdp(mode="restart", port=9222, target_url="https://www.blogger.com/blog/pages/1444221897689962852"):
+import shutil
+import sys
+
+def sync_profile_cookies():
+    """Tự động đồng bộ cookies và phiên đăng nhập từ Profile 2 sang BloggerStudioProfile khi có thể"""
+    try:
+        src_base = os.path.expandvars(r'%LOCALAPPDATA%\Google\Chrome\User Data')
+        best_profile = find_best_chrome_profile()
+        src_profile = os.path.join(src_base, best_profile)
+        dst_profile = os.path.expandvars(r'%LOCALAPPDATA%\BloggerStudioProfile\Default')
+        dst_base = os.path.expandvars(r'%LOCALAPPDATA%\BloggerStudioProfile')
+        os.makedirs(dst_profile, exist_ok=True)
+        
+        local_state = os.path.join(src_base, 'Local State')
+        if os.path.exists(local_state):
+            shutil.copy2(local_state, os.path.join(dst_base, 'Local State'))
+            
+        src_cookies = os.path.join(src_profile, 'Network', 'Cookies')
+        dst_cookies_dir = os.path.join(dst_profile, 'Network')
+        os.makedirs(dst_cookies_dir, exist_ok=True)
+        if os.path.exists(src_cookies):
+            shutil.copy2(src_cookies, os.path.join(dst_cookies_dir, 'Cookies'))
+            
+        for fname in ['Preferences', 'Login Data', 'Web Data', 'Secure Preferences']:
+            s = os.path.join(src_profile, fname)
+            if os.path.exists(s):
+                shutil.copy2(s, os.path.join(dst_profile, fname))
+    except Exception:
+        pass
+
+def launch_chrome_cdp(mode="profile", port=9222, target_url="https://www.blogger.com/blog/pages/1444221897689962852"):
     """
-    Khởi động Chrome với cờ CDP --remote-debugging-port
-    - mode='restart': Đóng Chrome hiện tại và khởi động lại với port 9222 (dùng ngay tài khoản Google đã có, không cần đăng nhập lại)
-    - mode='profile': Khởi chạy với thư mục profile riêng biệt (hoạt động song song)
+    Khởi động Chrome với cờ CDP --remote-debugging-port và --user-data-dir chuyên biệt
     """
     try:
         chrome_path = find_chrome_path()
         if not chrome_path:
-            return {"success": False, "error": "Không tìm thấy file Google Chrome trên máy tính."}
+            return {"success": False, "error": "Không tìm thấy Google Chrome trên máy tính."}
 
-        if mode == "restart":
-            best_profile = find_best_chrome_profile()
-            # Đóng tất cả process chrome đang chạy để mở lại với port 9222 bằng profile chính
-            subprocess.run(["taskkill", "/F", "/IM", "chrome.exe"], capture_output=True)
-            time.sleep(1.5)
-            cmd = [
-                chrome_path,
-                f"--remote-debugging-port={port}",
-                "--remote-allow-origins=*",
-                f"--profile-directory={best_profile}",
-                "http://127.0.0.1:8888",
-                target_url
-            ]
-            subprocess.Popen(cmd)
-        else:
-            # Nếu port đã mở sẵn ở profile riêng
-            if is_port_open("127.0.0.1", port):
-                return {"success": True, "message": f"Chrome CDP đã sẵn sàng trên cổng {port}."}
+        profile_dir = os.path.expandvars(r"%LOCALAPPDATA%\BloggerStudioProfile")
+        os.makedirs(profile_dir, exist_ok=True)
 
-            profile_dir = os.path.expandvars(r"%LOCALAPPDATA%\BloggerStudioProfile")
-            os.makedirs(profile_dir, exist_ok=True)
-            cmd = [
-                chrome_path,
-                f"--remote-debugging-port={port}",
-                "--remote-allow-origins=*",
-                f"--user-data-dir={profile_dir}",
-                "--no-first-run",
-                "--no-default-browser-check",
-                target_url,
-                "http://127.0.0.1:8888"
-            ]
-            subprocess.Popen(cmd)
+        # Nếu port đã mở sẵn
+        if is_port_open("127.0.0.1", port):
+            return {"success": True, "message": f"Chrome CDP đã sẵn sàng trên cổng {port}."}
+
+        # Cố gắng đồng bộ cookie từ Profile 2
+        sync_profile_cookies()
+
+        cmd = [
+            chrome_path,
+            f"--remote-debugging-port={port}",
+            "--remote-allow-origins=*",
+            f"--user-data-dir={profile_dir}",
+            "--no-first-run",
+            "--no-default-browser-check",
+            "http://127.0.0.1:8888",
+            target_url
+        ]
+
+        creationflags = 0
+        if sys.platform == "win32":
+            creationflags = subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP
+
+        subprocess.Popen(cmd, creationflags=creationflags)
 
         # Chờ tối đa 6 giây để port sẵn sàng
         for _ in range(12):
@@ -131,7 +153,7 @@ def launch_chrome_cdp(mode="restart", port=9222, target_url="https://www.blogger
 
         return {
             "success": True,
-            "message": f"Đã gửi lệnh khởi động Chrome trên cổng {port}. Vui lòng kiểm tra cửa sổ trình duyệt.",
+            "message": f"Đã gửi lệnh mở Chrome trên cổng {port}. Vui lòng kiểm tra cửa sổ trình duyệt.",
             "mode": mode
         }
     except Exception as e:
