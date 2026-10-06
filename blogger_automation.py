@@ -33,8 +33,14 @@ def is_cdp_available(port=9222):
     except Exception as e:
         return False, str(e)
 
-def find_chrome_path():
-    """Tự động tìm kiếm đường dẫn chrome.exe trên máy Windows"""
+def find_chrome_path(prefer_isolated=False):
+    """Tự động tìm kiếm đường dẫn chrome.exe hoặc Chromium trên máy Windows"""
+    import glob
+    if prefer_isolated:
+        playwright_chromiums = glob.glob(os.path.expandvars(r"%LOCALAPPDATA%\ms-playwright\chromium-*\chrome-win64\chrome.exe"))
+        if playwright_chromiums and os.path.exists(playwright_chromiums[0]):
+            return playwright_chromiums[0]
+
     candidates = [
         r"C:\Program Files\Google\Chrome\Application\chrome.exe",
         r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
@@ -45,6 +51,11 @@ def find_chrome_path():
     for p in candidates:
         if os.path.exists(p):
             return p
+
+    # Fallback to Playwright Chromium if Google Chrome not found
+    playwright_chromiums = glob.glob(os.path.expandvars(r"%LOCALAPPDATA%\ms-playwright\chromium-*\chrome-win64\chrome.exe"))
+    if playwright_chromiums and os.path.exists(playwright_chromiums[0]):
+        return playwright_chromiums[0]
     return None
 
 def launch_chrome_cdp(mode="profile", port=9222, target_url="https://www.blogger.com/blog/pages/1444221897689962852"):
@@ -53,18 +64,18 @@ def launch_chrome_cdp(mode="profile", port=9222, target_url="https://www.blogger
     - mode='profile': Khởi chạy với thư mục profile riêng biệt (hoạt động ngay kể cả khi Chrome thông thường đang mở nhiều tab)
     - mode='restart': Đóng Chrome hiện tại và khởi động lại với port 9222 (dùng lại tài khoản Google đã đăng nhập)
     """
-    chrome_path = find_chrome_path()
-    if not chrome_path:
-        return {"success": False, "error": "Không tìm thấy file chrome.exe trên hệ thống. Vui lòng cài đặt Google Chrome."}
-
     try:
         if mode == "restart":
+            chrome_path = find_chrome_path(prefer_isolated=False)
+            if not chrome_path:
+                return {"success": False, "error": "Không tìm thấy file Google Chrome chính để khởi động lại."}
             # Đóng tất cả process chrome đang chạy để mở lại với port 9222 bằng default profile
             subprocess.run(["taskkill", "/F", "/IM", "chrome.exe"], capture_output=True)
             time.sleep(1.5)
             cmd = [
                 chrome_path,
                 f"--remote-debugging-port={port}",
+                "--remote-allow-origins=*",
                 target_url
             ]
             subprocess.Popen(cmd)
@@ -73,11 +84,16 @@ def launch_chrome_cdp(mode="profile", port=9222, target_url="https://www.blogger
             if is_port_open("127.0.0.1", port):
                 return {"success": True, "message": f"Chrome CDP đã sẵn sàng trên cổng {port}."}
 
-            profile_dir = os.path.expandvars(r"%LOCALAPPDATA%\Google\Chrome\BloggerStudioProfile")
+            chrome_path = find_chrome_path(prefer_isolated=True)
+            if not chrome_path:
+                return {"success": False, "error": "Không tìm thấy Chrome hoặc Chromium trên máy."}
+
+            profile_dir = os.path.expandvars(r"%LOCALAPPDATA%\BloggerStudioProfile")
             os.makedirs(profile_dir, exist_ok=True)
             cmd = [
                 chrome_path,
                 f"--remote-debugging-port={port}",
+                "--remote-allow-origins=*",
                 f"--user-data-dir={profile_dir}",
                 "--no-first-run",
                 "--no-default-browser-check",
