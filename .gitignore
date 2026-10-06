@@ -7,4 +7,3 @@ client_secrets.json
 .chrome_cdp_profile/
 *.log
 scratch/
-README_REMOTE.md
