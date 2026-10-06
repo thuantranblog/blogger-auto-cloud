@@ -61,6 +61,7 @@
             <button class="tab active" data-tab="generatorTab"><i class="fa-solid fa-sliders"></i> Cấu Hình &amp; Sinh Mã AI</button>
             <button class="tab" data-tab="codeTab"><i class="fa-solid fa-code"></i> Mã HTML Trực Tiếp</button>
             <button class="tab" data-tab="componentsTab"><i class="fa-solid fa-cubes"></i> Thư Viện Linh Kiện</button>
+            <button class="tab" data-tab="seoLinksTab"><i class="fa-solid fa-link"></i> Kiểm Soát Link SEO <span id="linkBadgeCount" class="badge-pill">0</span></button>
           </div>
           <div class="editor-actions">
             <button id="btnCopyCode" class="btn-sm" title="Sao chép toàn bộ HTML"><i class="fa-regular fa-copy"></i> Copy HTML</button>
@@ -121,6 +122,21 @@
             <div class="form-group" id="labelsGroup" style="display: none;">
               <label for="postLabels">Nhãn bài viết (Dành cho Post):</label>
               <input type="text" id="postLabels" class="input-text" placeholder="kien-thuc-website, san-pham, huong-dan">
+            </div>
+
+            <!-- SEO LINK MINI CONTROLLER -->
+            <div class="seo-link-mini-box">
+              <div class="seo-link-mini-header">
+                <span class="seo-link-mini-title"><i class="fa-solid fa-link"></i> Kiểm Soát Link SEO (Google Onpage):</span>
+                <span id="miniSeoLinkScore" class="seo-score-badge">Chờ kiểm tra</span>
+              </div>
+              <div class="seo-link-mini-row">
+                <span id="miniIntCount" class="link-chip warn"><i class="fa-solid fa-sitemap"></i> Nội bộ: <b>0</b></span>
+                <span id="miniExtCount" class="link-chip warn"><i class="fa-solid fa-arrow-up-right-from-square"></i> Ngoại bộ: <b>0</b></span>
+                <button type="button" id="btnGoToSeoTab" class="btn-xs-seo" title="Mở bảng kiểm soát và tối ưu liên kết chuyên sâu">
+                  <i class="fa-solid fa-arrow-right"></i> Soi Chi Tiết Link
+                </button>
+              </div>
             </div>
 
             <button id="btnGenerateAI" class="btn-generate">
@@ -189,6 +205,46 @@
                   <p>Khung màu tím đậm kèm nút Zalo 0914878680 và Hotline</p>
                 </div>
                 <button class="btn-insert"><i class="fa-solid fa-plus"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 4: SEO LINK CONTROL & AUDIT -->
+          <div id="seoLinksTab" class="tab-content">
+            <div class="seo-audit-dashboard">
+              <!-- HEADER SCORE CARD -->
+              <div class="seo-score-card">
+                <div class="seo-score-circle" id="seoScoreCircle">
+                  <span id="seoScoreNum">0</span>
+                  <small>/100</small>
+                </div>
+                <div class="seo-score-details">
+                  <h4 id="seoScoreTitle">Điểm Chuẩn SEO Liên Kết (Link Health)</h4>
+                  <p id="seoScoreSummary">Chưa có bài viết. Hãy sinh mã để kiểm tra liên kết.</p>
+                  <div class="seo-stats-badges">
+                    <span id="statIntBadge" class="badge-int"><i class="fa-solid fa-sitemap"></i> 0 Link Nội Bộ</span>
+                    <span id="statExtBadge" class="badge-ext"><i class="fa-solid fa-arrow-up-right-from-square"></i> 0 Link Ngoại Bộ</span>
+                    <span id="statWarnBadge" class="badge-warn"><i class="fa-solid fa-triangle-exclamation"></i> 0 Cảnh Báo</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ACTION TOOLBAR -->
+              <div class="seo-actions-bar">
+                <button type="button" id="btnAuditLinksNow" class="btn-sm"><i class="fa-solid fa-rotate"></i> Quét Lại Link</button>
+                <button type="button" id="btnFixExternalLinks" class="btn-sm btn-primary" title="Tự động thêm target='_blank' và rel='noopener noreferrer' cho tất cả link ngoại bộ"><i class="fa-solid fa-shield-halved"></i> ⚡ Chuẩn Hóa Link Ngoại Bộ</button>
+                <button type="button" id="btnAddInternalLinksGrid" class="btn-sm btn-accent" title="Chèn lưới ma trận 12 liên kết nội bộ LuViet chuẩn SEO"><i class="fa-solid fa-plus"></i> 🔗 Chèn Cụm Link Nội Bộ LuViet</button>
+              </div>
+
+              <!-- WARNINGS & ADVICE -->
+              <div id="seoAuditAlerts" class="seo-audit-alerts"></div>
+
+              <!-- LINKS TABLE -->
+              <div class="seo-links-table-wrapper">
+                <h4><i class="fa-solid fa-list-check"></i> Chi Tiết Các Liên Kết Tìm Thấy:</h4>
+                <div id="seoLinksTableContainer" class="seo-links-table-container">
+                  <p class="empty-hint">Chưa có liên kết nào. Hãy tạo nội dung trước!</p>
+                </div>
               </div>
             </div>
           </div>

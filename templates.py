@@ -956,3 +956,206 @@ def generate_page_or_post(page_type, title, keywords=None, outline_items=None):
 </div>
 """
     return full_html
+
+
+# =====================================================================
+# SEO LINK AUDIT & OPTIMIZATION ENGINE
+# =====================================================================
+from bs4 import BeautifulSoup
+from urllib.parse import urlparse
+
+GENERIC_ANCHORS = {
+    "tại đây", "tai day", "click here", "click", "bấm vào đây", "bam vao day",
+    "xem thêm", "xem them", "link", "đây", "day", "ở đây", "o day",
+    "chi tiết", "chi tiet", "read more", "here", "truy cập", "truy cap", "tại link này"
+}
+
+def analyze_seo_links(html_content: str, site_domain: str = "luviet.com") -> dict:
+    """
+    Phân tích toàn diện liên kết nội bộ & bên ngoài trong bài viết theo tiêu chuẩn SEO Google:
+    - Số lượng & tỷ lệ liên kết nội bộ / ngoại bộ
+    - Phát hiện anchor text chung chung
+    - Kiểm tra thuộc tính target='_blank' và rel='noopener noreferrer'
+    - Điểm số SEO Link Health Score (0 - 100) và khuyến nghị hành động
+    """
+    if not html_content or not html_content.strip():
+        return {
+            "score": 0,
+            "total_links": 0,
+            "internal_count": 0,
+            "external_count": 0,
+            "warnings_count": 0,
+            "items": [],
+            "warnings": ["Chưa có nội dung bài viết để phân tích liên kết."],
+            "recommendations": ["Hãy viết bài hoặc sinh mã AI trước khi kiểm tra liên kết."]
+        }
+
+    soup = BeautifulSoup(html_content, "html.parser")
+    anchors = soup.find_all("a")
+    site_domain_clean = site_domain.lower().replace("https://", "").replace("http://", "").split("/")[0]
+    
+    internal_links = []
+    external_links = []
+    items = []
+    warnings = []
+    recommendations = []
+    
+    for a in anchors:
+        href = (a.get("href") or "").strip()
+        text = a.get_text(strip=True)
+        target = a.get("target") or ""
+        rel = a.get("rel") or []
+        if isinstance(rel, list):
+            rel_str = " ".join(rel).lower()
+        else:
+            rel_str = str(rel).lower()
+            
+        if not href or href == "#" or href.startswith("javascript:"):
+            continue
+            
+        parsed = urlparse(href)
+        domain = parsed.netloc.lower()
+        
+        # Check if internal or external
+        is_internal = False
+        if not domain:  # relative URL like /p/... or /search/...
+            is_internal = True
+        elif site_domain_clean in domain or "luviet.com" in domain:
+            is_internal = True
+        elif href.startswith("#") or href.startswith("mailto:") or href.startswith("tel:") or href.startswith("zalo:"):
+            continue
+            
+        item_issues = []
+        
+        # Check anchor text
+        text_lower = text.lower()
+        if not text:
+            item_issues.append("Văn bản neo (Anchor text) đang để trống")
+        elif text_lower in GENERIC_ANCHORS or len(text.strip()) < 3:
+            item_issues.append(f"Anchor text '{text}' quá chung chung, nên chứa từ khóa cụ thể")
+            
+        # Check external link attributes
+        if not is_internal:
+            if target != "_blank":
+                item_issues.append("Link ngoại bộ chưa có target='_blank' (nguy cơ thoát trang)")
+            if "noopener" not in rel_str and "noreferrer" not in rel_str:
+                item_issues.append("Link ngoại bộ thiếu rel='noopener noreferrer' (rủi ro bảo mật & SEO)")
+            external_links.append(href)
+        else:
+            internal_links.append(href)
+            
+        items.append({
+            "href": href,
+            "text": text or "(Trống)",
+            "type": "internal" if is_internal else "external",
+            "target": target,
+            "rel": rel_str,
+            "issues": item_issues,
+            "is_good": len(item_issues) == 0
+        })
+
+    total = len(items)
+    int_count = len(internal_links)
+    ext_count = len(external_links)
+    warn_count = sum(len(it["issues"]) for it in items)
+    
+    # Calculate SEO Link Score (Max 100)
+    score = 100
+    if int_count == 0:
+        score -= 40
+        warnings.append("🔴 BÁO ĐỘNG: Bài viết chưa có liên kết nội bộ nào! Nguy cơ trở thành trang cô lập (Orphan Page).")
+        recommendations.append("Cần bổ sung ít nhất 2 - 4 liên kết nội bộ trỏ về các dịch vụ/bài viết liên quan trên LuViet.")
+    elif int_count == 1:
+        score -= 15
+        warnings.append("🟡 CẢNH BÁO: Mới có 1 liên kết nội bộ, chưa tối ưu cho cấu trúc cụm chủ đề (Topic Cluster).")
+        recommendations.append("Nên bổ sung thêm 1 - 2 liên kết nội bộ để giữ chân người đọc lâu hơn.")
+    else:
+        recommendations.append(f"🟢 TỐT: Đã có {int_count} liên kết nội bộ giúp phân bổ sức mạnh SEO (PageRank) hiệu quả.")
+
+    if ext_count == 0:
+        score -= 10
+        warnings.append("ℹ️ LƯU Ý: Chưa có liên kết ngoại bộ tham chiếu nguồn tài liệu uy tín.")
+        recommendations.append("Nên có ít nhất 1 liên kết ngoại bộ uy tín (Wikipedia, Google, tài liệu kỹ thuật) để tăng chỉ số E-E-A-T.")
+    else:
+        recommendations.append(f"🟢 Đã có {ext_count} liên kết ngoại bộ tham chiếu.")
+
+    ext_without_blank = [it for it in items if it["type"] == "external" and it["target"] != "_blank"]
+    if ext_without_blank:
+        score -= min(15, len(ext_without_blank) * 5)
+        warnings.append(f"⚠️ Có {len(ext_without_blank)} liên kết ngoại bộ chưa mở trong tab mới (`target='_blank'`).")
+
+    generic_anchors_found = [it for it in items if any("chung chung" in issue for issue in it["issues"])]
+    if generic_anchors_found:
+        score -= min(15, len(generic_anchors_found) * 5)
+        warnings.append(f"⚠️ Có {len(generic_anchors_found)} liên kết dùng anchor text chung chung ('tại đây', 'xem thêm').")
+
+    score = max(0, min(100, score))
+    
+    return {
+        "score": score,
+        "total_links": total,
+        "internal_count": int_count,
+        "external_count": ext_count,
+        "warnings_count": warn_count + len(warnings),
+        "items": items,
+        "warnings": warnings,
+        "recommendations": recommendations
+    }
+
+def optimize_seo_links(html_content: str, site_domain: str = "luviet.com", add_internal_if_missing: bool = True) -> tuple:
+    """
+    Tự động chuẩn hóa toàn bộ liên kết trong HTML:
+    - Bổ sung target='_blank' và rel='noopener noreferrer' cho toàn bộ link ngoại bộ
+    - Tự động chèn cụm liên kết nội bộ LuViet 3 cột nếu bài viết thiếu link nội bộ
+    """
+    if not html_content or not html_content.strip():
+        return html_content, []
+
+    soup = BeautifulSoup(html_content, "html.parser")
+    anchors = soup.find_all("a")
+    site_domain_clean = site_domain.lower().replace("https://", "").replace("http://", "").split("/")[0]
+    
+    fixes_applied = []
+    internal_count = 0
+    
+    for a in anchors:
+        href = (a.get("href") or "").strip()
+        if not href or href == "#" or href.startswith("javascript:") or href.startswith("tel:") or href.startswith("zalo:"):
+            continue
+            
+        parsed = urlparse(href)
+        domain = parsed.netloc.lower()
+        
+        is_internal = (not domain) or (site_domain_clean in domain) or ("luviet.com" in domain)
+        
+        if is_internal:
+            internal_count += 1
+        else:
+            # Fix external link: add target="_blank"
+            if a.get("target") != "_blank":
+                a["target"] = "_blank"
+                fixes_applied.append(f"Thêm target='_blank' cho link ngoại bộ: {href}")
+                
+            # Fix external link: add rel="noopener noreferrer"
+            rel = a.get("rel") or []
+            if isinstance(rel, str):
+                rel_parts = rel.split()
+            else:
+                rel_parts = list(rel)
+            if "noopener" not in rel_parts:
+                rel_parts.append("noopener")
+            if "noreferrer" not in rel_parts:
+                rel_parts.append("noreferrer")
+            a["rel"] = " ".join(rel_parts)
+            fixes_applied.append(f"Chuẩn hóa rel='noopener noreferrer' cho link: {href}")
+
+    # If missing internal links and requested, insert internal links component
+    if add_internal_if_missing and internal_count < 2:
+        if not soup.find(class_="lv-internal-grid"):
+            internal_component_html = generate_internal_links_component()
+            internal_soup = BeautifulSoup(internal_component_html, "html.parser")
+            wrapper = soup.find(class_="lv-service-wrapper") or soup
+            wrapper.append(internal_soup)
+            fixes_applied.append("Tự động chèn lưới ma trận 12 liên kết nội bộ chuẩn SEO LuViet vào cuối bài.")
+
+    return str(soup), fixes_applied

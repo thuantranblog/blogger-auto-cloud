@@ -76,6 +76,35 @@ class SeoDescRequest(BaseModel):
     page_type: Optional[str] = "service"
     content_html: Optional[str] = ""
 
+class SeoLinkAuditRequest(BaseModel):
+    content_html: str
+    domain: Optional[str] = "luviet.com"
+
+class SeoLinkOptimizeRequest(BaseModel):
+    content_html: str
+    domain: Optional[str] = "luviet.com"
+    add_internal: Optional[bool] = True
+
+@app.post("/api/seo/analyze-links")
+def analyze_links_endpoint(req: SeoLinkAuditRequest):
+    result = templates.analyze_seo_links(req.content_html, site_domain=req.domain)
+    return {"success": True, "data": result}
+
+@app.post("/api/seo/optimize-links")
+def optimize_links_endpoint(req: SeoLinkOptimizeRequest):
+    new_html, fixes = templates.optimize_seo_links(
+        req.content_html,
+        site_domain=req.domain,
+        add_internal_if_missing=req.add_internal
+    )
+    audit = templates.analyze_seo_links(new_html, site_domain=req.domain)
+    return {
+        "success": True,
+        "html": new_html,
+        "fixes": fixes,
+        "audit": audit
+    }
+
 @app.post("/api/generate-seo-desc")
 def generate_seo_desc_endpoint(req: SeoDescRequest):
     kw_list = normalize_keywords(req.keywords)

@@ -4824,10 +4824,19 @@ $(document).ready(function($){jQuery(document).ready(function(e){var WindowHeigh
           var a = e.feed.entry[i].link[t].href;
           break
         }
-      if ("media$thumbnail" in e.feed.entry[i]) {
-        d = e.feed.entry[i].media$thumbnail.url.replace("s72-c", "w100-h67-p-k-no-nu");
-      } else {
-        d = "https://3.bp.blogspot.com/-Yw8BIuvwoSQ/VsjkCIMoltI/AAAAAAAAC4c/s55PW6xEKn0/w100-h67-p-k-no-nu/nth.png"
+      var d = "";
+      if ("media$thumbnail" in entry && entry.media$thumbnail && entry.media$thumbnail.url) {
+        d = entry.media$thumbnail.url.replace(/\/s[0-9]+(-[a-z0-9]+)*\//, "/w100-h67-p-k-no-nu/").replace("s72-c", "w100-h67-p-k-no-nu");
+      }
+      if (!d || d.indexOf("nth.png") !== -1) {
+        var postHtml = (entry.content && entry.content.$t) ? entry.content.$t : ((entry.summary && entry.summary.$t) ? entry.summary.$t : "");
+        var mImg = postHtml.match(/<img[^>]+src=["']([^"']+)["']/i);
+        if (mImg && mImg[1]) {
+          d = mImg[1];
+        }
+      }
+      if (!d) {
+        d = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiyZTpU6PAUca7yxAMugQzFz1J8phyXlEsbQDnIS3SUjWMd04AjiJYEYzYysrQ3xy2G-REOIMKt3Ec4fe2TCi75ThfeQ2eBgDuPl4_MIDok5eo_pcyl62UWavKIRSJC__i1FpG4TaadAig/w600-h400-p-k-no-nu/nth.png";
       }
         h = e.feed.entry[i].published.$t,
         o = h.substring(0, 4),
@@ -4835,9 +4844,10 @@ $(document).ready(function($){jQuery(document).ready(function(e){var WindowHeigh
         u = h.substring(8, 10),
         m = u + "/" + p + "/" + o;
       var r = e.feed.entry[i].title.$t,
-        itempost = '<article class="blog-item blog-item-list clearfix"> <a href="'+a+'" class="panel-box-media" title="'+r+'"><img src="https://cdn.jsdelivr.net/gh/giaodienblog/cdn@343e0fa/antloader.svg" data-lazyload="'+d+'" width="70" alt="'+r+'"></a> <div class="blogs-rights"> <h3 class="blog-item-name"><a href="'+a+'" title="'+r+'">'+r+'</a></h3> <div class="post-time">Ngày đăng: '+m+'</div> </div> </article>';
+        itempost = '<article class="blog-item blog-item-list clearfix"> <a href="'+a+'" class="panel-box-media" title="'+r+'"><img src="'+d+'" data-lazyload="'+d+'" width="70" alt="'+r+'"></a> <div class="blogs-rights"> <h3 class="blog-item-name"><a href="'+a+'" title="'+r+'">'+r+'</a></h3> <div class="post-time">Ngày đăng: '+m+'</div> </div> </article>';
       $('.list-blogs').append(itempost)
     }
+    if (window.awe_lazyloadImage) { window.awe_lazyloadImage(); }
   }
   $.ajax({
     url: "/feeds/posts/default/-/tin-tuc",
@@ -5841,26 +5851,33 @@ var label = $('#antproductb').attr("data-id");
           break
         }
       }
-            if("content" in e.feed.entry[n]){
-                var postcontent = e.feed.entry[n].content.$t;
-            }else if("summary" in e.feed.entry[n]){
-                var postcontent = e.feed.entry[n].summary.$t;
-            }else{
-                var postcontent = "";
+            var postRaw = "";
+            if("content" in e.feed.entry[n] && e.feed.entry[n].content){
+                postRaw = e.feed.entry[n].content.$t || "";
+            }else if("summary" in e.feed.entry[n] && e.feed.entry[n].summary){
+                postRaw = e.feed.entry[n].summary.$t || "";
             }
-            var re = /<\S[^>]*>/g;
-            postcontent = postcontent.replace(re,"");
+            var postcontent = postRaw.replace(/<\S[^>]*>/g,"");
       var f = e.feed.entry[n].title.$t;
-      if ("media$thumbnail" in e.feed.entry[n]) {
-        d = e.feed.entry[n].media$thumbnail.url.replace("s72-c", "w650-h400-p-k-no-nu")
-      } else {
-        d = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiyZTpU6PAUca7yxAMugQzFz1J8phyXlEsbQDnIS3SUjWMd04AjiJYEYzYysrQ3xy2G-REOIMKt3Ec4fe2TCi75ThfeQ2eBgDuPl4_MIDok5eo_pcyl62UWavKIRSJC__i1FpG4TaadAig/w600-h400-p-k-no-nu/nth.png"
+      var d = "";
+      if ("media$thumbnail" in entry && entry.media$thumbnail && entry.media$thumbnail.url) {
+        d = entry.media$thumbnail.url.replace(/\/s[0-9]+(-[a-z0-9]+)*\//, "/w650-h400-p-k-no-nu/").replace("s72-c", "w650-h400-p-k-no-nu");
+      }
+      if (!d || d.indexOf("nth.png") !== -1) {
+        var mImg = postRaw.match(/<img[^>]+src=["']([^"']+)["']/i);
+        if (mImg && mImg[1]) {
+          d = mImg[1];
+        }
+      }
+      if (!d) {
+        d = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiyZTpU6PAUca7yxAMugQzFz1J8phyXlEsbQDnIS3SUjWMd04AjiJYEYzYysrQ3xy2G-REOIMKt3Ec4fe2TCi75ThfeQ2eBgDuPl4_MIDok5eo_pcyl62UWavKIRSJC__i1FpG4TaadAig/w600-h400-p-k-no-nu/nth.png";
       }
       h = e.feed.entry[n].published.$t, o = h.substring(0, 4), p = h.substring(5, 7), u = h.substring(8, 10), m = u + "/" + p + "/" + o;
-      var r = '<div class="post-inner clearfix"> <a href="' + t + '" title="' + f + '"> <div class="post_image"> <img src="https://cdn.jsdelivr.net/gh/giaodienblog/cdn@343e0fa/antloader.svg" data-lazyload="' + d + '" alt="' + f + '" class="img-responsive center-block" /> </div> <div class="border-news"> <h5>' + f + '</h5><p class="blog-item-summary">'+postcontent.substring(0,100)+'...</p> <div class="date_added">Ngày đăng: ' + m + '</div> </div> </a> </div>';
+      var r = '<div class="post-inner clearfix"> <a href="' + t + '" title="' + f + '"> <div class="post_image"> <img src="' + d + '" data-lazyload="' + d + '" alt="' + f + '" class="img-responsive center-block" /> </div> <div class="border-news"> <h5>' + f + '</h5><p class="blog-item-summary">'+postcontent.substring(0,100)+'...</p> <div class="date_added">Ngày đăng: ' + m + '</div> </div> </a> </div>';
       $('.section-news-owl').owlCarousel().trigger('add.owl.carousel', [jQuery('<div class="owl-item">' + r + '</div>')]);
     }
     $('.section-news-owl').trigger('refresh.owl.carousel');
+    if (window.awe_lazyloadImage) { window.awe_lazyloadImage(); }
   }
   $.ajax({
     url: "/feeds/posts/default/-/" + encodeURIComponent(postbloglb),

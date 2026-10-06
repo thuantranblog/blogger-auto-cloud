@@ -220,7 +220,14 @@ document.addEventListener("DOMContentLoaded", () => {
     doc.close();
   }
 
-  htmlEditor.addEventListener("input", updatePreview);
+  let auditDebounce = null;
+  htmlEditor.addEventListener("input", () => {
+    updatePreview();
+    clearTimeout(auditDebounce);
+    auditDebounce = setTimeout(() => {
+      auditSeoLinks(htmlEditor.value);
+    }, 600);
+  });
 
   // 7. Generate AI Content
   btnGenerateAI.addEventListener("click", async () => {
@@ -247,6 +254,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (data.success && data.html) {
         htmlEditor.value = data.html;
         updatePreview();
+        auditSeoLinks(data.html);
 
         if (data.search_desc) {
           postDesc.value = data.search_desc;
@@ -668,6 +676,231 @@ document.addEventListener("DOMContentLoaded", () => {
       btnSyncBlogger.disabled = false;
       btnSyncBlogger.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Đẩy Lên Blogger`;
     }
+  }
+
+  // =========================================================================
+  // SEO LINK CONTROL & AUDIT ENGINE
+  // =========================================================================
+  const linkBadgeCount = document.getElementById("linkBadgeCount");
+  const miniSeoLinkScore = document.getElementById("miniSeoLinkScore");
+  const miniIntCount = document.getElementById("miniIntCount");
+  const miniExtCount = document.getElementById("miniExtCount");
+  const btnGoToSeoTab = document.getElementById("btnGoToSeoTab");
+  const seoScoreCircle = document.getElementById("seoScoreCircle");
+  const seoScoreNum = document.getElementById("seoScoreNum");
+  const seoScoreTitle = document.getElementById("seoScoreTitle");
+  const seoScoreSummary = document.getElementById("seoScoreSummary");
+  const statIntBadge = document.getElementById("statIntBadge");
+  const statExtBadge = document.getElementById("statExtBadge");
+  const statWarnBadge = document.getElementById("statWarnBadge");
+  const btnAuditLinksNow = document.getElementById("btnAuditLinksNow");
+  const btnFixExternalLinks = document.getElementById("btnFixExternalLinks");
+  const btnAddInternalLinksGrid = document.getElementById("btnAddInternalLinksGrid");
+  const seoAuditAlerts = document.getElementById("seoAuditAlerts");
+  const seoLinksTableContainer = document.getElementById("seoLinksTableContainer");
+
+  async function auditSeoLinks(htmlContent) {
+    if (!htmlContent || !htmlContent.trim()) {
+      if (linkBadgeCount) linkBadgeCount.textContent = "0";
+      if (miniSeoLinkScore) {
+        miniSeoLinkScore.textContent = "Chưa có nội dung";
+        miniSeoLinkScore.className = "seo-score-badge";
+      }
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/seo/analyze-links", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content_html: htmlContent, domain: "luviet.com" }),
+      });
+      const json = await res.json();
+      if (!json.success || !json.data) return;
+      const data = json.data;
+
+      // 1. Update mini bar & tab badge
+      if (linkBadgeCount) linkBadgeCount.textContent = data.total_links;
+      if (miniIntCount) {
+        miniIntCount.innerHTML = `<i class="fa-solid fa-sitemap"></i> Nội bộ: <b>${data.internal_count}</b>`;
+        miniIntCount.className = `link-chip ${data.internal_count >= 2 ? "good" : "warn"}`;
+      }
+      if (miniExtCount) {
+        miniExtCount.innerHTML = `<i class="fa-solid fa-arrow-up-right-from-square"></i> Ngoại bộ: <b>${data.external_count}</b>`;
+        miniExtCount.className = `link-chip ${data.external_count >= 1 ? "good" : "warn"}`;
+      }
+      if (miniSeoLinkScore) {
+        miniSeoLinkScore.textContent = `${data.score}/100 Điểm SEO`;
+        miniSeoLinkScore.className = `seo-score-badge ${data.score >= 80 ? "good" : data.score >= 50 ? "warn" : "bad"}`;
+      }
+
+      // 2. Update Tab 4 Dashboard
+      if (seoScoreNum) seoScoreNum.textContent = data.score;
+      if (seoScoreCircle) {
+        seoScoreCircle.className = `seo-score-circle ${data.score >= 80 ? "good" : data.score >= 50 ? "warn" : "bad"}`;
+      }
+      if (seoScoreTitle) {
+        seoScoreTitle.textContent = data.score >= 85 ? "Cấu Trúc Liên Kết Chuẩn SEO Xuất Sắc" : data.score >= 60 ? "Cấu Trúc Liên Kết Khá (Cần Tối Ưu)" : "Cấu Trúc Liên Kết Chưa Đạt Chuẩn";
+      }
+      if (seoScoreSummary) {
+        seoScoreSummary.textContent = `Tổng cộng ${data.total_links} liên kết (${data.internal_count} nội bộ, ${data.external_count} ngoại bộ). Phát hiện ${data.warnings.length} điểm cần lưu ý.`;
+      }
+      if (statIntBadge) statIntBadge.innerHTML = `<i class="fa-solid fa-sitemap"></i> ${data.internal_count} Link Nội Bộ`;
+      if (statExtBadge) statExtBadge.innerHTML = `<i class="fa-solid fa-arrow-up-right-from-square"></i> ${data.external_count} Link Ngoại Bộ`;
+      if (statWarnBadge) statWarnBadge.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> ${data.warnings.length} Cảnh Báo`;
+
+      // 3. Render Alerts
+      if (seoAuditAlerts) {
+        seoAuditAlerts.innerHTML = "";
+        data.warnings.forEach((warn) => {
+          const item = document.createElement("div");
+          item.className = "seo-alert-item warning";
+          item.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> <span>${warn}</span>`;
+          seoAuditAlerts.appendChild(item);
+        });
+        data.recommendations.forEach((rec) => {
+          const item = document.createElement("div");
+          item.className = "seo-alert-item success";
+          item.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span>${rec}</span>`;
+          seoAuditAlerts.appendChild(item);
+        });
+      }
+
+      // 4. Render Table
+      if (seoLinksTableContainer) {
+        if (!data.items || data.items.length === 0) {
+          seoLinksTableContainer.innerHTML = `<p class="empty-hint">Không tìm thấy thẻ &lt;a&gt; nào trong bài viết.</p>`;
+        } else {
+          let rowsHtml = data.items.map((it, idx) => {
+            const isInt = it.type === "internal";
+            const typeBadge = `<span class="link-type-tag ${isInt ? "internal" : "external"}">${isInt ? "Nội Bộ" : "Ngoại Bộ"}</span>`;
+            const issueHtml = it.issues.length > 0 
+              ? it.issues.map(iss => `<span class="link-issue-pill"><i class="fa-solid fa-triangle-exclamation"></i> ${iss}</span>`).join("")
+              : `<span class="link-ok-pill"><i class="fa-solid fa-check"></i> Chuẩn SEO</span>`;
+            return `
+              <tr>
+                <td><b>#${idx + 1}</b></td>
+                <td>${typeBadge}</td>
+                <td><strong>${it.text}</strong></td>
+                <td><span class="link-url-text" title="${it.href}"><a href="${it.href}" target="_blank" rel="noopener noreferrer">${it.href}</a></span></td>
+                <td><small>target: <code>${it.target || "none"}</code><br>rel: <code>${it.rel || "none"}</code></small></td>
+                <td>${issueHtml}</td>
+              </tr>
+            `;
+          }).join("");
+
+          seoLinksTableContainer.innerHTML = `
+            <table class="seo-links-table">
+              <thead>
+                <tr>
+                  <th>STT</th>
+                  <th>Loại</th>
+                  <th>Anchor Text</th>
+                  <th>Đường Dẫn URL</th>
+                  <th>Thuộc Tính</th>
+                  <th>Đánh Giá SEO</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${rowsHtml}
+              </tbody>
+            </table>
+          `;
+        }
+      }
+    } catch (err) {
+      console.error("Lỗi phân tích link SEO:", err);
+    }
+  }
+
+  // Quick jump button from Tab 1 to Tab 4
+  if (btnGoToSeoTab) {
+    btnGoToSeoTab.addEventListener("click", () => {
+      const seoTabBtn = document.querySelector('.tab[data-tab="seoLinksTab"]');
+      if (seoTabBtn) seoTabBtn.click();
+      auditSeoLinks(htmlEditor.value);
+    });
+  }
+
+  // Listen to tab clicks: if switching to seoLinksTab, auto audit
+  document.querySelectorAll(".tab").forEach((tab) => {
+    tab.addEventListener("click", () => {
+      if (tab.dataset.tab === "seoLinksTab") {
+        auditSeoLinks(htmlEditor.value);
+      }
+    });
+  });
+
+  // Audit now button in Tab 4
+  if (btnAuditLinksNow) {
+    btnAuditLinksNow.addEventListener("click", () => {
+      auditSeoLinks(htmlEditor.value);
+      showToast("Đã quét lại cấu trúc liên kết!", "info");
+    });
+  }
+
+  // 1-Click Fix External Links
+  if (btnFixExternalLinks) {
+    btnFixExternalLinks.addEventListener("click", async () => {
+      const content = htmlEditor.value;
+      if (!content.trim()) {
+        showToast("Chưa có nội dung để chuẩn hóa link!", "error");
+        return;
+      }
+      btnFixExternalLinks.disabled = true;
+      btnFixExternalLinks.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Đang Chuẩn Hóa...`;
+      try {
+        const res = await fetch("/api/seo/optimize-links", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ content_html: content, domain: "luviet.com", add_internal: false }),
+        });
+        const data = await res.json();
+        if (data.success && data.html) {
+          htmlEditor.value = data.html;
+          updatePreview();
+          auditSeoLinks(data.html);
+          showToast(`Đã chuẩn hóa ${data.fixes.length} liên kết ngoại bộ!`, "success");
+        }
+      } catch (e) {
+        showToast("Lỗi chuẩn hóa: " + e.message, "error");
+      } finally {
+        btnFixExternalLinks.disabled = false;
+        btnFixExternalLinks.innerHTML = `<i class="fa-solid fa-shield-halved"></i> ⚡ Chuẩn Hóa Link Ngoại Bộ`;
+      }
+    });
+  }
+
+  // 1-Click Add LuViet Internal Links Matrix
+  if (btnAddInternalLinksGrid) {
+    btnAddInternalLinksGrid.addEventListener("click", async () => {
+      const content = htmlEditor.value;
+      if (!content.trim()) {
+        showToast("Chưa có nội dung để chèn link nội bộ!", "error");
+        return;
+      }
+      btnAddInternalLinksGrid.disabled = true;
+      btnAddInternalLinksGrid.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Đang Chèn...`;
+      try {
+        const res = await fetch("/api/seo/optimize-links", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ content_html: content, domain: "luviet.com", add_internal: true }),
+        });
+        const data = await res.json();
+        if (data.success && data.html) {
+          htmlEditor.value = data.html;
+          updatePreview();
+          auditSeoLinks(data.html);
+          showToast("Đã chèn cụm liên kết nội bộ 12 mục chuẩn LuViet!", "success");
+        }
+      } catch (e) {
+        showToast("Lỗi chèn link: " + e.message, "error");
+      } finally {
+        btnAddInternalLinksGrid.disabled = false;
+        btnAddInternalLinksGrid.innerHTML = `<i class="fa-solid fa-plus"></i> 🔗 Chèn Cụm Link Nội Bộ LuViet`;
+      }
+    });
   }
 
   // Initial setup: check status & trigger first sample generation
