@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-10-07T06:56:29.494447+00:00",
-  "total_posted": 53,
+  "last_updated": "2026-10-07T14:29:08.155218+00:00",
+  "total_posted": 54,
   "history": [
     {
       "topic": "Dịch vụ thiết kế website doanh nghiệp chuẩn SEO chuyên nghiệp 2026",
@@ -245,7 +245,9 @@
       "url": "https://www.luviet.com/2026/10/ban-hang-kenh-cho-nguoi-it-von-bat-au.html",
       "published": "2026-10-05T06:30:00+07:00",
       "posted_at": "2026-09-30T23:35:02.496264+00:00",
-      "mode": "schedule"
+      "mode": "schedule",
+      "indexed": true,
+      "indexed_at": "2026-10-07T14:29:12.563909+00:00"
     },
     {
       "topic": "Vì Sao Website Của Bạn Tải Chậm Quá 3 Giây Khiến Khách Hàng Thoát Trang Hàng Loạt?",
@@ -254,7 +256,9 @@
       "url": "https://www.luviet.com/2026/10/website-tai-cham-qua-3-giay-vi-sao.html",
       "published": "2026-10-05T11:30:00+07:00",
       "posted_at": "2026-10-01T02:25:06.024443+00:00",
-      "mode": "schedule"
+      "mode": "schedule",
+      "indexed": true,
+      "indexed_at": "2026-10-07T14:29:12.563909+00:00"
     },
     {
       "topic": "Bài Toán Dòng Tiền Kinh Doanh Online: Đọng Vốn Tiền COD Và Cách Thu Tiền Ngay Về Tài Khoản",
@@ -274,7 +278,9 @@
       "url": "https://www.luviet.com/2026/10/rui-ro-khi-phu-thuoc-nen-tang-ben-thu.html",
       "published": "2026-10-06T06:30:00+07:00",
       "posted_at": "2026-10-01T16:42:04.206733+00:00",
-      "mode": "schedule"
+      "mode": "schedule",
+      "indexed": true,
+      "indexed_at": "2026-10-07T14:29:12.563909+00:00"
     },
     {
       "topic": "Tư Duy Xây Hệ Thống Bán Hàng Tự Động Hóa: 1 Người Vẫn Vận Hành Trơn Tru Hàng Trăm Đơn/Ngày",
@@ -283,7 +289,9 @@
       "url": "https://www.luviet.com/2026/10/tu-duy-xay-he-thong-ban-hang-tu-ong-hoa.html",
       "published": "2026-10-06T11:30:00+07:00",
       "posted_at": "2026-10-01T21:37:26.123572+00:00",
-      "mode": "schedule"
+      "mode": "schedule",
+      "indexed": true,
+      "indexed_at": "2026-10-07T14:29:12.563909+00:00"
     },
     {
       "topic": "Landing Page Chuẩn CRO Là Gì? Bí Quyết Tăng Gấp Đôi Tỷ Lệ Đặt Hàng Mà Không Tăng Tiền Ads",
@@ -303,7 +311,9 @@
       "url": "https://www.luviet.com/2026/10/form-at-hang-1-cham-mua-sam-sieu-toc.html",
       "published": "2026-10-07T06:30:00+07:00",
       "posted_at": "2026-10-02T07:06:01.226681+00:00",
-      "mode": "schedule"
+      "mode": "schedule",
+      "indexed": true,
+      "indexed_at": "2026-10-07T14:29:12.563909+00:00"
     },
     {
       "topic": "Công Nghệ VietQR Động: Giải Pháp Quét Mã Trả Tiền Trong 3 Giây Đột Phá Doanh Số Shop Online",
@@ -312,7 +322,9 @@
       "url": "https://www.luviet.com/2026/10/cong-nghe-vietqr-ong-giai-phap-quet-ma.html",
       "published": "2026-10-07T11:30:00+07:00",
       "posted_at": "2026-10-02T13:59:03.755558+00:00",
-      "mode": "schedule"
+      "mode": "schedule",
+      "indexed": true,
+      "indexed_at": "2026-10-07T14:29:12.563909+00:00"
     },
     {
       "topic": "Bật Mí Cách Tự Động Đẩy Đơn Sang GHTK, GHN, Viettel Post Chỉ Với 1 Cú Click Chuột",
@@ -321,7 +333,9 @@
       "url": "https://www.luviet.com/2026/10/bat-mi-cach-tu-ong-ay-on-sang-ghtk-ghn.html",
       "published": "2026-10-07T14:30:00+07:00",
       "posted_at": "2026-10-02T19:06:25.114707+00:00",
-      "mode": "schedule"
+      "mode": "schedule",
+      "indexed": true,
+      "indexed_at": "2026-10-07T14:29:12.563909+00:00"
     },
     {
       "topic": "Cách Tự Động Tính Phí Vận Chuyển Theo Từng Xã/Phường Chuẩn Xác 100% Cho Website Của Bạn",
@@ -519,6 +533,15 @@
       "url": "https://www.luviet.com/2026/10/so-sanh-chatbot-kich-ban-cu-ky-nut-bam.html",
       "published": "2026-10-15T06:30:00+07:00",
       "posted_at": "2026-10-07T06:56:29.494428+00:00",
+      "mode": "schedule"
+    },
+    {
+      "topic": "Tối Ưu 80% Chi Phí Nhân Sự Trực Trực Tuyến Nhờ Đưa AI Vào Tiếp Nhận Khách Hàng",
+      "title": "Tối Ưu 80% Chi Phí Nhân Sự Trực Tuyến Nhờ Đưa AI Vào Tiếp Nhận Khách Hàng",
+      "post_id": "7831896424102985884",
+      "url": "https://www.luviet.com/2026/10/toi-uu-80-chi-phi-nhan-su-truc-tuyen.html",
+      "published": "2026-10-15T11:30:00+07:00",
+      "posted_at": "2026-10-07T14:29:08.155202+00:00",
       "mode": "schedule"
     }
   ]
