@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-10-07T00:51:38.894629+00:00",
-  "total_posted": 52,
+  "last_updated": "2026-10-07T06:56:29.494447+00:00",
+  "total_posted": 53,
   "history": [
     {
       "topic": "Dịch vụ thiết kế website doanh nghiệp chuẩn SEO chuyên nghiệp 2026",
@@ -263,7 +263,9 @@
       "url": "https://www.luviet.com/2026/10/bai-toan-dong-tien-kinh-doanh-online.html",
       "published": "2026-10-05T14:30:00+07:00",
       "posted_at": "2026-10-01T09:25:37.423957+00:00",
-      "mode": "schedule"
+      "mode": "schedule",
+      "indexed": true,
+      "indexed_at": "2026-10-07T06:56:34.229915+00:00"
     },
     {
       "topic": "Rủi Ro Khi Phụ Thuộc 100% Vào Nền Tảng Bên Thứ Ba Và Chiến Lược Xây Dựng Sân Nhà Vững Chắc",
@@ -290,7 +292,9 @@
       "url": "https://www.luviet.com/2026/10/landing-page-chuan-cro-la-gi-bi-quyet.html",
       "published": "2026-10-06T14:30:00+07:00",
       "posted_at": "2026-10-02T01:07:35.630078+00:00",
-      "mode": "schedule"
+      "mode": "schedule",
+      "indexed": true,
+      "indexed_at": "2026-10-07T06:56:34.229915+00:00"
     },
     {
       "topic": "Form Đặt Hàng 1-Chạm (1-Click Checkout): Trải Nghiệm Mua Sắm Siêu Tốc Giúp Khách Không Kịp Đắn Đo",
@@ -506,6 +510,15 @@
       "url": "https://www.luviet.com/2026/10/cach-ai-phan-tich-hanh-vi-khach-hang-e.html",
       "published": "2026-10-14T14:30:00+07:00",
       "posted_at": "2026-10-07T00:51:38.894612+00:00",
+      "mode": "schedule"
+    },
+    {
+      "topic": "So Sánh Chatbot Kịch Bản Cũ Kỹ (Nút Bấm) vs Trợ Lý AI Ngôn Ngữ Tự Nhiên Hiện Đại",
+      "title": "So Sánh Chatbot Kịch Bản Cũ Kỹ (Nút Bấm) vs Trợ Lý AI Ngôn Ngữ Tự Nhiên Hiện Đại",
+      "post_id": "3874944903645187475",
+      "url": "https://www.luviet.com/2026/10/so-sanh-chatbot-kich-ban-cu-ky-nut-bam.html",
+      "published": "2026-10-15T06:30:00+07:00",
+      "posted_at": "2026-10-07T06:56:29.494428+00:00",
       "mode": "schedule"
     }
   ]
