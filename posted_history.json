@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-10-09T00:11:40.410098+00:00",
-  "total_posted": 59,
+  "last_updated": "2026-10-09T13:31:46.069853+00:00",
+  "total_posted": 60,
   "history": [
     {
       "topic": "Dịch vụ thiết kế website doanh nghiệp chuẩn SEO chuyên nghiệp 2026",
@@ -366,7 +366,9 @@
       "url": "https://www.luviet.com/2026/10/ung-dung-hieu-ung-fomo-so-bo-lo-ung.html",
       "published": "2026-10-08T14:30:00+07:00",
       "posted_at": "2026-10-03T08:16:56.961809+00:00",
-      "mode": "schedule"
+      "mode": "schedule",
+      "indexed": true,
+      "indexed_at": "2026-10-09T13:31:50.204000+00:00"
     },
     {
       "topic": "Đồng Hồ Đếm Ngược Giờ Vàng: Vũ Khí Tạo Cảm Giác Khan Hiếm Khiến Khách Mua Ngay Lập Tức",
@@ -375,7 +377,9 @@
       "url": "https://www.luviet.com/2026/10/ong-ho-em-nguoc-gio-vang-vu-khi-tao-cam.html",
       "published": "2026-10-09T06:30:00+07:00",
       "posted_at": "2026-10-03T13:31:11.967389+00:00",
-      "mode": "schedule"
+      "mode": "schedule",
+      "indexed": true,
+      "indexed_at": "2026-10-09T13:31:50.204000+00:00"
     },
     {
       "topic": "Tối Ưu Sticky CTA Bar Trên Điện Thoại: Tăng 35% Lượt Bấm Mua Hàng Di Động",
@@ -395,7 +399,9 @@
       "url": "https://www.luviet.com/2026/10/quy-trinh-xu-ly-on-hang-tu-15-phut.html",
       "published": "2026-10-09T14:30:00+07:00",
       "posted_at": "2026-10-03T20:12:00.064026+00:00",
-      "mode": "schedule"
+      "mode": "schedule",
+      "indexed": true,
+      "indexed_at": "2026-10-09T13:31:50.204000+00:00"
     },
     {
       "topic": "Email Marketing Tự Động Cứu Giỏ Hàng Bỏ Quên: Cách Lấy Lại 30% Đơn Hàng Tưởng Chừng Đã Mất",
@@ -593,6 +599,15 @@
       "url": "https://www.luviet.com/2026/10/kich-ban-xu-ly-tu-choi-mua-hang-cuc.html",
       "published": "2026-10-17T06:30:00+07:00",
       "posted_at": "2026-10-09T00:11:40.410081+00:00",
+      "mode": "schedule"
+    },
+    {
+      "topic": "Tương Lai Của E-Commerce 2026: Doanh Nghiệp Không Dùng AI Sẽ Bị Đào Thải Ra Sao?",
+      "title": "Tương Lai Của E-Commerce 2026: Doanh Nghiệp Không AI Sẽ Bị Đào Thải?",
+      "post_id": "8338443131897030343",
+      "url": "https://www.luviet.com/2026/10/tuong-lai-cua-e-commerce-2026-doanh.html",
+      "published": "2026-10-17T11:30:00+07:00",
+      "posted_at": "2026-10-09T13:31:46.069836+00:00",
       "mode": "schedule"
     }
   ]
