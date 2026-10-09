@@ -355,7 +355,9 @@
       "url": "https://www.luviet.com/2026/10/7-khoi-hieu-ung-tam-ly-inh-cao-giup.html",
       "published": "2026-10-08T11:30:00+07:00",
       "posted_at": "2026-10-03T02:05:44.256913+00:00",
-      "mode": "schedule"
+      "mode": "schedule",
+      "indexed": true,
+      "indexed_at": "2026-10-09T06:27:00.876730+00:00"
     },
     {
       "topic": "Ứng Dụng Hiệu Ứng FOMO (Sợ Bỏ Lỡ) Đúng Cách Để Kích Thích Khách Hàng Ra Quyết Định Trong 60 Giây",
@@ -382,7 +384,9 @@
       "url": "https://www.luviet.com/2026/10/toi-uu-sticky-cta-bar-tren-ien-thoai.html",
       "published": "2026-10-09T11:30:00+07:00",
       "posted_at": "2026-10-03T17:36:50.845813+00:00",
-      "mode": "schedule"
+      "mode": "schedule",
+      "indexed": true,
+      "indexed_at": "2026-10-09T06:27:00.876730+00:00"
     },
     {
       "topic": "Quy Trình Xử Lý Đơn Hàng Từ 15 Phút Xuống 15 Giây Nhờ Tự Động In Tem Mã Vận Đơn A6",
