@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-10-08T19:42:45.057844+00:00",
-  "total_posted": 58,
+  "last_updated": "2026-10-09T00:11:40.410098+00:00",
+  "total_posted": 59,
   "history": [
     {
       "topic": "Dịch vụ thiết kế website doanh nghiệp chuẩn SEO chuyên nghiệp 2026",
@@ -344,7 +344,9 @@
       "url": "https://www.luviet.com/2026/10/cach-tu-ong-tinh-phi-van-chuyen-theo.html",
       "published": "2026-10-08T06:30:00+07:00",
       "posted_at": "2026-10-02T23:04:54.854375+00:00",
-      "mode": "schedule"
+      "mode": "schedule",
+      "indexed": true,
+      "indexed_at": "2026-10-09T00:11:44.689744+00:00"
     },
     {
       "topic": "7 Khối Hiệu Ứng Tâm Lý Đỉnh Cao Giúp Landing Page Tăng Vọt Tỷ Lệ Chốt Sale",
@@ -578,6 +580,15 @@
       "url": "https://www.luviet.com/2026/10/ai-tu-ong-tra-loi-phi-ship-thoi-gian.html",
       "published": "2026-10-16T14:30:00+07:00",
       "posted_at": "2026-10-08T19:42:45.057823+00:00",
+      "mode": "schedule"
+    },
+    {
+      "topic": "Kịch Bản Xử Lý Từ Chối Mua Hàng Cực Khéo Léo Được Lập Trình Cho AI Chatbot",
+      "title": "Kịch Bản Xử Lý Từ Chối Mua Hàng Cực Khéo Léo Được Lập Trình Cho AI Chatbot",
+      "post_id": "1189051640630284862",
+      "url": "https://www.luviet.com/2026/10/kich-ban-xu-ly-tu-choi-mua-hang-cuc.html",
+      "published": "2026-10-17T06:30:00+07:00",
+      "posted_at": "2026-10-09T00:11:40.410081+00:00",
       "mode": "schedule"
     }
   ]
