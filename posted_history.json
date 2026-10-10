@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-10-09T23:10:20.211051+00:00",
-  "total_posted": 62,
+  "last_updated": "2026-10-10T02:27:50.378347+00:00",
+  "total_posted": 63,
   "history": [
     {
       "topic": "Dịch vụ thiết kế website doanh nghiệp chuẩn SEO chuyên nghiệp 2026",
@@ -410,7 +410,9 @@
       "url": "https://www.luviet.com/2026/10/email-marketing-tu-ong-cuu-gio-hang-bo.html",
       "published": "2026-10-10T06:30:00+07:00",
       "posted_at": "2026-10-03T23:11:23.699523+00:00",
-      "mode": "schedule"
+      "mode": "schedule",
+      "indexed": true,
+      "indexed_at": "2026-10-10T02:27:53.900817+00:00"
     },
     {
       "topic": "Xây Dựng Quy Trình Remarketing 0 Đồng Cho Khách Hàng Cũ Bằng Hệ Thống CRM Tích Hợp Sẵn",
@@ -626,6 +628,15 @@
       "url": "https://www.luviet.com/2026/10/tu-ong-hoa-bao-cao-doanh-thu-du-bao-xu.html",
       "published": "2026-10-18T06:30:00+07:00",
       "posted_at": "2026-10-09T23:10:20.211033+00:00",
+      "mode": "schedule"
+    },
+    {
+      "topic": "Ngành Mỹ Phẩm: Cách Xây Dựng Trang Đích Trị Mụn/Trắng Da Tăng Vọt Tỷ Lệ Chốt Combo",
+      "title": "Ngành Mỹ Phẩm: Cách Xây Dựng Trang Đích Trị Mụn Chốt Combo",
+      "post_id": "8444286683032841443",
+      "url": "https://www.luviet.com/2026/10/nganh-my-pham-cach-xay-dung-trang-ich.html",
+      "published": "2026-10-18T11:30:00+07:00",
+      "posted_at": "2026-10-10T02:27:50.378329+00:00",
       "mode": "schedule"
     }
   ]
