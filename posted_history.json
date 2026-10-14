@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-10-14T00:36:42.354815+00:00",
-  "total_posted": 80,
+  "last_updated": "2026-10-14T05:23:03.750365+00:00",
+  "total_posted": 81,
   "history": [
     {
       "topic": "Dịch vụ thiết kế website doanh nghiệp chuẩn SEO chuyên nghiệp 2026",
@@ -790,6 +790,15 @@
       "url": "https://www.luviet.com/2026/10/huong-dan-tro-ten-mien-rieng-vncom-ve.html",
       "published": "2026-10-24T06:30:00+07:00",
       "posted_at": "2026-10-14T00:36:42.354795+00:00",
+      "mode": "schedule"
+    },
+    {
+      "topic": "Bảo Mật Cơ Sở Dữ Liệu Riêng Biệt (Database Per Tenant): Dữ Liệu Shop Của Bạn An Toàn Như Thế Nào?",
+      "title": "Bảo Mật Cơ Sở Dữ Liệu Riêng Biệt (Database Per Tenant): Dữ Liệu Shop Của Bạn An Toàn Như Thế Nào?",
+      "post_id": "8153276821778122135",
+      "url": "https://www.luviet.com/2026/10/bao-mat-co-so-du-lieu-rieng-biet.html",
+      "published": "2026-10-24T11:30:00+07:00",
+      "posted_at": "2026-10-14T05:23:03.750346+00:00",
       "mode": "schedule"
     }
   ]
